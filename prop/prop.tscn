@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3 uid="uid://b3o03rdwxli7y"]
+
+[ext_resource type="Texture2D" uid="uid://7xh6bmmmthsx" path="res://textures/prototype/orange/texture_01.png" id="1_07tnj"]
+[ext_resource type="Script" path="res://prop/prop.gd" id="2_q7mjd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c8c61"]
+resource_local_to_scene = true
+albedo_texture = ExtResource("1_07tnj")
+
+[sub_resource type="BoxMesh" id="BoxMesh_bylxx"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u4udo"]
+
+[node name="Prop" type="MeshInstance3D"]
+material_override = SubResource("StandardMaterial3D_c8c61")
+mesh = SubResource("BoxMesh_bylxx")
+script = ExtResource("2_q7mjd")
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="Collision" type="CollisionShape3D" parent="Body"]
+shape = SubResource("BoxShape3D_u4udo")
