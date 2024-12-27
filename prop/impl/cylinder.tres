@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PropImpl" load_steps=3 format=3 uid="uid://dmcuprjwctmns"]
+
+[ext_resource type="Script" path="res://prop/impl/prop_data.gd" id="1_pn1ag"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_em75g"]
+
+[resource]
+script = ExtResource("1_pn1ag")
+use_triplanar = true
+mesh = SubResource("CylinderMesh_em75g")

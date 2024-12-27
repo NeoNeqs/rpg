@@ -1,97 +1,141 @@
 @tool
 class_name Prop
-extends GeometryInstance3D
+extends MeshInstance3D
 
-# TODO: dynamic collision option: `var enable_collision: bool`
-#       when off it should not have a Body nor a CollisionShape
+# TODO: Player controller
+# TODO: test collision generation at scale (=1, =1, =1), (<1, <1, <1), (>1, >1, >1)
 
-# Keep in sync with [property _impls]
-@export_enum("Box", "Cylinder", "Sphere", "Stairs")
-var shape: String = "Box":
+# Must match the filenames of props in res://prop/impl/
+@export_enum("box", "capsule", "cylinder", "sphere", "stairs")
+var prop_shape: String = "box":
 	set(value):
-		shape = value
-		_prop_impl = _impls[shape]
-		_update_shape()
+		# Prevents Inspesctor dock redraw when editing the object
+		if not prop_shape == value:
+			_update_shape(value) # must be called before assigning
+		if value == "stairs":
+			texture = 8
+		prop_shape = value
+		_update_collision()
 
 
 @export_enum("dark", "green", "light", "orange", "purple", "red") 
 var color: String = "orange":
 	set(value):
 		color = value
-		_update()
+		_update_texture()
 
 
 @export_range(1, 10)
-var type: int = 1:
+var texture: int = 1:
 	set(value):
-		if shape == "Stairs":
-			return
-		type = value
-		_update()
+		if prop_shape == "stairs" and not value == 8:
+			printerr("Can't change texture for Stairs Shape")
+			texture = 8
+		else:
+			texture = value
+		_update_texture()
 
 
-@export_custom(PROPERTY_HINT_LINK, "")
-var prop_scale: Vector3 = Vector3.ONE:
+@export
+var enable_collision: bool = true:
 	set(value):
-		prop_scale = value.clamp(Vector3.ZERO, Vector3(10, 10, 10))
-		_update_shape()
+		enable_collision = value
+		_update_collision()
 
 
-# Untyped self to trick Godot's type checking
-var _u_self = self
+var _prop_data: PropData
+var _prev_scale: Vector3
 
-# Keep in sync with [property shape]
-var _impls: Dictionary = {
-	"Box": BoxProp.new(),
-	"Sphere": SphereProp.new(),
-	"Cylinder": CylinderProp.new(),
-	"Stairs": StairsProp.new()
-}
 
-var _prop_impl: PropImpl = _impls[shape]
+func _enter_tree() -> void:
+	Logger.extra.debug("This is {}", ["a test"])
+	if material_override == null:
+		material_override = StandardMaterial3D.new()
+	
+	set_notify_local_transform(true)
 
+	_update_shape(prop_shape)
+	_update_texture()
 
 func _ready() -> void:
-	_update()
-	_update_shape()
+	# update the collision once
+	_update_collision()
 
 
-func _update_shape() -> void:
+#func _notification(what: int) -> void:
+	#if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED:
+		## disabled temporarily to prevent infinite calls to `_notification`
+		#set_notify_local_transform(false)
+		#if not is_equal_approx(_prev_scale.x, scale.x):
+			#scale.z = scale.x
+		#elif not is_equal_approx(_prev_scale.z, scale.z):
+			#scale.x = scale.z
+		#
+		#_prev_scale = scale
+		## Don't update collision here, it will be slow
+		#set_notify_local_transform(true)
+		
+
+func _update_shape(p_new_shape: String) -> void:
+	_prop_data = load(_get_prop_path(p_new_shape))
+	mesh = _prop_data.mesh
+	
+	var mat: BaseMaterial3D = get_metarial()
+	mat.uv1_triplanar = _prop_data.use_triplanar
+	mat.uv1_world_triplanar = _prop_data.use_triplanar
+	
+
+func _update_collision() -> void:
 	if not is_node_ready():
 		return
 	
-	if not _u_self is MeshInstance3D:
-		printerr("Object is not a MeshInstance3D. " + ObjInfo.for_vi(self))
+	for child: Node in get_children():
+		if child is PhysicsBody3D:
+			remove_child(child)
+			child.queue_free()
+	
+	if not enable_collision:
 		return
 		
-	_prop_impl.update_shape(self)
+	# Don't generate collisions when editing a scene in the editor
+	if Engine.is_editor_hint():
+		return
+	
+	create_convex_collision(true, true)
+	
+	#(get_child(0) as Node3D).top_level = true
+	#(get_child(0).get_child(0) as Node3D).top_level = true
+	#(get_child(0) as Node3D).scale = Vector3.ONE
+	#(get_child(0).get_child(0) as Node3D).scale = Vector3.ONE
 
-
-func _update() -> void:
-	var mat: BaseMaterial3D = _get_metarial()
+func _update_texture() -> void:
+	var mat: BaseMaterial3D = get_metarial()
 	if not mat:
 		printerr("Material not found for prop. " + ObjInfo.for_vi(self))
 		return
 	
 	mat.albedo_texture = load("res://textures/prototype/%s/texture_%s.png" % [
 		color,
-		str(type).pad_zeros(2)
+		str(texture).pad_zeros(2)
 	])
 
 
-func _get_metarial() -> BaseMaterial3D:
-	if _u_self is MeshInstance3D:
-		if not _u_self.mesh == null and _u_self.mesh.material is BaseMaterial3D:
-			return _u_self.mesh.material
+func _get_prop_path(p_name: String) -> String:
+	return "res://prop/impl/%s.tres" % [p_name.to_lower()]
 
-		for i in _u_self.get_surface_override_material_count():
-			var override_mat: Material = _u_self.get_surface_override_material(i)
+
+func get_metarial() -> BaseMaterial3D:
+	for i: int in get_surface_override_material_count():
+		var override_mat: Material = get_surface_override_material(i)
 			
-			if override_mat is BaseMaterial3D:
-				return override_mat
+		if override_mat is BaseMaterial3D:
+			return override_mat
 	
 	return material_override as BaseMaterial3D
 
 
 func get_collision_shape() -> CollisionShape3D:
-	return $Body/Collision as CollisionShape3D
+	if enable_collision and not Engine.is_editor_hint():
+		return get_child(0).get_child(0) as CollisionShape3D
+	
+	return null

@@ -1,14 +1,42 @@
-[gd_scene load_steps=4 format=3 uid="uid://c7n3fws3wd5yu"]
+[gd_scene load_steps=8 format=3 uid="uid://c7n3fws3wd5yu"]
 
-[ext_resource type="PackedScene" uid="uid://b3o03rdwxli7y" path="res://prop/prop.tscn" id="1_wlneo"]
-[ext_resource type="Texture2D" uid="uid://qh60d2y4qmn" path="res://textures/prototype/dark/texture_01.png" id="2_jrbq7"]
+[ext_resource type="Texture2D" uid="uid://7xh6bmmmthsx" path="res://textures/prototype/orange/texture_01.png" id="1_ct8vn"]
+[ext_resource type="Script" path="res://prop/prop.gd" id="1_xtdv1"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5vbxg"]
-resource_local_to_scene = true
-albedo_texture = ExtResource("2_jrbq7")
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_l6ole"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_dye1h"]
+sky_material = SubResource("ProceduralSkyMaterial_l6ole")
+
+[sub_resource type="Environment" id="Environment_idvik"]
+background_mode = 2
+sky = SubResource("Sky_dye1h")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s3kq4"]
+albedo_texture = ExtResource("1_ct8vn")
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_ukyni"]
 
 [node name="Node3D" type="Node3D"]
 
-[node name="Prop" parent="." instance=ExtResource("1_wlneo")]
-material_override = SubResource("StandardMaterial3D_5vbxg")
-color = "dark"
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_idvik")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.938137, 0.346264, 0, -0.346264, 0.938137, 0.371628, 0.868565, 4.09382)
+
+[node name="Prop2" type="MeshInstance3D" parent="."]
+transform = Transform3D(7.70584, 0, 0, 0, 3.85, 0, 0, 0, 17.28, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_s3kq4")
+mesh = SubResource("BoxMesh_ukyni")
+script = ExtResource("1_xtdv1")
