@@ -1,0 +1,77 @@
+[gd_scene load_steps=10 format=3 uid="uid://iivb1yj1wg2a"]
+
+[ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://scenes/world/character/character.gd" id="1_e5tqa"]
+[ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
+[ext_resource type="Script" uid="uid://3c6pdeawufd8" path="res://scenes/world/character/camera.gd" id="3_jrmkq"]
+[ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://scenes/world/character/movement_controller.gd" id="4_377km"]
+[ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://scenes/world/character/camera_controller.gd" id="5_36lfn"]
+[ext_resource type="Script" uid="uid://dg7ry0b3pmge8" path="res://scenes/world/character/stats_module.gd" id="6_8hqne"]
+[ext_resource type="Script" uid="uid://djuglop5l5fy" path="res://attributes.gd" id="7_nltjn"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1jngo"]
+radius = 0.3
+height = 1.5
+
+[sub_resource type="Resource" id="Resource_uy0re"]
+script = ExtResource("7_nltjn")
+strength = 0
+dexterity = 0
+intelligence = 0
+wisdom = 0
+stamina = 100
+spirit = 0
+armor = 0
+armor_multiplier = 1.0
+armor_penetration = 0
+armor_penetration_multiplier = 0.0
+shadow_resistance = 0
+shadow_resistance_multiplier = 1.0
+shadow_penetration = 0
+shadow_penetration_multiplier = 0.0
+strength_multiplier = 0
+dexterity_multiplier = 0
+intelligence_multiplier = 0
+wisdom_multiplier = 0
+stamina_multiplier = 0
+spirit_multiplier = 0
+haste = 0
+metadata/_custom_type_script = ExtResource("7_nltjn")
+
+[node name="Character" type="Node3D"]
+script = ExtResource("1_e5tqa")
+
+[node name="Body" type="CharacterBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("CapsuleShape3D_1jngo")
+
+[node name="Model" type="Node3D" parent="Body"]
+
+[node name="Pirate_Male" parent="Body/Model" instance=ExtResource("2_1jngo")]
+transform = Transform3D(-0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 0, 0, 0)
+
+[node name="Pivot" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.426638, 0)
+script = ExtResource("3_jrmkq")
+
+[node name="Arm" type="SpringArm3D" parent="Body/Pivot"]
+spring_length = 5.0
+
+[node name="Camera3D" type="Camera3D" parent="Body/Pivot/Arm"]
+
+[node name="MovementController" type="Node" parent="." node_paths=PackedStringArray("body", "model")]
+script = ExtResource("4_377km")
+body = NodePath("../Body")
+model = NodePath("../Body/Model")
+
+[node name="CameraController" type="Node" parent="." node_paths=PackedStringArray("arm", "pivot", "model")]
+script = ExtResource("5_36lfn")
+arm = NodePath("../Body/Pivot/Arm")
+pivot = NodePath("../Body/Pivot")
+model = NodePath("../Body/Model")
+
+[node name="CombatSystem" type="Node" parent="."]
+script = ExtResource("6_8hqne")
+attributes = SubResource("Resource_uy0re")
+metadata/_custom_type_script = ExtResource("6_8hqne")

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PropImpl" load_steps=3 format=3 uid="uid://c6a5xquomu65g"]
+
+[ext_resource type="Script" uid="uid://d1ejjxryaaswt" path="res://scenes/world/prop/prop_data.gd" id="1_akve5"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_hquq3"]
+
+[resource]
+script = ExtResource("1_akve5")
+use_triplanar = false
+mesh = SubResource("SphereMesh_hquq3")

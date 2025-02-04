@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://dmc6ivj6ocq8p"]
+
+[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://inventory/components/damage_component.gd" id="1_5eq2r"]
+[ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://inventory/item.gd" id="1_h0edt"]
+[ext_resource type="Texture2D" uid="uid://bbgmujnj3q1rc" path="res://assets/textures/item/bo.png" id="1_otrck"]
+
+[sub_resource type="Resource" id="Resource_580ar"]
+script = ExtResource("1_5eq2r")
+damage_type = 1
+min_damage = 20
+max_damage = 30
+speed = 2.0
+metadata/_custom_type_script = ExtResource("1_5eq2r")
+
+[resource]
+script = ExtResource("1_h0edt")
+display_name = "Training Sword"
+lore = ""
+icon = ExtResource("1_otrck")
+rarity = 1
+price = 99999
+level = 69
+stack_size = 1
+_components = {
+&"DamageComponent": SubResource("Resource_580ar")
+}
+metadata/_custom_type_script = ExtResource("1_h0edt")

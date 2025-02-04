@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PropData" load_steps=3 format=3 uid="uid://ce1dborc5rrko"]
+
+[ext_resource type="Script" uid="uid://d1ejjxryaaswt" path="res://scenes/world/prop/prop_data.gd" id="1_mc4td"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ukyni"]
+
+[resource]
+script = ExtResource("1_mc4td")
+use_triplanar = true
+mesh = SubResource("BoxMesh_ukyni")

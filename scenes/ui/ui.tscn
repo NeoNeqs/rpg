@@ -1,0 +1,71 @@
+[gd_scene load_steps=9 format=3 uid="uid://k0m4b32u3fyd"]
+
+[ext_resource type="Script" uid="uid://bcq24at5bh5bm" path="res://scenes/ui/ui.gd" id="1_gdcp5"]
+[ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="2_ajbqs"]
+[ext_resource type="Script" uid="uid://dm8q2ltaisfv6" path="res://scenes/ui/fps_label.gd" id="3_sxu0e"]
+[ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="4_3l7w4"]
+[ext_resource type="Script" uid="uid://w4m0yaqnaeq1" path="res://global/singleton/inventory_manager.gd" id="5_fmbix"]
+[ext_resource type="PackedScene" uid="uid://dc68bk011ci4s" path="res://scenes/ui/tooltip.tscn" id="6_jmxi2"]
+[ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://scenes/ui/inventory/inventory_slot.tscn" id="7_kjw2a"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_lv10c"]
+font = ExtResource("2_ajbqs")
+font_size = 20
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+script = ExtResource("1_gdcp5")
+
+[node name="FPSLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -130.0
+offset_bottom = 36.0
+grow_horizontal = 0
+label_settings = SubResource("LabelSettings_lv10c")
+vertical_alignment = 2
+script = ExtResource("3_sxu0e")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 328.0
+offset_top = 197.0
+offset_right = 1082.0
+offset_bottom = 721.0
+texture = ExtResource("4_3l7w4")
+patch_margin_left = 36
+patch_margin_top = 36
+patch_margin_right = 36
+patch_margin_bottom = 36
+
+[node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("_tooltip", "_drag_slot")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_fmbix")
+_tooltip = NodePath("Tooltip")
+_drag_slot = NodePath("DragSlot")
+metadata/_custom_type_script = ExtResource("5_fmbix")
+
+[node name="Tooltip" parent="InventoryManager" instance=ExtResource("6_jmxi2")]
+visible = false
+layout_mode = 0
+mouse_filter = 1
+
+[node name="DragSlot" parent="InventoryManager" instance=ExtResource("7_kjw2a")]
+visible = false
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+scale = Vector2(0.7, 0.7)
+mouse_filter = 2

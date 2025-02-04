@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PropImpl" load_steps=3 format=3 uid="uid://d1gy02y134pj7"]
+
+[ext_resource type="Script" uid="uid://d1ejjxryaaswt" path="res://scenes/world/prop/prop_data.gd" id="1_jqelg"]
+[ext_resource type="ArrayMesh" uid="uid://cslyfxqb1aj44" path="res://assets/models/stairs.tres" id="1_ph00q"]
+
+[resource]
+script = ExtResource("1_jqelg")
+use_triplanar = false
+mesh = ExtResource("1_ph00q")

@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="Item" load_steps=14 format=3 uid="uid://ctfxdgmbxm2ph"]
+
+[ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://inventory/item.gd" id="1_axbdf"]
+[ext_resource type="Texture2D" uid="uid://bbc6u2y8dua7w" path="res://assets/textures/item/chest-armor.png" id="1_eevvd"]
+[ext_resource type="Script" uid="uid://bph563yl57lvo" path="res://inventory/components/combat_component.gd" id="1_vpo8f"]
+[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://inventory/components/armor_component.gd" id="2_4shsu"]
+[ext_resource type="Script" uid="uid://4pj5sdduayka" path="res://effect.gd" id="3_6k2c7"]
+[ext_resource type="Resource" uid="uid://efslua3s7ayu" path="res://corruption.tres" id="4_vpo8f"]
+[ext_resource type="Script" uid="uid://cxmvufju02ony" path="res://inventory/components/effect_component.gd" id="5_0jq8u"]
+[ext_resource type="Resource" uid="uid://cvs0caxfj2ia6" path="res://blade_flurry.tres" id="5_4shsu"]
+[ext_resource type="Script" uid="uid://lrwvlhsj1j88" path="res://inventory/components/stats_component.gd" id="6_6jk7c"]
+
+[sub_resource type="Resource" id="Resource_dkf1g"]
+script = ExtResource("2_4shsu")
+armor = 1931
+slot = 2
+armor_type = 2
+total_durability = 30
+metadata/_custom_type_script = ExtResource("2_4shsu")
+
+[sub_resource type="Resource" id="Resource_nwne7"]
+script = ExtResource("1_vpo8f")
+total_durability = 0
+metadata/_custom_type_script = ExtResource("1_vpo8f")
+
+[sub_resource type="Resource" id="Resource_metsg"]
+script = ExtResource("5_0jq8u")
+effects = Array[ExtResource("3_6k2c7")]([ExtResource("4_vpo8f"), ExtResource("5_4shsu")])
+metadata/_custom_type_script = ExtResource("5_0jq8u")
+
+[sub_resource type="Resource" id="Resource_ek0on"]
+script = ExtResource("6_6jk7c")
+strength = 0
+stamina = 0
+metadata/_custom_type_script = ExtResource("6_6jk7c")
+
+[resource]
+script = ExtResource("1_axbdf")
+display_name = "Chest Guard of a Spectral Tiger"
+lore = "This is some lore :)"
+icon = ExtResource("1_eevvd")
+rarity = 4
+price = 0
+level = 0
+stack_size = 1
+_components = {
+&"ArmorComponent": SubResource("Resource_dkf1g"),
+&"CombatComponent": SubResource("Resource_nwne7"),
+&"EffectComponent": SubResource("Resource_metsg"),
+&"StatsComponent": SubResource("Resource_ek0on")
+}

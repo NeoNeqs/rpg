@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ModifierEffect" load_steps=2 format=3 uid="uid://cvs0caxfj2ia6"]
+
+[ext_resource type="Script" uid="uid://hpmtjwcgiafl" path="res://modifier_effect.gd" id="1_rm36t"]
+
+[resource]
+script = ExtResource("1_rm36t")
+modifier = "haste"
+value = 15.0
+apply_chance = 0.2
+tick_timeout = 15
+ticks = 1
+flags = 1
+metadata/_custom_type_script = ExtResource("1_rm36t")
