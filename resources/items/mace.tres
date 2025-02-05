@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://00yw3emhpn77"]
+
+[ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_5t5m3"]
+[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_4743m"]
+[ext_resource type="Texture2D" uid="uid://cwm5741761nm6" path="res://assets/textures/item/flanged-mace.svg" id="2_kg7v8"]
+
+[sub_resource type="Resource" id="Resource_kg7v8"]
+script = ExtResource("1_4743m")
+damage_type = 0
+weapon_type = 0
+min_damage = 1
+max_damage = 2
+speed = 1.5
+metadata/_custom_type_script = ExtResource("1_4743m")
+
+[resource]
+script = ExtResource("1_5t5m3")
+display_name = "Mace"
+lore = ""
+icon = ExtResource("2_kg7v8")
+rarity = 0
+price = 0
+level = 0
+stack_size = 1
+_components = {
+&"DamageComponent": SubResource("Resource_kg7v8")
+}
+metadata/_custom_type_script = ExtResource("1_5t5m3")

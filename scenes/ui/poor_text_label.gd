@@ -1,24 +1,18 @@
 class_name PoorTextLabel
 extends VBoxContainer
 
-var tag_regex := RegEx.create_from_string(r"([^#]+|#[^#]*#)")
+static var tag_regex := RegEx.create_from_string(r"([^#]+|#[^#]*#)")
 
-#func _ready() -> void:
-	##update("This is some text #right##ff0000#A V C\n#red#Test")
-#
-	#update("""#color=orangered#Chest Guard of a Spectral Tiger (Legendary)
-#Chest Piece#right#Heavy Armor
-#1931 Armor (30/30)
-##color=green#Equip: Damages the target with 19 Shadow damage every 3 seconds.
-#2#color=violet#On hit(20%): Increases haste by 15 for 15 seconds.
-#
-#\"#color=purple#This is some lore#color=white#\"""")
+
+func _ready() -> void:
+	update("Chest#color=red##right#Head")
+
 
 func update(p_text: String) -> void:
 	clear()
-
+	
 	var lines: PackedStringArray = p_text.split('\n')
-
+	
 	for line: String in lines:
 		parse_line(line)
 	
@@ -42,6 +36,8 @@ func parse_line(p_line: String) -> void:
 
 func _handle_right_tag(p_current_label: Label) -> Label:
 	if p_current_label.text.is_empty():
+		p_current_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		p_current_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		return p_current_label
 	
 	var hbox: Node = get_hbox(p_current_label)

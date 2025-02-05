@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://ik6wg6tp4x08"]
+
+[ext_resource type="Texture2D" uid="uid://cshwa7gkp2nmb" path="res://assets/textures/item/plain-dagger.svg" id="1_25keo"]
+[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_fgw4y"]
+[ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_mkiuy"]
+
+[sub_resource type="Resource" id="Resource_luexb"]
+script = ExtResource("1_fgw4y")
+damage_type = 0
+weapon_type = 2
+min_damage = 20
+max_damage = 60
+speed = 1.5
+metadata/_custom_type_script = ExtResource("1_fgw4y")
+
+[resource]
+script = ExtResource("1_mkiuy")
+display_name = "Dagger"
+lore = ""
+icon = ExtResource("1_25keo")
+rarity = 3
+price = 0
+level = 0
+stack_size = 1
+_components = {
+&"DamageComponent": SubResource("Resource_luexb")
+}
+metadata/_custom_type_script = ExtResource("1_mkiuy")

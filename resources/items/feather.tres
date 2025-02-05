@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://c7omw0rnuj50b"]
 
-[ext_resource type="Script" path="res://inventory/item.gd" id="1_mpd2f"]
-[ext_resource type="Texture2D" uid="uid://bg8wjj7xn37u1" path="res://assets/textures/item/feather.png" id="1_ujmfw"]
+[ext_resource type="Texture2D" uid="uid://b84i0w4n5vs32" path="res://assets/textures/item/feather.svg" id="1_4ikay"]
+[ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_mpd2f"]
 
 [resource]
 script = ExtResource("1_mpd2f")
 display_name = "Feather"
 lore = "This is a feather mon"
-icon = ExtResource("1_ujmfw")
+icon = ExtResource("1_4ikay")
 rarity = 0
 price = 10
 level = 0

@@ -4,7 +4,7 @@
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="2_ajbqs"]
 [ext_resource type="Script" uid="uid://dm8q2ltaisfv6" path="res://scenes/ui/fps_label.gd" id="3_sxu0e"]
 [ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="4_3l7w4"]
-[ext_resource type="Script" uid="uid://w4m0yaqnaeq1" path="res://global/singleton/inventory_manager.gd" id="5_fmbix"]
+[ext_resource type="Script" uid="uid://w4m0yaqnaeq1" path="res://scripts/inventory/inventory_manager.gd" id="5_fmbix"]
 [ext_resource type="PackedScene" uid="uid://dc68bk011ci4s" path="res://scenes/ui/tooltip.tscn" id="6_jmxi2"]
 [ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://scenes/ui/inventory/inventory_slot.tscn" id="7_kjw2a"]
 
@@ -49,9 +49,13 @@ patch_margin_right = 36
 patch_margin_bottom = 36
 
 [node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("_tooltip", "_drag_slot")]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("5_fmbix")
 _tooltip = NodePath("Tooltip")
 _drag_slot = NodePath("DragSlot")

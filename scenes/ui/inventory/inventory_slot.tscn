@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://b7xu5k302lfn1"]
+[gd_scene load_steps=10 format=3 uid="uid://b7xu5k302lfn1"]
 
 [ext_resource type="Script" uid="uid://b6ma1xh84dqi6" path="res://scenes/ui/inventory/inventory_slot.gd" id="1_gg53h"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="5_fnhfn"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k6fm4"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]
 
 [sub_resource type="Gradient" id="Gradient_q2k4p"]
 interpolation_color_space = 1
@@ -15,6 +15,14 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0, 0)
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gbfhx"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+texture = SubResource("GradientTexture2D_3nf06")
+modulate_color = Color(1, 2, 2, 1)
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ji56f"]
 content_margin_left = 4.0
 content_margin_top = 4.0
@@ -24,6 +32,7 @@ texture = SubResource("GradientTexture2D_3nf06")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e5rcf"]
 resource_local_to_scene = true
+bg_color = Color(0.6, 0.6, 0.6, 0)
 draw_center = false
 border_width_left = 3
 border_width_top = 3
@@ -33,16 +42,19 @@ border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_y4ihs"]
 font = ExtResource("5_fnhfn")
-font_size = 22
+font_size = 20
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
 
 [node name="InventorySlot" type="Button"]
-custom_minimum_size = Vector2(64, 64)
+custom_minimum_size = Vector2(50, 50)
 offset_right = 60.0
 offset_bottom = 60.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_k6fm4")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gbfhx")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_gbfhx")
+theme_override_styles/hover = SubResource("StyleBoxTexture_gbfhx")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_ji56f")
 theme_override_styles/normal = SubResource("StyleBoxTexture_ji56f")
-button_mask = 3
-keep_pressed_outside = true
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("1_gg53h")
@@ -59,14 +71,18 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_e5rcf")
 
 [node name="Quantity" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 12
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -11.0
-offset_right = -3.0
-grow_horizontal = 2
+offset_left = -52.0
+offset_top = -14.0
+offset_right = 2.0
+offset_bottom = 5.0
+grow_horizontal = 0
 grow_vertical = 0
+text = "20"
 label_settings = SubResource("LabelSettings_y4ihs")
 horizontal_alignment = 2
 vertical_alignment = 2

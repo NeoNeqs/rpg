@@ -2,9 +2,6 @@
 class_name Prop
 extends MeshInstance3D
 
-# TODO: Player controller
-# TODO: test collision generation at scale (=1, =1, =1), (<1, <1, <1), (>1, >1, >1)
-
 # Must match the filenames of props in res://prop/impl/
 @export_enum("box", "capsule", "cylinder", "sphere", "stairs") var prop_shape: String = "box":
 	set(value):
@@ -75,15 +72,8 @@ func _update_collision() -> void:
 		return
 
 	# Don't generate collisions when editing a scene in the editor
-	if Engine.is_editor_hint():
-		return
-
-	create_convex_collision(true, true)
-
-	#(get_child(0) as Node3D).top_level = true
-	#(get_child(0).get_child(0) as Node3D).top_level = true
-	#(get_child(0) as Node3D).scale = Vector3.ONE
-	#(get_child(0).get_child(0) as Node3D).scale = Vector3.ONE
+	if not Engine.is_editor_hint():
+		create_convex_collision(true, true)
 
 
 func _update_texture() -> void:

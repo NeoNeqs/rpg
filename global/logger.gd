@@ -160,4 +160,5 @@ static func _print_info() -> void:
 
 	extra.info("--------------------Misc Information--------------------")
 	extra.info("Is sandboxed: {}", [OS.is_sandboxed()])
+	# TODO:
 	#extra.info("VRAM usage: {}", [RenderingServer.get_rendering_device().get_memory_usage()])
