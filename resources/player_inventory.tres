@@ -16,97 +16,97 @@ script = ExtResource("1_5w27l")
 item = ExtResource("2_uhsxt")
 quantity = 20
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_twgmw"]
 script = ExtResource("1_5w27l")
 item = ExtResource("2_uhsxt")
 quantity = 1
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_hxkng"]
 script = ExtResource("1_5w27l")
 item = ExtResource("3_d5xpf")
 quantity = 1
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_wqk3y"]
 script = ExtResource("1_5w27l")
 item = ExtResource("4_hfe8y")
 quantity = 1
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_h2bui"]
 script = ExtResource("1_5w27l")
 item = ExtResource("5_n3o1a")
 quantity = 1
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_d0jpx"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_mt5ru"]
 script = ExtResource("1_5w27l")
 item = ExtResource("6_wwsvn")
 quantity = 1
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_7h6cp"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_cxvga"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_kgypi"]
 script = ExtResource("1_5w27l")
 item = ExtResource("7_wwsvn")
 quantity = 1
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_jh20t"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_i3rtp"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_h7hv0"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_j1qiu"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_15pok"]
 script = ExtResource("1_5w27l")
 quantity = 0
 whitelist = Array[Script]([])
-allowed_components = null
+allowed_components = Array[ExtResource("6_2ci4u")]([])
 
 [sub_resource type="Resource" id="Resource_qvyit"]
 script = ExtResource("3_ppbfd")

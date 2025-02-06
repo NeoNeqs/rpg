@@ -7,7 +7,7 @@ signal slot_hovered(p_slot: InventorySlot)
 signal slot_unhovered()
 
 @onready
-var grid: GridContainer = $Grid
+var _grid: GridContainer = $Grid
 
 var inventory: Inventory
 
@@ -21,7 +21,7 @@ func set_data(p_inventory: Inventory) -> void:
 	if not is_node_ready():
 		await ready
 	
-	grid.columns = p_inventory.columns
+	_grid.columns = p_inventory.columns
 	
 	resize()
 	
@@ -30,22 +30,22 @@ func set_data(p_inventory: Inventory) -> void:
 
 
 func resize() -> void:
-	var old_size: int = grid.get_child_count()
+	var old_size: int = _grid.get_child_count()
 	var new_size: int = inventory.get_size()
 	var add_slot_count: int = maxi(0, new_size - old_size)
 	var remove_slot_count: int = maxi(0, old_size - new_size)
 
 	for i: int in add_slot_count:
-		grid.add_child(_make_slot(inventory.get_item_stack(old_size + i)))
+		_grid.add_child(_make_slot(inventory.get_item_stack(old_size + i)))
 	
 	for i: int in remove_slot_count:
-		var slot: Node = grid.get_child(old_size - 1 - i)
+		var slot: Node = _grid.get_child(old_size - 1 - i)
 		slot.queue_free()
 
 
 func _on_items_changed() -> void:
 	for index: int in inventory.get_size():
-		var slot: InventorySlot = grid.get_child(index)
+		var slot: InventorySlot = _grid.get_child(index)
 		slot.update(inventory.get_item_stack(index))
 
 
@@ -62,4 +62,4 @@ func _make_slot(p_item_stack: ItemStack) -> InventorySlot:
 
 
 func get_slot(p_index: int) -> InventorySlot:
-	return grid.get_child(p_index) as InventorySlot
+	return _grid.get_child(p_index) as InventorySlot

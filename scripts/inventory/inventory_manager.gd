@@ -54,6 +54,7 @@ func create_inventory(p_inventory: Inventory) -> void:
 	inv_view.slot_pressed.connect(_on_slot_pressed)
 	inv_view.slot_hovered.connect(_on_slot_hovered)
 	inv_view.slot_unhovered.connect(_on_slot_unhovered)
+	
 	add_child(inv_view)
 
 
@@ -70,7 +71,7 @@ func _on_slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bo
 		DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_HIDDEN)
 		_drag_slot.update(item_stack)
 		_drag_slot.visible = true
-		_tooltip.visible = _tooltip.update(p_slot.get_item_stack())
+		_tooltip.visible = false
 		set_process(true)
 		return
 	

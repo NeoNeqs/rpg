@@ -67,18 +67,10 @@ func _is_allowed(p_from: int, p_to_inv: Inventory, p_to: int) -> bool:
 	for cmp: ItemComponent in p_to_inv._items[p_to].allowed_components:
 		if cmp.is_allowed(_items[p_from].item.get_component(cmp.get_script())):
 			return true
+	
+	# empty list means any item is allowed
 	return p_to_inv._items[p_to].allowed_components.size() == 0
-	#for cmp: Script in Item.registered_components:
-		
 
-#func _is_allowed(p_from: int, p_to_inv: Inventory, p_to: int) -> bool:
-	#return (
-		#_items[p_from].whitelist.size() == 0 or
-		#_items[p_from].whitelist.any(
-			#func (cmp: Script) -> bool: \
-				#return not p_to_inv._items[p_to].item.get_component(cmp) == null
-		#)
-	#)
 
 func get_item_stack(p_index: int) -> ItemStack:
 	if not _is_valid_index(p_index):
@@ -123,6 +115,7 @@ func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> bool:
 		# putting a single item in that slot would dupe it (quantity would be = 2)
 		if p_inv_to._items[p_to].quantity > 1:
 			p_inv_to._items[p_to].quantity += 1
+			
 		items_changed.emit()
 		p_inv_to.items_changed.emit()
 		return not _items[p_from].quantity == 0
@@ -143,7 +136,6 @@ func _swap(p_from: int, p_inv_to: Inventory, p_to: int) -> bool:
 	items_changed.emit()
 	p_inv_to.items_changed.emit()
 	return true
-
 
 
 func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> bool:

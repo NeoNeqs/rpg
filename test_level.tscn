@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://c7n3fws3wd5yu"]
 
 [ext_resource type="Texture2D" uid="uid://beim1glubpohi" path="res://assets/textures/prototype/green/texture_10.png" id="1_1c2mv"]
-[ext_resource type="Script" uid="uid://dwktvik6f4wrn" path="res://scenes/world/prop/prop.gd" id="1_xtdv1"]
+[ext_resource type="Script" uid="uid://dwktvik6f4wrn" path="res://world/prop/prop.gd" id="1_xtdv1"]
 [ext_resource type="Texture2D" uid="uid://7xh6bmmmthsx" path="res://assets/textures/prototype/orange/texture_01.png" id="3_f7g2b"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_l6ole"]

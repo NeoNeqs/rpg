@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b0h7oudoccqxk"]
 
 [ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="1_tfwvd"]
-[ext_resource type="Script" uid="uid://df0g2xon6bl37" path="res://scenes/ui/inventory/inventory_view.gd" id="2_aqecm"]
+[ext_resource type="Script" uid="uid://df0g2xon6bl37" path="res://ui/inventory/inventory_view.gd" id="2_aqecm"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vl0br"]
 texture = ExtResource("1_tfwvd")

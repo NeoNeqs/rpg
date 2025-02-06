@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dc68bk011ci4s"]
 
-[ext_resource type="Script" uid="uid://bq8cmvw1egkfu" path="res://scenes/ui/tooltip.gd" id="1_mrxg7"]
-[ext_resource type="Script" uid="uid://x0grqm4774eb" path="res://scenes/ui/poor_text_label.gd" id="2_b5j4s"]
+[ext_resource type="Script" uid="uid://bq8cmvw1egkfu" path="res://ui/tooltip.gd" id="1_mrxg7"]
+[ext_resource type="Script" uid="uid://x0grqm4774eb" path="res://ui/poor_text_label.gd" id="2_b5j4s"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b5j4s"]
 bg_color = Color(0.0705882, 0.0705882, 0.0705882, 0.847059)

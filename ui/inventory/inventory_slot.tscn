@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://b7xu5k302lfn1"]
 
-[ext_resource type="Script" uid="uid://b6ma1xh84dqi6" path="res://scenes/ui/inventory/inventory_slot.gd" id="1_gg53h"]
+[ext_resource type="Script" uid="uid://b6ma1xh84dqi6" path="res://ui/inventory/inventory_slot.gd" id="1_gg53h"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="5_fnhfn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]

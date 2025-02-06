@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=3 uid="uid://iivb1yj1wg2a"]
 
-[ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://scenes/world/character/character.gd" id="1_e5tqa"]
+[ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://world/character/character.gd" id="1_e5tqa"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
-[ext_resource type="Script" uid="uid://3c6pdeawufd8" path="res://scenes/world/character/camera.gd" id="3_jrmkq"]
-[ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://scenes/world/character/movement_controller.gd" id="4_377km"]
-[ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://scenes/world/character/camera_controller.gd" id="5_36lfn"]
-[ext_resource type="Script" uid="uid://dg7ry0b3pmge8" path="res://scenes/world/character/stats_module.gd" id="6_8hqne"]
+[ext_resource type="Script" uid="uid://3c6pdeawufd8" path="res://world/character/camera.gd" id="3_jrmkq"]
+[ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"]
+[ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"]
+[ext_resource type="Script" uid="uid://dg7ry0b3pmge8" path="res://world/character/stats_module.gd" id="6_8hqne"]
 [ext_resource type="Script" uid="uid://djuglop5l5fy" path="res://attributes.gd" id="7_nltjn"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1jngo"]
