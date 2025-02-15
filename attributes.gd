@@ -69,7 +69,7 @@ func get_max_mana() -> int:
 
 func get_physical_damage_reduction() -> float:
 	# when get_real_armor() == ARMOR_CAP this effectively gives 25 % dmg reduction
-	return get_real_armor() / (ARMOR_CAP * 4.0)
+	return 1.0 - (get_real_armor() / (ARMOR_CAP * 4.0))
 
 
 func get_physical_damage_penetration() -> float:
@@ -77,7 +77,7 @@ func get_physical_damage_penetration() -> float:
 
 
 func get_shadow_damage_reduction() -> float:
-	return get_real_shadow_resistance() / (RESISTANCE_CAP * 4.0)
+	return 1.0 - (get_real_shadow_resistance() / (RESISTANCE_CAP * 4.0))
 
 
 func get_shadow_damage_penetration() -> float:
@@ -103,7 +103,7 @@ static func get_attributes_as_hint_string() -> String:
 	
 	var attribute_names := PackedStringArray()
 	var dummy := Attributes.new()
-	
+
 	for prop: Dictionary in dummy.get_property_list():
 		if not (prop["usage"] & EXPORT_USAGE) == EXPORT_USAGE:
 			continue

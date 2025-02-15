@@ -23,8 +23,7 @@ var flags: int
 var _current_tick: int
 
 func _init() -> void:
-	if Engine.is_editor_hint():
-		assert(false, "Don't instantiate base class Effect")
+	assert(false, "Don't instantiate base class Effect")
 
 
 func tick() -> bool:
@@ -41,6 +40,11 @@ func get_tooltip() -> String:
 		return "Equip: "
 	
 	return "On hit (%d%%): " % int(apply_chance * 100.0)
+
+
+func apply(p_target: CombatSystem, p_attacker: CombatSystem) -> void:
+	assert(false, "Don't call apply on the base class Effect")
+
 
 func _get_property_list() -> Array[Dictionary]:
 	return [{

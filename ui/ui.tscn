@@ -65,6 +65,10 @@ metadata/_custom_type_script = ExtResource("5_fmbix")
 [node name="SpellBook" parent="InventoryManager" instance=ExtResource("8_gycre")]
 layout_mode = 0
 anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="Tooltip" parent="InventoryManager" instance=ExtResource("6_jmxi2")]
 visible = false
