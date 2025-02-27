@@ -4,10 +4,6 @@ extends VBoxContainer
 static var tag_regex := RegEx.create_from_string(r"([^#]+|#[^#]*#)")
 
 
-func _ready() -> void:
-	update("Chest#color=red##right#Head")
-
-
 func update(p_text: String) -> void:
 	clear()
 	

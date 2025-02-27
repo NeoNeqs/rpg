@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Inventory" load_steps=29 format=3 uid="uid://q6akjdd51jsk"]
+[gd_resource type="Resource" script_class="ItemInventory" load_steps=29 format=3 uid="uid://q6akjdd51jsk"]
 
 [ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="1_5w27l"]
-[ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="2_562we"]
+[ext_resource type="Script" uid="uid://bfbhdfruh37hb" path="res://scripts/inventory/item_inventory.gd" id="2_562we"]
 [ext_resource type="Resource" uid="uid://c7omw0rnuj50b" path="res://resources/items/feather.tres" id="2_uhsxt"]
 [ext_resource type="Resource" uid="uid://ctfxdgmbxm2ph" path="res://resources/items/chest_guard.tres" id="3_d5xpf"]
 [ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="3_ppbfd"]

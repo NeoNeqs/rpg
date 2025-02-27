@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://bcuohjehcsa8"]
+
+[ext_resource type="Script" uid="uid://c0i184xorvi78" path="res://ui/inventory/slot.gd" id="1_feaih"]
+[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/item/fire-ray.svg" id="2_s8ovl"]
+[ext_resource type="FontFile" uid="uid://odtxjjamhyfs" path="res://assets/fonts/noto_sans_display/noto_sans_display.ttf" id="3_egelf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_jipi4"]
+font = ExtResource("3_egelf")
+
+[node name="SpellSlot" type="HBoxContainer" node_paths=PackedStringArray("_text_holder", "_icon_holder")]
+mouse_filter = 0
+script = ExtResource("1_feaih")
+_text_holder = NodePath("Name")
+_icon_holder = NodePath("Icon")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("2_s8ovl")
+expand_mode = 1
+
+[node name="Name" type="Label" parent="."]
+layout_mode = 2
+text = "Fireball"
+label_settings = SubResource("LabelSettings_jipi4")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

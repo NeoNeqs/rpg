@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SpellInventory" load_steps=4 format=3 uid="uid://bw0q1prym64w1"]
+
+[ext_resource type="Script" uid="uid://c511e5ryyhof7" path="res://scripts/inventory/spell.gd" id="1_a61wl"]
+[ext_resource type="Script" uid="uid://dqfdkxfjuimyh" path="res://scripts/inventory/spell_inventory.gd" id="1_osc0e"]
+[ext_resource type="Resource" uid="uid://bd8tr011tube2" path="res://resources/spells/fireball.tres" id="2_gwjrs"]
+
+[resource]
+script = ExtResource("1_osc0e")
+_spells = Array[ExtResource("1_a61wl")]([ExtResource("2_gwjrs")])
+metadata/_custom_type_script = ExtResource("1_osc0e")

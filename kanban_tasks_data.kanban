@@ -1,0 +1,55 @@
+{
+	"categories": [
+		{
+			"uuid": "eb42331d-7547-40bd-b83c-a0a9c1600790",
+			"title": "Task",
+			"color": "008dd8"
+		},
+		{
+			"uuid": "284b13f8-7c2d-42f0-becb-245f6351ae5d",
+			"title": "New",
+			"color": "f309f1"
+		}
+	],
+	"stages": [
+		{
+			"uuid": "ad1b2730-349f-42c4-ac5e-0fea3236e0d2",
+			"title": "Todo",
+			"tasks": []
+		},
+		{
+			"uuid": "99dbb151-f714-4c37-bc69-6797f46c2b55",
+			"title": "Doing",
+			"tasks": []
+		},
+		{
+			"uuid": "53a756c9-356d-4ffa-8469-373943e845c5",
+			"title": "Done",
+			"tasks": [
+				"af9674d3-004b-4d82-a315-2e2800a7a904"
+			]
+		}
+	],
+	"tasks": [
+		{
+			"uuid": "af9674d3-004b-4d82-a315-2e2800a7a904",
+			"title": "Rework View-Invenotry-Slot system",
+			"description": "- Inventory, SpellInventory\n- InventoryView\n- InventorySlot, SpellSlot\n\nInventoryView will handle a resource parameter that will do action based on a type check ",
+			"category": "eb42331d-7547-40bd-b83c-a0a9c1600790",
+			"steps": []
+		}
+	],
+	"layout": {
+		"columns": [
+			[
+				"ad1b2730-349f-42c4-ac5e-0fea3236e0d2"
+			],
+			[
+				"99dbb151-f714-4c37-bc69-6797f46c2b55"
+			],
+			[
+				"53a756c9-356d-4ffa-8469-373943e845c5"
+			]
+		]
+	}
+}

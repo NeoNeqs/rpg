@@ -10,11 +10,12 @@ enum LogLevel {
 	Critical,
 }
 
-static var ui: Logger = Logger.new("UI", LogLevel.Debug)
-static var be: Logger = Logger.new("Backend", LogLevel.Debug)
-static var cb: Logger = Logger.new("Combat", LogLevel.Debug)
-static var physics: Logger = Logger.new("Physics", LogLevel.Debug)
-static var extra: Logger = Logger.new("Extra", LogLevel.Debug)
+static var ui := Logger.new("UI", LogLevel.Debug)
+static var inv := Logger.new("Inventory", LogLevel.Debug)
+static var be := Logger.new("Backend", LogLevel.Debug)
+static var cb := Logger.new("Combat", LogLevel.Debug)
+static var physics := Logger.new("Physics", LogLevel.Debug)
+static var extra := Logger.new("Extra", LogLevel.Debug)
 
 const message_format: String = "[{}] [{}] [{}] [{}]: {}"
 const placeholder: String = "{}"

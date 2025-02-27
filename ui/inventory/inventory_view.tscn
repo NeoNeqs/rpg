@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://b0h7oudoccqxk"]
+[gd_scene load_steps=5 format=3 uid="uid://b0h7oudoccqxk"]
 
 [ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="1_tfwvd"]
-[ext_resource type="Script" uid="uid://df0g2xon6bl37" path="res://ui/inventory/inventory_view.gd" id="2_aqecm"]
+[ext_resource type="Script" uid="uid://ntwjfyy4p875" path="res://ui/inventory/view.gd" id="2_tq20t"]
+[ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://ui/inventory/item_slot.tscn" id="3_vpadk"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vl0br"]
 texture = ExtResource("1_tfwvd")
@@ -11,12 +12,14 @@ texture_margin_right = 36.0
 texture_margin_bottom = 36.0
 modulate_color = Color(0.054902, 0.054902, 0.054902, 0.823529)
 
-[node name="InventoryView" type="PanelContainer"]
+[node name="InventoryView" type="PanelContainer" node_paths=PackedStringArray("_holder")]
 z_index = -1
 offset_right = 164.0
 offset_bottom = 104.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_vl0br")
-script = ExtResource("2_aqecm")
+script = ExtResource("2_tq20t")
+_holder = NodePath("Grid")
+_slot_scene = ExtResource("3_vpadk")
 
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 2

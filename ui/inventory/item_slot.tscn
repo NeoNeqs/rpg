@@ -1,0 +1,87 @@
+[gd_scene load_steps=8 format=3 uid="uid://b7xu5k302lfn1"]
+
+[ext_resource type="Script" uid="uid://c0i184xorvi78" path="res://ui/inventory/slot.gd" id="1_07ih2"]
+[ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="2_difxo"]
+
+[sub_resource type="Gradient" id="Gradient_07ih2"]
+interpolation_color_space = 1
+colors = PackedColorArray(0.092, 0.092, 0.092, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_difxo"]
+gradient = SubResource("Gradient_07ih2")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jsaib"]
+texture = SubResource("GradientTexture2D_difxo")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e5rcf"]
+resource_local_to_scene = true
+bg_color = Color(0.6, 0.6, 0.6, 0)
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_y4ihs"]
+font = ExtResource("2_difxo")
+font_size = 20
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[node name="ItemSlot" type="Panel" node_paths=PackedStringArray("_text_holder", "_icon_holder", "_border_holder")]
+custom_minimum_size = Vector2(50, 50)
+offset_right = 50.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_jsaib")
+script = ExtResource("1_07ih2")
+_text_holder = NodePath("Quantity")
+_icon_holder = NodePath("TextureRect")
+_border_holder = NodePath("Border")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
+
+[node name="Border" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_e5rcf")
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
+
+[node name="Quantity" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -52.0
+offset_top = -14.0
+offset_right = 2.0
+offset_bottom = 5.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "20"
+label_settings = SubResource("LabelSettings_y4ihs")
+horizontal_alignment = 2
+vertical_alignment = 2
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true

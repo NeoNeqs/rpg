@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="Spell" load_steps=9 format=3 uid="uid://bd8tr011tube2"]
+
+[ext_resource type="Script" uid="uid://c511e5ryyhof7" path="res://scripts/inventory/spell.gd" id="1_r2nu1"]
+[ext_resource type="Script" uid="uid://4pj5sdduayka" path="res://effect.gd" id="1_ragy3"]
+[ext_resource type="Script" uid="uid://fh5abtlh6jdo" path="res://damage_effect.gd" id="2_giy0g"]
+[ext_resource type="Script" uid="uid://cxmvufju02ony" path="res://scripts/components/effect_component.gd" id="3_tgobx"]
+[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/item/fire-ray.svg" id="4_pube5"]
+
+[sub_resource type="Resource" id="Resource_1pktv"]
+script = ExtResource("2_giy0g")
+damage_type = 0
+value = 20.0
+apply_chance = 1.0
+tick_timeout = 1
+ticks = 0
+flags = 1
+metadata/_custom_type_script = ExtResource("2_giy0g")
+
+[sub_resource type="Resource" id="Resource_tax7r"]
+script = ExtResource("2_giy0g")
+damage_type = 0
+value = 30.0
+apply_chance = 1.0
+tick_timeout = 3
+ticks = 3
+flags = 0
+metadata/_custom_type_script = ExtResource("2_giy0g")
+
+[sub_resource type="Resource" id="Resource_kldfp"]
+script = ExtResource("3_tgobx")
+effects = Array[ExtResource("1_ragy3")]([SubResource("Resource_1pktv"), SubResource("Resource_tax7r")])
+metadata/_custom_type_script = ExtResource("3_tgobx")
+
+[resource]
+script = ExtResource("1_r2nu1")
+name = "Fireball"
+effects = SubResource("Resource_kldfp")
+icon = ExtResource("4_pube5")
+range_ = 40
+gcd = 1.5
+metadata/_custom_type_script = ExtResource("1_r2nu1")

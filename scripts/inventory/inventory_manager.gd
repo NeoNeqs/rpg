@@ -5,12 +5,12 @@ extends Control
 var _tooltip: Tooltip
 
 @export
-var _drag_slot: InventorySlot
+var _drag_slot: Slot
 
 const s_offset := Vector2(20, 0)
 
 var selected_index: int = -1
-var selected_inventory_view: InventoryView
+var selected_view: View
 
 
 func _init() -> void:
@@ -21,6 +21,9 @@ func _ready() -> void:
 	set_process(false)
 	create_inventory(load("res://resources/test_inventory.tres"))
 
+	$SpellBook.slot_pressed.connect(_on_slot_pressed)
+	$SpellBook.slot_hovered.connect(_on_spell_hovered)
+	$SpellBook.slot_unhovered.connect(_on_slot_unhovered)
 
 func _process(_delta: float) -> void:
 	if _drag_slot.visible:
@@ -47,72 +50,97 @@ func _process(_delta: float) -> void:
 
 
 func create_inventory(p_inventory: Inventory) -> void:
-	var inv_view: InventoryView = AssetDB.InventoryViewScene.instantiate()
+	var item_view: View = AssetDB.InventoryViewScene.instantiate()
 	
-	inv_view.set_data(p_inventory)
-	inv_view.position = Vector2(200, 200)
-	inv_view.slot_pressed.connect(_on_slot_pressed)
-	inv_view.slot_hovered.connect(_on_slot_hovered)
-	inv_view.slot_unhovered.connect(_on_slot_unhovered)
+	item_view.set_data(p_inventory)
+	item_view.position = Vector2(200, 200)
+	item_view.slot_pressed.connect(_on_slot_pressed)
+	item_view.slot_hovered.connect(_on_slot_hovered)
+	item_view.slot_unhovered.connect(_on_slot_unhovered)
 	
-	add_child(inv_view)
+	add_child(item_view)
+
+func select(p_view: View, p_slot: Slot, p_index: int) -> void:
+	selected_index = p_index
+	selected_view = p_view
+	DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_HIDDEN)
 
 
-func _on_slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bool) -> void:
-	if selected_index == -1:
-		var item_stack := p_view.inventory.get_item_stack(p_slot.get_index())
+func unselect() -> void:
+	selected_index = -1
+	selected_view = null
+	
+	DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)
+
+
+func _on_slot_pressed(p_view: View, p_slot: Slot, p_single: bool) -> void:
+	var slot_index: int = p_slot.get_index()
+	
+	var element: Resource = p_view.get_element_at(slot_index)
+	if not is_selected():
 		
-		if item_stack.quantity == 0:
+		if p_view.is_empty_at(slot_index):
 			return
 		
-		selected_index = p_slot.get_index()
-		selected_inventory_view = p_view
+		select(p_view, p_slot, slot_index)
 		p_slot.select()
-		DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_HIDDEN)
-		_drag_slot.update(item_stack)
+		
+		_drag_slot.update(element)
 		_drag_slot.visible = true
 		_tooltip.visible = false
 		set_process(true)
 		return
 	
-	var items_left: bool = selected_inventory_view.inventory.handle_item_action(
+
+	#if selected_view._inventory is ItemInventory:
+	var result: Inventory.ActionResult = selected_view._inventory.handle_item_action(
 		selected_index,
-		p_view.inventory,
+		p_view._inventory,
 		p_slot.get_index(),
 		p_single
 	)
 	
-	# TODO: once handle_item_action returns a state instead of bool do this:
-	if items_left: # LeftOver
-		var selected_item_stack := selected_inventory_view.inventory.get_item_stack(selected_index) as ItemStack
-		var pressed_item_stack := p_view.inventory.get_item_stack(p_slot.get_index()) as ItemStack
+	if result == Inventory.ActionResult.NotAllowed:
+		pass
+	elif result == Inventory.ActionResult.Allowed:
+		var selected_element: Resource = selected_view.get_element_at(selected_index)
+		var pressed_element: Resource = p_view.get_element_at(slot_index)
 		
-		p_slot.update(pressed_item_stack)
+		p_slot.update(pressed_element)
 		
-		_drag_slot.update(selected_item_stack)
+		_drag_slot.update(selected_element)
+	elif result == Inventory.ActionResult.Invalid:
+		pass
+	elif result == Inventory.ActionResult.NoLeftover:
+		selected_view.get_slot(selected_index).unselect()
+		unselect()
+		_drag_slot.visible = false
+		
+		if element is ItemStack:
+			_tooltip.visible = _tooltip.update(p_view.get_element_at(slot_index).item)
+		else:
+			_tooltip.visible = _tooltip.update(p_view.get_element_at(slot_index))
+		set_process(_tooltip.visible)
+	
+
+# TODO: the mess below....
+
+func _on_slot_hovered(p_view: View, p_slot: Slot) -> void:
+	if is_selected():
 		return
 	
-	# This will keep the item dragged
-	# if NotAllowed: return
-	
-	# NoLeftOver
-	selected_inventory_view.get_slot(selected_index).unselect()
-	selected_index = -1
-	selected_inventory_view = null
-	
-	DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)
-	_drag_slot.visible = false
-	_tooltip.visible = _tooltip.update(p_slot.get_item_stack())
-	set_process(_tooltip.visible)
-
-
-func _on_slot_hovered(p_slot: InventorySlot) -> void:
-	if not selected_index == -1:
-		return
-	
-	_tooltip.visible = _tooltip.update(p_slot.get_item_stack())
+	# TODO: move visiblity inside tooltip class
+	_tooltip.visible = _tooltip.update(p_view.get_element_at(p_slot.get_index()).item)
 	set_process(true)
 
+func is_selected() -> bool:
+	return not (selected_index == -1)
 
 func _on_slot_unhovered() -> void:
 	_tooltip.visible = false
+
+func _on_spell_hovered(p_view: View, p_spell: Slot) -> void:
+	if is_selected():
+		return
+	_tooltip.visible = _tooltip.update(p_view.get_element_at(p_spell.get_index()))
+	set_process(true)

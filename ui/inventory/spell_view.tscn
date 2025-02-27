@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://d4bn283eravlm"]
+
+[ext_resource type="Script" uid="uid://ntwjfyy4p875" path="res://ui/inventory/view.gd" id="1_8vl6d"]
+[ext_resource type="Resource" uid="uid://bw0q1prym64w1" path="res://resources/spells.tres" id="2_xabqr"]
+[ext_resource type="PackedScene" uid="uid://bcuohjehcsa8" path="res://ui/inventory/spell_slot.tscn" id="3_56xn8"]
+
+[node name="SpellBook" type="PanelContainer" node_paths=PackedStringArray("_holder")]
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8vl6d")
+_holder = NodePath("MarginContainer/Slots")
+_inventory = ExtResource("2_xabqr")
+_slot_scene = ExtResource("3_56xn8")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Slots" type="VBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 5
