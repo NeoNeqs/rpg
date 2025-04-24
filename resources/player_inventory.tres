@@ -128,8 +128,5 @@ script = ExtResource("2_562we")
 _items = Array[ExtResource("1_5w27l")]([SubResource("Resource_ulwbs"), SubResource("Resource_twgmw"), SubResource("Resource_hxkng"), SubResource("Resource_wqk3y"), SubResource("Resource_h2bui"), SubResource("Resource_d0jpx"), SubResource("Resource_mt5ru"), SubResource("Resource_7h6cp"), SubResource("Resource_cxvga"), SubResource("Resource_kgypi"), SubResource("Resource_jh20t"), SubResource("Resource_i3rtp"), SubResource("Resource_h7hv0"), SubResource("Resource_j1qiu"), SubResource("Resource_15pok"), SubResource("Resource_reua0")])
 columns = 4
 editable = true
-<<<<<<< Updated upstream
 owns = true
-=======
->>>>>>> Stashed changes
 allowed_components = Array[ExtResource("6_2ci4u")]([SubResource("Resource_2xcq3")])
