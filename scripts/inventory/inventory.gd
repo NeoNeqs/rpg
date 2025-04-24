@@ -12,11 +12,30 @@ extends Resource
 signal items_changed
 signal size_changed
 
+# Todo: Find better names. There are 2 (3?) states:
+#       1. After action is done there are still items left in the source slot (Leftover)
+#          This should keep the slot selected.
+#       2. After action is done there are no more items left in the source (NoLeftover)
+#          This should deselect the slot
+#       3. ........
+
+enum ItemActionResult {
+	NoAction,
+	LeftOver,
+#	NoLeftOver,
+}
 
 @export var _items: Array[ItemStack] = []:
 	set = __set_items_override
 
 @export var columns: int = 2
+@export var editable: bool = true
+
+@export var allowed_components: Array[ItemComponent] = []:
+	set(v):
+		allowed_components = v
+		notify_property_list_changed()
+
 
 func _init(p_size: int = 1) -> void:
 	if _items.is_empty():
@@ -24,52 +43,71 @@ func _init(p_size: int = 1) -> void:
 		new.resize(p_size)
 		_items = new
 
-# Returns state of p_from ItemStack after operation is done:
-# True: there is items left in p_from
-# False: all items in p_from are gone
-# TODO: change return value to be an enum State (LeftOver, NoLeftOver, NotAllowed)
-func handle_item_action(p_from: int, p_to_inv: Inventory, p_to: int, p_single: bool) -> bool:
+
+func handle_item_action(p_from: int, p_to_inv: Inventory, p_to: int, p_single: bool) -> ItemActionResult:
 	if not _is_valid_index(p_from):
-		return false # return NoLeftOver
+		return ItemActionResult.NoAction
 	
 	if not p_to_inv._is_valid_index(p_to):
-		return false # return NoLeftOver
+		return ItemActionResult.NoAction
 	
 	if _items[p_from].is_empty():
-		return false # return NoLeftOver
+		return ItemActionResult.NoAction
 	
 	if self == p_to_inv and p_from == p_to:
-		return false # return NoLeftOver
+		return ItemActionResult.NoAction
 	
 	if not _is_allowed(p_from, p_to_inv, p_to):
-		return false # return NotAllowed
+		return ItemActionResult.NoAction
+	
+	if not editable:
+		if p_to_inv.editable:
+			return _reference(p_from, p_to_inv, p_to)
+		return ItemActionResult.NoAction
+	
 	
 	if p_to_inv._items[p_to].is_empty():
 		return _move(p_from, p_to_inv, p_to, p_single)
 	
+	# IMPORTANT: This condition (however stupid it may seem) is possible:
+	# 1. Have the `p_to` index have an allowed item placed in the that slot
+	# 2. Select an item in the same inventory (idk if it matters whether 
+	#    it's the same or not) that is not allowed to be place in `p_to` index
+	# 3. Right click the `p_to` slot that has the allowed.
+	# The expected behavior is to not allow the selected item to be placed there.
+	# And that's what this condition prevents.
 	if not p_to_inv._is_allowed(p_to, self, p_from):
-		return false # return NotAllowed
+		return ItemActionResult.NoAction
 	
+
 	# NOTE: Special case when destination is full. 
 	#		Otherwise it would try to stack, which would do nothing or
-	#		it would try to stack, returning false which makes it inconsistent
-	#		with the proper behavior.
+	#		it would try to stack, returning false which would be inconsistent
+	#		with the proper behavior (Swapping).
 	if p_to_inv._items[p_to].quantity == p_to_inv._items[p_to].item.stack_size:
 		return _swap(p_from, p_to_inv, p_to)
 	
 	if _items[p_from].item == p_to_inv._items[p_to].item:
 		return _stack(p_from, p_to_inv, p_to, p_single)
 	
-	# TEST
 	return _swap(p_from, p_to_inv, p_to)
 
+## Checks whether an item at `p_from` index is allowed to be placed in
+## p_to_inv at `p_to` index.
 func _is_allowed(p_from: int, p_to_inv: Inventory, p_to: int) -> bool:
-	for cmp: ItemComponent in p_to_inv._items[p_to].allowed_components:
-		if cmp.is_allowed(_items[p_from].item.get_component(cmp.get_script())):
+	for is_cmp: ItemComponent in p_to_inv._items[p_to].allowed_components:
+		var temp := _items[p_from].item.get_component(is_cmp.get_script())
+		if is_cmp.is_allowed(temp):
 			return true
 	
+	if p_to_inv._items[p_to].allowed_components.size() == 0:
+		for inv_cmp: ItemComponent in p_to_inv.allowed_components:
+			var temp := _items[p_from].item.get_component(inv_cmp.get_script())
+			if inv_cmp.is_allowed(temp):
+				return true
+		
 	# empty list means any item is allowed
-	return p_to_inv._items[p_to].allowed_components.size() == 0
+	return false
 
 
 func get_item_stack(p_index: int) -> ItemStack:
@@ -83,7 +121,6 @@ func set_item(p_item: Item, p_index: int, p_quantity: int = 1) -> bool:
 	if not _is_valid_index(p_index):
 		return false
 	
-	# TEST: especially the order, since item has to be set before quantity
 	_items[p_index].item = p_item
 	_items[p_index].quantity = p_quantity
 	items_changed.emit()
@@ -102,28 +139,32 @@ func get_size() -> int:
 	return _items.size()
 
 
-func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> bool:
-	# TEST
+func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemActionResult:
 	if p_single:
 		p_inv_to._items[p_to].item = _items[p_from].item
 		_items[p_from].quantity -= 1
 		# IMPORTANT: This is weird, I know. Let me explain:
-		# ItemStack class has some guarantees in place to ensure correctness
+		# ItemStack class has some guarantees in place to ensure it's correctness
 		# Since the item in p_to can be null (hence the assignment above)
 		# after the assignment p_to will have quantity = 1 (and not 0!!!).
-		# So without this check when p_to is null (that implies quantity = 0)
-		# putting a single item in that slot would dupe it (quantity would be = 2)
+		# So without this check when p_to is null (that implies quantity = 0 at `p_to` index)
+		# putting a single item in that slot would dupe it (it would be `2` instead `1`)
 		if p_inv_to._items[p_to].quantity > 1:
 			p_inv_to._items[p_to].quantity += 1
 			
 		items_changed.emit()
 		p_inv_to.items_changed.emit()
-		return not _items[p_from].quantity == 0
+	else:
+		_swap(p_from, p_inv_to, p_to)
 	
-	return not _swap(p_from, p_inv_to, p_to)
+	if _items[p_from].quantity == 0:
+		#return ItemActionResult.NoLeftOver
+		return ItemActionResult.NoAction
+		
+	return ItemActionResult.LeftOver
 
 
-func _swap(p_from: int, p_inv_to: Inventory, p_to: int) -> bool:
+func _swap(p_from: int, p_inv_to: Inventory, p_to: int) -> ItemActionResult:
 	var temp_item: Item = p_inv_to._items[p_to].item
 	var temp_quantity: int = p_inv_to._items[p_to].quantity
 	
@@ -135,10 +176,10 @@ func _swap(p_from: int, p_inv_to: Inventory, p_to: int) -> bool:
 	
 	items_changed.emit()
 	p_inv_to.items_changed.emit()
-	return true
+	return ItemActionResult.LeftOver
 
 
-func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> bool:
+func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemActionResult:
 	var total: int = p_inv_to._items[p_to].quantity + _items[p_from].quantity
 	
 	var take_from_total: int
@@ -156,22 +197,25 @@ func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> bool
 	
 	items_changed.emit()
 	p_inv_to.items_changed.emit()
-	return not _items[p_from].quantity == 0
-
-
-func _get_empty() -> Array[int]:
-	var result: Array[int] = []
 	
-	for index: int in _items.size():
-		if _items[index].quantity == 0:
-			result.append(index)
-	return result
+	if _items[p_from].quantity == 0:
+		#return ItemActionResult.NoLeftOver
+		return ItemActionResult.NoAction
+		
+	return ItemActionResult.LeftOver
+
+# NOTE (to self): This will be basis for a HotBar where items can only be referenced, moved around,
+#                 or swapped, but not stacked
+func _reference(p_from: int, p_inv_to: Inventory, p_to: int) -> ItemActionResult:
+	p_inv_to._items[p_to] = _items[p_from]
+	return ItemActionResult.NoAction
+
 
 func _is_valid_index(p_index: int) -> bool:
 	if p_index >= 0 and p_index < _items.size():
 		return true
 
-	Logger.be.debug("Index out of range of inventory buffer. Index={}, size={}", [p_index, get_size()])
+	Logger.core.debug("Index out of range of inventory buffer. Index={}, size={}", [p_index, get_size()])
 	return false
 
 

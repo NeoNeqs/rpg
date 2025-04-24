@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7334qd7vclt6"
-path="res://.godot/imported/fire-ray.svg-4a0d0fc925ea2e1445cdc7bc5a16b883.ctex"
+uid="uid://oauwek8drqx4"
+path="res://.godot/imported/heavy-rain.svg-c41914eb7c46b362d4c202a7121f01df.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/item/fire-ray.svg"
-dest_files=["res://.godot/imported/fire-ray.svg-4a0d0fc925ea2e1445cdc7bc5a16b883.ctex"]
+source_file="res://assets/textures/spell/heavy-rain.svg"
+dest_files=["res://.godot/imported/heavy-rain.svg-c41914eb7c46b362d4c202a7121f01df.ctex"]
 
 [params]
 

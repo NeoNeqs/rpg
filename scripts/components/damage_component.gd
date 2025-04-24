@@ -9,7 +9,7 @@ enum WeaponType {
 	Sword,
 }
 
-@export var damage_type: CombatSystem.DamageType = CombatSystem.DamageType.Physical
+@export var damage_type := CombatSystem.DamageType.Physical
 @export var weapon_type: WeaponType = WeaponType.Mace
 @export var min_damage: int = 0
 @export var max_damage: int = 1
@@ -17,8 +17,6 @@ enum WeaponType {
 
 
 func is_allowed(p_other: ItemComponent) -> bool:
-	if p_other is DamageComponent:
-		prints(weapon_type, p_other.weapon_type)
 	return (
 		p_other is DamageComponent and
 		weapon_type == p_other.weapon_type

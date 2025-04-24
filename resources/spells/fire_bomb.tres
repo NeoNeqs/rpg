@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://c7njom0us2gls"]
+
+[ext_resource type="Texture2D" uid="uid://cstll1446gb3c" path="res://assets/textures/spell/fire-bomb.svg" id="1_2sk7b"]
+[ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_kfk7d"]
+[ext_resource type="Script" uid="uid://dhyw5hkewtxnq" path="res://scripts/behaviors/damage_behavior.gd" id="1_xqcng"]
+[ext_resource type="Script" uid="uid://dw5fgliskaak3" path="res://scripts/components/spell_component.gd" id="2_bwndl"]
+
+[sub_resource type="Resource" id="Resource_slr88"]
+script = ExtResource("1_xqcng")
+amount = 100
+metadata/_custom_type_script = ExtResource("1_xqcng")
+
+[sub_resource type="Resource" id="Resource_fetm4"]
+script = ExtResource("2_bwndl")
+behavior = SubResource("Resource_slr88")
+metadata/_custom_type_script = ExtResource("2_bwndl")
+
+[resource]
+script = ExtResource("1_kfk7d")
+display_name = "Fire Bomb"
+lore = ""
+icon = ExtResource("1_2sk7b")
+price = 0
+stack_size = 1
+cooldown = 10.0
+_components = {
+&"SpellComponent": SubResource("Resource_fetm4")
+}
+metadata/_custom_type_script = ExtResource("1_kfk7d")

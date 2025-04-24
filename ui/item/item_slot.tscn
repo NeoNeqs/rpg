@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://b7xu5k302lfn1"]
 
-[ext_resource type="Script" uid="uid://b6ma1xh84dqi6" path="res://ui/inventory/inventory_slot.gd" id="1_gg53h"]
-[ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="5_fnhfn"]
+[ext_resource type="Script" uid="uid://dvdalfeqh5g1g" path="res://ui/item/item_slot.gd" id="1_difxo"]
+[ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="3_fdv6p"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]
 
@@ -41,12 +41,12 @@ border_width_bottom = 3
 border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_y4ihs"]
-font = ExtResource("5_fnhfn")
+font = ExtResource("3_fdv6p")
 font_size = 20
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
 
-[node name="InventorySlot" type="Button"]
+[node name="ItemSlot" type="Button" node_paths=PackedStringArray("border_holder", "text_holder", "icon_holder")]
 custom_minimum_size = Vector2(50, 50)
 offset_right = 60.0
 offset_bottom = 60.0
@@ -55,9 +55,19 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_gbfhx")
 theme_override_styles/hover = SubResource("StyleBoxTexture_gbfhx")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_ji56f")
 theme_override_styles/normal = SubResource("StyleBoxTexture_ji56f")
-icon_alignment = 1
-expand_icon = true
-script = ExtResource("1_gg53h")
+script = ExtResource("1_difxo")
+border_holder = NodePath("Border")
+text_holder = NodePath("Quantity")
+icon_holder = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
 
 [node name="Border" type="Panel" parent="."]
 layout_mode = 1
@@ -82,7 +92,6 @@ offset_right = 2.0
 offset_bottom = 5.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "20"
 label_settings = SubResource("LabelSettings_y4ihs")
 horizontal_alignment = 2
 vertical_alignment = 2

@@ -20,6 +20,7 @@ enum Type {
 @export var current_durability: int
 @export var max_durability: int
 
+
 func is_allowed(p_other: ItemComponent) -> bool:
 	return (
 		p_other is ArmorComponent and

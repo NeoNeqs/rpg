@@ -10,11 +10,11 @@ enum LogLevel {
 	Critical,
 }
 
-static var ui: Logger = Logger.new("UI", LogLevel.Debug)
-static var be: Logger = Logger.new("Backend", LogLevel.Debug)
+static var core: Logger = Logger.new("Core", LogLevel.Debug)
 static var cb: Logger = Logger.new("Combat", LogLevel.Debug)
-static var physics: Logger = Logger.new("Physics", LogLevel.Debug)
-static var extra: Logger = Logger.new("Extra", LogLevel.Debug)
+static var ui: Logger = Logger.new("UI", LogLevel.Debug)
+#static var be: Logger = Logger.new("Backend", LogLevel.Debug)
+#static var physics: Logger = Logger.new("Physics", LogLevel.Debug)
 
 const message_format: String = "[{}] [{}] [{}] [{}]: {}"
 const placeholder: String = "{}"
@@ -131,10 +131,10 @@ func _get_thread_string() -> String:
 static func _print_info() -> void:
 	if not OS.has_feature("template"):
 		return
-	extra.info("--------------------System Information--------------------")
-	extra.info("OS: {} {}, Locale: {}", [OS.get_distribution_name(), OS.get_version(), OS.get_locale()])
-	extra.info("CPU: {}, ({}-core)", [OS.get_processor_name(), OS.get_processor_count()])
-	extra.info(
+	core.info("--------------------System Information--------------------")
+	core.info("OS: {} {}, Locale: {}", [OS.get_distribution_name(), OS.get_version(), OS.get_locale()])
+	core.info("CPU: {}, ({}-core)", [OS.get_processor_name(), OS.get_processor_count()])
+	core.info(
 		"GPU: {}, API: {} ({})",
 		[
 			RenderingServer.get_rendering_device().get_device_name(),
@@ -143,22 +143,22 @@ static func _print_info() -> void:
 		]
 	)
 	var mem_info: Dictionary = OS.get_memory_info()
-	extra.info("Memory: {} + {} Swap", [String.humanize_size(mem_info["physical"]), String.humanize_size(mem_info["available"] - mem_info["physical"])])
-	extra.info("Stack size: {}", [String.humanize_size(mem_info["stack"])])
+	core.info("Memory: {} + {} Swap", [String.humanize_size(mem_info["physical"]), String.humanize_size(mem_info["available"] - mem_info["physical"])])
+	core.info("Stack size: {}", [String.humanize_size(mem_info["stack"])])
 
-	extra.info("--------------------Process Information--------------------")
-	extra.info("Executable path: {}", [OS.get_executable_path()])
-	extra.info("Engine arguments: {}", [OS.get_cmdline_args()])
-	extra.info("User arguments: {}", [OS.get_cmdline_user_args()])
+	core.info("--------------------Process Information--------------------")
+	core.info("Executable path: {}", [OS.get_executable_path()])
+	core.info("Engine arguments: {}", [OS.get_cmdline_args()])
+	core.info("User arguments: {}", [OS.get_cmdline_user_args()])
 
-	extra.info("--------------------Storage Information--------------------")
-	extra.info("Is 'user://' persistent: {}", [OS.is_userfs_persistent()])
-	extra.info("User data dir: {}", [OS.get_user_data_dir()])
-	extra.info("Config dir: {}", [OS.get_config_dir()])
-	extra.info("Cache dir: {}", [OS.get_cache_dir()])
-	extra.info("Data dir: {}", [OS.get_data_dir()])
+	core.info("--------------------Storage Information--------------------")
+	core.info("Is 'user://' persistent: {}", [OS.is_userfs_persistent()])
+	core.info("User data dir: {}", [OS.get_user_data_dir()])
+	core.info("Config dir: {}", [OS.get_config_dir()])
+	core.info("Cache dir: {}", [OS.get_cache_dir()])
+	core.info("Data dir: {}", [OS.get_data_dir()])
 
-	extra.info("--------------------Misc Information--------------------")
-	extra.info("Is sandboxed: {}", [OS.is_sandboxed()])
+	core.info("--------------------Misc Information--------------------")
+	core.info("Is sandboxed: {}", [OS.is_sandboxed()])
 	# TODO:
-	#extra.info("VRAM usage: {}", [RenderingServer.get_rendering_device().get_memory_usage()])
+	#core.info("VRAM usage: {}", [RenderingServer.get_rendering_device().get_memory_usage()])

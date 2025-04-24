@@ -1,0 +1,90 @@
+[gd_scene load_steps=12 format=3 uid="uid://ng8yjyxxl7rl"]
+
+[ext_resource type="Script" uid="uid://qaf6jg2p8qwr" path="res://ui/spell/spell_slot.gd" id="1_x6abj"]
+[ext_resource type="FontFile" uid="uid://odtxjjamhyfs" path="res://assets/fonts/noto_sans_display/noto_sans_display.ttf" id="3_egelf"]
+[ext_resource type="Script" uid="uid://chpedqm3syrq5" path="res://cooldown.gd" id="3_rstpd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_feaih"]
+
+[sub_resource type="Gradient" id="Gradient_feaih"]
+offsets = PackedFloat32Array(0.216592, 1)
+colors = PackedColorArray(0.125911, 0.125911, 0.125911, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_t5uhr"]
+gradient = SubResource("Gradient_feaih")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_feaih"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+texture = SubResource("GradientTexture2D_t5uhr")
+modulate_color = Color(1.2, 1.2, 1.2, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t5uhr"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+texture = SubResource("GradientTexture2D_t5uhr")
+
+[sub_resource type="Gradient" id="Gradient_nqyqr"]
+colors = PackedColorArray(0, 0, 0, 0.470588, 0, 0, 0, 0.470588)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_feaih"]
+gradient = SubResource("Gradient_nqyqr")
+
+[sub_resource type="LabelSettings" id="LabelSettings_jipi4"]
+font = ExtResource("3_egelf")
+
+[node name="SpellSlot" type="Button" node_paths=PackedStringArray("text_holder", "icon_holder")]
+custom_minimum_size = Vector2(50, 50)
+offset_right = 50.0
+offset_bottom = 50.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_feaih")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_feaih")
+theme_override_styles/hover = SubResource("StyleBoxTexture_feaih")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_t5uhr")
+theme_override_styles/normal = SubResource("StyleBoxTexture_t5uhr")
+script = ExtResource("1_x6abj")
+text_holder = NodePath("Label")
+icon_holder = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+offset_right = 50.0
+offset_bottom = 50.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Cooldown" type="TextureProgressBar" parent="TextureRect"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+step = 0.1
+fill_mode = 5
+nine_patch_stretch = true
+texture_progress = SubResource("GradientTexture2D_feaih")
+script = ExtResource("3_rstpd")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+layout_mode = 2
+offset_left = 70.0
+offset_top = 14.0
+offset_right = 71.0
+offset_bottom = 36.0
+label_settings = SubResource("LabelSettings_jipi4")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

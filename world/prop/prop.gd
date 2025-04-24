@@ -79,7 +79,6 @@ func _update_collision() -> void:
 func _update_texture() -> void:
 	var mat: BaseMaterial3D = get_metarial()
 	if not mat:
-		printerr("Material not found for prop. " + ObjInfo.for_vi(self))
 		return
 
 	mat.albedo_texture = load("res://assets/textures/prototype/%s/texture_%s.png" % [color, str(texture).pad_zeros(2)])

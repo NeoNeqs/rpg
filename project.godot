@@ -50,15 +50,15 @@ gdscript/warnings/confusable_capture_reassignment=2
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/window_width_override=960
-window/size/window_height_override=540
+window/size/window_width_override=1440
+window/size/window_height_override=810
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/vsync/vsync_mode=3
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-plugin-refresher/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/rpg_utils/plugin.cfg", "res://addons/script-ide/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-plugin-refresher/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/rpg_utils/plugin.cfg")
 
 [gui]
 

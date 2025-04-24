@@ -1,15 +1,23 @@
-[gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://c7omw0rnuj50b"]
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://c7omw0rnuj50b"]
 
 [ext_resource type="Texture2D" uid="uid://b84i0w4n5vs32" path="res://assets/textures/item/feather.svg" id="1_4ikay"]
+[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_ajdph"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_mpd2f"]
+
+[sub_resource type="Resource" id="Resource_c208j"]
+script = ExtResource("1_ajdph")
+rarity = 0
+level = 0
+metadata/_custom_type_script = ExtResource("1_ajdph")
 
 [resource]
 script = ExtResource("1_mpd2f")
 display_name = "Feather"
 lore = "This is a feather mon"
 icon = ExtResource("1_4ikay")
-rarity = 0
 price = 10
-level = 0
 stack_size = 20
-_components = {}
+cooldown = 1.0
+_components = {
+&"DetailedItemComponent": SubResource("Resource_c208j")
+}

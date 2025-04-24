@@ -5,6 +5,9 @@ extends RefCounted
 
 static func nameof(p_obj: Variant) -> StringName:
 	var stringified: String = str(p_obj)
+	
+	if p_obj == null:
+		return stringified
 
 	# Godot's built-in type
 	if stringified.contains("GDScriptNativeClass"):
@@ -12,7 +15,11 @@ static func nameof(p_obj: Variant) -> StringName:
 		return built_in_name.substr(1, built_in_name.find("#", 1) - 1)
 
 	# User defined type
-	var _class_name: String = p_obj.get_global_name()
+	var _script: Script = p_obj.get_script()
+	if _script == null:
+		return stringified
+	
+	var _class_name: String = _script.get_global_name()
 
 	if not _class_name.is_empty():
 		return _class_name

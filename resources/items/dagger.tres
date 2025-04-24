@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://ik6wg6tp4x08"]
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://ik6wg6tp4x08"]
 
 [ext_resource type="Texture2D" uid="uid://cshwa7gkp2nmb" path="res://assets/textures/item/plain-dagger.svg" id="1_25keo"]
 [ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_fgw4y"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_mkiuy"]
+[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_luexb"]
 
 [sub_resource type="Resource" id="Resource_luexb"]
 script = ExtResource("1_fgw4y")
@@ -13,16 +14,22 @@ max_damage = 60
 speed = 1.5
 metadata/_custom_type_script = ExtResource("1_fgw4y")
 
+[sub_resource type="Resource" id="Resource_c25pr"]
+script = ExtResource("2_luexb")
+rarity = 2
+level = 0
+metadata/_custom_type_script = ExtResource("2_luexb")
+
 [resource]
 script = ExtResource("1_mkiuy")
 display_name = "Dagger"
 lore = ""
 icon = ExtResource("1_25keo")
-rarity = 3
 price = 0
-level = 0
 stack_size = 1
+cooldown = 1.0
 _components = {
-&"DamageComponent": SubResource("Resource_luexb")
+&"DamageComponent": SubResource("Resource_luexb"),
+&"DetailedItemComponent": SubResource("Resource_c25pr")
 }
 metadata/_custom_type_script = ExtResource("1_mkiuy")
