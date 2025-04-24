@@ -19,6 +19,7 @@ func _ready() -> void:
 	set_process(false)
 	create_item_inventory(load("res://resources/test_inventory.tres"))
 	create_spell_inventory(load("res://resources/spell_book.tres"))
+	create_hotbar_inventory(load("res://resources/hotbar.tres"))
 
 func _process(_delta: float) -> void:
 	if _drag_slot.visible:
@@ -50,7 +51,18 @@ func create_spell_inventory(p_spell_inventory: Inventory) -> void:
 	spell_book.set_data(p_spell_inventory)
 	
 	add_child(spell_book)
+
+func create_hotbar_inventory(p_hotbar_inventory: Inventory) -> void:
+	var hotbar: ItemView = AssetDB.HotbarViewScene.instantiate()
 	
+	hotbar.position = Vector2(400, 800)
+	hotbar.slot_pressed.connect(_on_slot_pressed)
+	hotbar.slot_hovered.connect(_on_slot_hovered.bind(hotbar))
+	hotbar.slot_unhovered.connect(_on_slot_unhovered)
+	hotbar.set_data(p_hotbar_inventory)
+	
+	add_child(hotbar)
+
 func _on_slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bool) -> void:
 	if selected_index == -1:
 		var item_stack := p_view.inventory.get_item_stack(p_slot.get_index())

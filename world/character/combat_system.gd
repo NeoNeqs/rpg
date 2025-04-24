@@ -41,7 +41,7 @@ func apply_effect(p_effect: Effect, p_attacker: Attributes = null) -> void:
 
 
 func damage_physical(p_effect: DamageEffect, p_attacker: Attributes) -> void:
-	var damage_reduction: float = 1.0 - attributes.get_physical_damage_reduction()
+	var damage_reduction: float = attributes.get_physical_damage_reduction()
 	if p_attacker:
 		damage_reduction += p_attacker.get_physical_damage_penetration()
 	
@@ -49,7 +49,7 @@ func damage_physical(p_effect: DamageEffect, p_attacker: Attributes) -> void:
 
 
 func damage_shadow(p_effect: DamageEffect, p_attacker: Attributes) -> void:
-	var damage_reduction: float = 1.0 - attributes.get_shadow_damage_reduction()
+	var damage_reduction: float = attributes.get_shadow_damage_reduction()
 	if p_attacker:
 		damage_reduction += p_attacker.get_shadow_damage_penetration()
 		

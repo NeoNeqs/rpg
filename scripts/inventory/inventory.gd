@@ -30,6 +30,7 @@ enum ItemActionResult {
 
 @export var columns: int = 2
 @export var editable: bool = true
+@export var owns: bool = true
 
 @export var allowed_components: Array[ItemComponent] = []:
 	set(v):
@@ -62,9 +63,13 @@ func handle_item_action(p_from: int, p_to_inv: Inventory, p_to: int, p_single: b
 	
 	if not editable:
 		if p_to_inv.editable:
+			print("Referencing (editable)")
 			return _reference(p_from, p_to_inv, p_to)
 		return ItemActionResult.NoAction
 	
+	if not p_to_inv.owns:
+		print("Referencing (owns)")
+		return _reference(p_from, p_to_inv, p_to)
 	
 	if p_to_inv._items[p_to].is_empty():
 		return _move(p_from, p_to_inv, p_to, p_single)
@@ -85,7 +90,9 @@ func handle_item_action(p_from: int, p_to_inv: Inventory, p_to: int, p_single: b
 	#		it would try to stack, returning false which would be inconsistent
 	#		with the proper behavior (Swapping).
 	if p_to_inv._items[p_to].quantity == p_to_inv._items[p_to].item.stack_size:
+		#if owns and p_to_inv.owns:
 		return _swap(p_from, p_to_inv, p_to)
+
 	
 	if _items[p_from].item == p_to_inv._items[p_to].item:
 		return _stack(p_from, p_to_inv, p_to, p_single)

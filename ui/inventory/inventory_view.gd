@@ -35,7 +35,7 @@ func set_data(p_inventory: Inventory) -> void:
 
 
 func _setup_container() -> void:
-	assert(false, "Do not call this method.")
+	pass
 
 func resize() -> void:
 	var old_size: int = container.get_child_count()

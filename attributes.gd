@@ -103,7 +103,8 @@ static func get_attributes_as_hint_string() -> String:
 	
 	var attribute_names := PackedStringArray()
 	var dummy := Attributes.new()
-
+	
+	# TODO: ensure get_property_list has predictable ordering
 	for prop: Dictionary in dummy.get_property_list():
 		if not (prop["usage"] & EXPORT_USAGE) == EXPORT_USAGE:
 			continue

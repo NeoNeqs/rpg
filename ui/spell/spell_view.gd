@@ -2,8 +2,6 @@ class_name SpellView
 extends InventoryView
 
 
-func _setup_container() -> void:
-	pass
 
 func _make_slot(p_item_stack: ItemStack) -> InventorySlot:
 	var spell_slot: SpellSlot = slot_scene.instantiate()
