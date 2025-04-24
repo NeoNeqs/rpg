@@ -94,10 +94,8 @@ func handle_item_action(p_from: int, p_to_inv: Inventory, p_to: int, p_single: b
 		#if owns and p_to_inv.owns:
 		return _swap(p_from, p_to_inv, p_to)
 
-	
-	if _items[p_from].item == p_to_inv._items[p_to].item:
+	if _items[p_from].item == p_to_inv._items[p_to].item and owns and p_to_inv.owns:
 		return _stack(p_from, p_to_inv, p_to, p_single)
-	
 	return _swap(p_from, p_to_inv, p_to)
 
 ## Checks whether an item at `p_from` index is allowed to be placed in
@@ -152,7 +150,7 @@ func get_size() -> int:
 
 
 func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemActionResult:
-	if p_single:
+	if p_single and owns:
 		p_inv_to._items[p_to].item = _items[p_from].item
 		_items[p_from].quantity -= 1
 		# IMPORTANT: This is weird, I know. Let me explain:
