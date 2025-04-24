@@ -19,6 +19,22 @@ func _gui_input(p_event: InputEvent) -> void:
 			MOUSE_BUTTON_RIGHT:
 				right_pressed.emit()
 
+func set_on_cooldown(p_cooldown_in_usec: int) -> void:
+	var cooldown: Cooldown = icon_holder.get_node("Cooldown")
+	if cooldown == null:
+		Logger.core.critical("Slot does not have a cooldown node attached.")
+		return
+	
+	cooldown.start(p_cooldown_in_usec)
+
+func reset_cooldown() -> void:
+	var cooldown: Cooldown = icon_holder.get_node("Cooldown")
+	if cooldown == null:
+		Logger.core.critical("Slot does not have a cooldown node attached.")
+		return
+	
+	cooldown.reset()
+
 func update(p_item_stack: ItemStack) -> void:
 	assert(false, "Do not call this method.")
 

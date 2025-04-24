@@ -22,8 +22,8 @@ lore = ""
 icon = ExtResource("1_3ifp4")
 price = 0
 stack_size = 1
-cooldown = 1.0
+cooldown = 3.0
 _components = {
 &"SpellComponent": SubResource("Resource_ts5sy")
 }
-metadata/_custom_type_script = ExtResource("1_vnh6b")
+metadata/_custom_type_script = "uid://ni37hjpima3q"

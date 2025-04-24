@@ -63,13 +63,14 @@ func handle_item_action(p_from: int, p_to_inv: Inventory, p_to: int, p_single: b
 	
 	if not editable:
 		if p_to_inv.editable:
-			print("Referencing (editable)")
 			return _reference(p_from, p_to_inv, p_to)
 		return ItemActionResult.NoAction
 	
-	if not p_to_inv.owns:
-		print("Referencing (owns)")
+	if owns and not p_to_inv.owns:
 		return _reference(p_from, p_to_inv, p_to)
+	
+	if not owns and p_to_inv.owns:
+		return ItemActionResult.NoAction
 	
 	if p_to_inv._items[p_to].is_empty():
 		return _move(p_from, p_to_inv, p_to, p_single)
@@ -115,6 +116,10 @@ func _is_allowed(p_from: int, p_to_inv: Inventory, p_to: int) -> bool:
 		
 	# empty list means any item is allowed
 	return false
+
+func delete(p_from: int) -> void:
+	_items[p_from].item = null
+	items_changed.emit()
 
 
 func get_item_stack(p_index: int) -> ItemStack:
@@ -211,10 +216,13 @@ func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> Item
 		
 	return ItemActionResult.LeftOver
 
-# NOTE (to self): This will be basis for a HotBar where items can only be referenced, moved around,
-#                 or swapped, but not stacked
+
 func _reference(p_from: int, p_inv_to: Inventory, p_to: int) -> ItemActionResult:
-	p_inv_to._items[p_to] = _items[p_from]
+	# IMPORTANT: Do not reference ItemStacks here. By copying the item directly
+	#            we avoid problems with deleting items and moving them around!
+	p_inv_to._items[p_to].item = _items[p_from].item
+	p_inv_to._items[p_to].quantity = _items[p_from].quantity
+	p_inv_to.items_changed.emit()
 	return ItemActionResult.NoAction
 
 

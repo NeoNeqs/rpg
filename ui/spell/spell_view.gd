@@ -3,16 +3,6 @@ extends InventoryView
 
 
 
-func _make_slot(p_item_stack: ItemStack) -> InventorySlot:
-	var spell_slot: SpellSlot = slot_scene.instantiate()
-	spell_slot.update(p_item_stack)
-	
-	spell_slot.left_pressed.connect(slot_pressed.emit.bind(self, spell_slot, false))
-	spell_slot.right_pressed.connect(slot_pressed.emit.bind(self, spell_slot, true))
-	spell_slot.hovered.connect(slot_hovered.emit.bind(spell_slot))
-	spell_slot.unhovered.connect(slot_unhovered.emit)
-	return spell_slot
-
 #func _ready() -> void:
 	#var spell_slot: SpellSlot = AssetDB.SpellSlotScene.instantiate()
 	#spell_slot.right_pressed.connect(_on_slot_right_pressed.bind(spell_slot))

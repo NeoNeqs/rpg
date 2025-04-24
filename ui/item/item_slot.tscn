@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://b7xu5k302lfn1"]
+[gd_scene load_steps=11 format=3 uid="uid://b7xu5k302lfn1"]
 
 [ext_resource type="Script" uid="uid://dvdalfeqh5g1g" path="res://ui/item/item_slot.gd" id="1_difxo"]
+[ext_resource type="PackedScene" uid="uid://bfcwwknne4ffo" path="res://cooldown.tscn" id="2_mhayv"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="3_fdv6p"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]
@@ -68,6 +69,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
+
+[node name="Cooldown" parent="TextureRect" instance=ExtResource("2_mhayv")]
+layout_mode = 1
 
 [node name="Border" type="Panel" parent="."]
 layout_mode = 1

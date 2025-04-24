@@ -134,12 +134,12 @@ func use() -> void:
 func _handle_spell_component(p_spell_component: SpellComponent) -> void:
 	var cooldown_usec := int(cooldown * 1_000_000)
 
-	if not _can_cast(cooldown_usec):
+	if is_on_cooldown(cooldown_usec):
 		_logger.debug(
 			"Spell '{}' is still on cooldown for {}.", 
 			[
 				get_display_name(), 
-				DebugUtils.humnaize_time(_last_cast_time + cooldown_usec - Time.get_ticks_usec())]
+				DebugUtils.humnaize_time(get_remaining_cooldown())]
 		)
 		return
 	
@@ -163,12 +163,12 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 	
 	var cooldown_usec := int(spell.cooldown * 1_000_000)
 
-	if not _can_cast(cooldown_usec):
+	if is_on_cooldown(cooldown_usec):
 		_logger.debug(
 			"Spell '{}' is still on cooldown for {}.", 
 			[
 				spell.get_display_name(), 
-				DebugUtils.humnaize_time(_last_cast_time + cooldown_usec - Time.get_ticks_usec())]
+				DebugUtils.humnaize_time(get_remaining_cooldown())]
 		)
 		return
 
@@ -187,7 +187,7 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 				)
 				return
 			
-			if not _can_cast(cooldown_usec):
+			if is_on_cooldown(cooldown_usec):
 				return
 			var _result: SpellComponent.Result = spell_comp.cast()
 			_logger.debug("Casting spell '{}'.", [spell.get_display_name()])
@@ -205,9 +205,23 @@ func _complete_cast(p_chain_spell_component: ChainSpellComponent) -> void:
 	_last_cast_time = Time.get_ticks_usec()
 
 
-func _can_cast(cooldown_usec: int) -> bool:
+func is_on_cooldown(cooldown_usec: int) -> bool:
 	var current_time := Time.get_ticks_usec()
-	return (_last_cast_time + cooldown_usec <= current_time)
+	return (_last_cast_time + cooldown_usec > current_time)
+
+
+func get_remaining_cooldown() -> int:
+	var csc: ChainSpellComponent = get_component(ChainSpellComponent)
+	if csc == null:
+		return 0
+	var cooldown_in_usec: int
+	var spell: Item = csc.get_spell()
+	if spell == null:
+		cooldown_in_usec = int(cooldown * 1_000_000.0)
+	else:
+		cooldown_in_usec = int(spell.cooldown * 1_000_000.0)
+	
+	return _last_cast_time + cooldown_in_usec - Time.get_ticks_usec()
 
 #endregion
 

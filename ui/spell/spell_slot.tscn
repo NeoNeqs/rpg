@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://ng8yjyxxl7rl"]
+[gd_scene load_steps=11 format=3 uid="uid://ng8yjyxxl7rl"]
 
 [ext_resource type="Script" uid="uid://qaf6jg2p8qwr" path="res://ui/spell/spell_slot.gd" id="1_x6abj"]
+[ext_resource type="PackedScene" uid="uid://bfcwwknne4ffo" path="res://cooldown.tscn" id="2_6sgnv"]
+[ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="2_v6gts"]
 [ext_resource type="FontFile" uid="uid://odtxjjamhyfs" path="res://assets/fonts/noto_sans_display/noto_sans_display.ttf" id="3_egelf"]
-[ext_resource type="Script" uid="uid://chpedqm3syrq5" path="res://cooldown.gd" id="3_rstpd"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_feaih"]
 
@@ -31,12 +32,6 @@ content_margin_right = 4.0
 content_margin_bottom = 4.0
 texture = SubResource("GradientTexture2D_t5uhr")
 
-[sub_resource type="Gradient" id="Gradient_nqyqr"]
-colors = PackedColorArray(0, 0, 0, 0.470588, 0, 0, 0, 0.470588)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_feaih"]
-gradient = SubResource("Gradient_nqyqr")
-
 [sub_resource type="LabelSettings" id="LabelSettings_jipi4"]
 font = ExtResource("3_egelf")
 
@@ -55,27 +50,21 @@ icon_holder = NodePath("TextureRect")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-offset_right = 50.0
-offset_bottom = 50.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-mouse_filter = 2
-expand_mode = 1
-
-[node name="Cooldown" type="TextureProgressBar" parent="TextureRect"]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-step = 0.1
-fill_mode = 5
-nine_patch_stretch = true
-texture_progress = SubResource("GradientTexture2D_feaih")
-script = ExtResource("3_rstpd")
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("2_v6gts")
+expand_mode = 1
+
+[node name="Cooldown" parent="TextureRect" instance=ExtResource("2_6sgnv")]
+z_index = 2
+layout_mode = 1
 
 [node name="Label" type="Label" parent="."]
 visible = false

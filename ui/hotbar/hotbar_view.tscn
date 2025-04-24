@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dpcqcelyap0p1"]
 
-[ext_resource type="Script" uid="uid://br4besf5f5crq" path="res://ui/item/item_view.gd" id="1_0uvli"]
+[ext_resource type="Script" uid="uid://dwi8rogiimsal" path="res://ui/hotbar/hotbar_view.gd" id="1_0uvli"]
 [ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://ui/item/item_slot.tscn" id="2_ncn4q"]
 
 [node name="Hotbar" type="PanelContainer" node_paths=PackedStringArray("container")]

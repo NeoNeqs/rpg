@@ -58,18 +58,32 @@ func _on_items_changed() -> void:
 
 
 func _make_slot(p_item_stack: ItemStack) -> InventorySlot:
-	assert(false, "Do not call this method.")
-	return null
-	#var slot: InventorySlot = slot_scene.instantiate()
-	##var slot: InventorySlot = AssetDB.ItemSlotScene.instantiate()
-	#slot.update(p_item_stack)
-	#
-	#slot.left_pressed.connect(slot_pressed.emit.bind(self, slot, false))
-	#slot.right_pressed.connect(slot_pressed.emit.bind(self, slot, true))
-	#slot.hovered.connect(slot_hovered.emit.bind(slot))
-	#slot.unhovered.connect(slot_unhovered.emit)
-	#
-	#return slot
+	var slot: InventorySlot = slot_scene.instantiate()
+	slot.update(p_item_stack)
+	
+	slot.left_pressed.connect(slot_pressed.emit.bind(self, slot, false))
+	slot.right_pressed.connect(slot_pressed.emit.bind(self, slot, true))
+	slot.hovered.connect(slot_hovered.emit.bind(slot))
+	slot.unhovered.connect(slot_unhovered.emit)
+	
+	_setup_item_used_signaling(p_item_stack, slot)
+	return slot
+
+
+func _setup_item_used_signaling(p_item_stack: ItemStack, p_slot: InventorySlot) -> void:
+	p_slot.reset_cooldown()
+	if not p_item_stack.item == null:
+		if p_item_stack.item.used.is_connected(on_item_used):
+			p_item_stack.item.used.disconnect(on_item_used)
+		p_item_stack.item.used.connect(on_item_used.bind(p_item_stack, p_slot))
+		var remaining_cooldown: int = p_item_stack.item.get_remaining_cooldown()
+		if remaining_cooldown > 0:
+			on_item_used(remaining_cooldown, p_item_stack, p_slot)
+
+
+func on_item_used(l_cooldown_in_usec: int, p_item_stack: ItemStack, p_slot: InventorySlot) -> void:
+	p_slot.update(p_item_stack)
+	p_slot.set_on_cooldown(l_cooldown_in_usec)
 
 
 func get_slot(p_index: int) -> InventorySlot:

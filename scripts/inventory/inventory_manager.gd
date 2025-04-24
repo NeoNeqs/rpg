@@ -63,6 +63,18 @@ func create_hotbar_inventory(p_hotbar_inventory: Inventory) -> void:
 	
 	add_child(hotbar)
 
+
+func delete_selected() -> void:
+	
+	DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)
+	selected_inventory_view.get_slot(selected_index).unselect()
+	#_tooltip.update(p_view.inventory.get_item_stack(p_slot.get_index()))
+	_drag_slot.visible = false
+	set_process(false)
+	selected_inventory_view.inventory.delete(selected_index)
+	_unselect()
+
+
 func _on_slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bool) -> void:
 	if selected_index == -1:
 		var item_stack := p_view.inventory.get_item_stack(p_slot.get_index())
