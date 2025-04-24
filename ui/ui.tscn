@@ -12,7 +12,7 @@
 font = ExtResource("2_ajbqs")
 font_size = 20
 
-[node name="UI" type="Control"]
+[node name="UI" type="Control" node_paths=PackedStringArray("inventory_manager")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,6 +22,7 @@ grow_vertical = 2
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 script = ExtResource("1_gdcp5")
+inventory_manager = NodePath("InventoryManager")
 
 [node name="FPSLabel" type="Label" parent="."]
 layout_mode = 1
@@ -59,7 +60,7 @@ mouse_filter = 2
 script = ExtResource("5_fmbix")
 _tooltip = NodePath("Tooltip")
 _drag_slot = NodePath("DragSlot")
-metadata/_custom_type_script = ExtResource("5_fmbix")
+metadata/_custom_type_script = "uid://w4m0yaqnaeq1"
 
 [node name="Tooltip" parent="InventoryManager" instance=ExtResource("6_jmxi2")]
 visible = false
