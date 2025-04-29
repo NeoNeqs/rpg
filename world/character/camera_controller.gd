@@ -16,8 +16,19 @@ var _free_look_enabled: bool = false
 var _turn_enabled: bool = false
 var _last_position := Vector2.INF
 
+# FIXME: when holding right clicking and scrolling at the same time, the camera
+#        uncontrollably jumps around.
+# TODO: reimplement this script from the ground up
+# TODO: don't put Debug.visible like this. Possible solution:
+#       - make another global class that will always be in a release build
+#         with `process_input` flag
+# TODO: implement MouseModeManager state machine. It must have clear states, at
+#       least a default one 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if Debug.visible:
+		return
+	
 	if event is InputEventMouseButton:
 		_handle_mouse_button(event)
 	elif event is InputEventMouseMotion:
@@ -29,7 +40,7 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 		_zoom(-spring_step)
 	elif event.is_action("camera_zoom_out"):
 		_zoom(spring_step)
-
+	
 	# Prevent camera turn when dragging InventorySlot
 	if DisplayServer.mouse_get_mode() == DisplayServer.MOUSE_MODE_HIDDEN:
 		return
@@ -44,7 +55,6 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 		_align_model_with_camera()
 	
 	_update_mouse_mode()
-
 
 func _update_mouse_mode() -> void:
 	if not _free_look_enabled == _turn_enabled:

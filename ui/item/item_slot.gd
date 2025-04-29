@@ -5,18 +5,6 @@ extends InventorySlot
 @export var border_holder: Panel
 
 
-func _set_border_color(p_color: Color) -> void:
-	if border_holder == null:
-		return
-	
-	var stylebox: StyleBoxFlat = border_holder.get_theme_stylebox("panel")
-	
-	if stylebox == null:
-		return
-	
-	stylebox.border_color = p_color
-
-
 func update(p_item_stack: ItemStack) -> void:
 	if p_item_stack == null or p_item_stack.item == null:
 		_set_border_color(Color.BLACK)
@@ -32,3 +20,15 @@ func update(p_item_stack: ItemStack) -> void:
 		text_holder.text = ""
 	else:
 		text_holder.text = str(p_item_stack.quantity)
+
+
+func _set_border_color(p_color: Color) -> void:
+	if border_holder == null:
+		return
+	
+	var stylebox: StyleBoxFlat = border_holder.get_theme_stylebox("panel")
+	
+	if stylebox == null:
+		return
+	
+	stylebox.border_color = p_color

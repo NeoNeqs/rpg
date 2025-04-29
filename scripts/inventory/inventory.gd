@@ -138,7 +138,7 @@ func set_item(p_item: Item, p_index: int, p_quantity: int = 1) -> bool:
 
 
 func is_item_empty(p_index: int) -> bool:
-	return _items[p_index].quantity == 0
+	return _items[p_index].is_empty()
 
 
 func get_items() -> Array[ItemStack]:
@@ -167,8 +167,7 @@ func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemA
 	else:
 		_swap(p_from, p_inv_to, p_to)
 	
-	if _items[p_from].quantity == 0:
-		#return ItemActionResult.NoLeftOver
+	if _items[p_from].is_empty():
 		return ItemActionResult.NoAction
 		
 	return ItemActionResult.LeftOver
@@ -208,8 +207,7 @@ func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> Item
 	items_changed.emit()
 	p_inv_to.items_changed.emit()
 	
-	if _items[p_from].quantity == 0:
-		#return ItemActionResult.NoLeftOver
+	if _items[p_from].is_empty():
 		return ItemActionResult.NoAction
 		
 	return ItemActionResult.LeftOver

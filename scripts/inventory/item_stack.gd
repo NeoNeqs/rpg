@@ -5,7 +5,7 @@ extends Resource
 # (item == null) => (quantity == 0)
 # (not item == null) => (quantity > 0)
 
-@export var item: Item:
+@export var item: Item = null:
 	set = set_item
 
 @export var quantity: int = 0:

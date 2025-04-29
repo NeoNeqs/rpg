@@ -4,7 +4,7 @@ extends PanelContainer
 const s_offset := Vector2(20, 0)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not visible:
 		return
 	

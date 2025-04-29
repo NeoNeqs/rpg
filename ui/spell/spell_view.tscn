@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://ng8yjyxxl7rl" path="res://ui/spell/spell_slot.tscn" id="2_ybdat"]
 
 [node name="SpellBook" type="PanelContainer" node_paths=PackedStringArray("container")]
-z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

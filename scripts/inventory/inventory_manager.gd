@@ -19,7 +19,9 @@ func _ready() -> void:
 	set_process(false)
 	create_item_inventory(load("res://resources/test_inventory.tres"))
 	create_spell_inventory(load("res://resources/spell_book.tres"))
-	create_hotbar_inventory(load("res://resources/hotbar.tres"))
+	create_hotbar_inventory(
+		load("res://resources/hotbar.tres"), HotbarView.Type.Main, HotbarView.Modifiers.Alt
+	)
 
 func _process(_delta: float) -> void:
 	if _drag_slot.visible:
@@ -52,23 +54,25 @@ func create_spell_inventory(p_spell_inventory: Inventory) -> void:
 	
 	add_child(spell_book)
 
-func create_hotbar_inventory(p_hotbar_inventory: Inventory) -> void:
-	var hotbar: ItemView = AssetDB.HotbarViewScene.instantiate()
+func create_hotbar_inventory(
+	p_hotbar_inventory: Inventory,
+	p_type: HotbarView.Type, p_modifiers: HotbarView.Modifiers
+) -> void:
+	var hotbar: HotbarView = AssetDB.HotbarViewScene.instantiate()
 	
 	hotbar.position = Vector2(400, 800)
 	hotbar.slot_pressed.connect(_on_slot_pressed)
 	hotbar.slot_hovered.connect(_on_slot_hovered.bind(hotbar))
 	hotbar.slot_unhovered.connect(_on_slot_unhovered)
 	hotbar.set_data(p_hotbar_inventory)
-	
+	hotbar.hotbar_type = p_type
+	hotbar.modifiers = p_modifiers
 	add_child(hotbar)
 
 
 func delete_selected() -> void:
-	
 	DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)
 	selected_inventory_view.get_slot(selected_index).unselect()
-	#_tooltip.update(p_view.inventory.get_item_stack(p_slot.get_index()))
 	_drag_slot.visible = false
 	set_process(false)
 	selected_inventory_view.inventory.delete(selected_index)
@@ -107,7 +111,6 @@ func _on_slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bo
 			var pressed_item_stack: ItemStack = p_view.inventory.get_item_stack(p_slot.get_index())
 			p_slot.update(pressed_item_stack)
 		Inventory.ItemActionResult.NoAction:
-#		var rest when rest in [Inventory.ItemActionResult.NoAction, Inventory.ItemActionResult.NoLeftOver]:
 			DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)
 			selected_inventory_view.get_slot(selected_index).unselect()
 			_tooltip.update(p_view.inventory.get_item_stack(p_slot.get_index()))

@@ -4,5 +4,6 @@ extends InventoryView
 
 
 func _setup_container() -> void:
-	if container is GridContainer:
-		(container as GridContainer).columns = inventory.columns
+	var grid_container := container as GridContainer
+	if not grid_container == null:
+		grid_container.columns = inventory.columns

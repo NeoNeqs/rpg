@@ -7,5 +7,5 @@ func _init() -> void:
 	pass
 
 func on_cast() -> bool:
-	print("Dealt %d Damage" % amount)
+	Logger.core.info("Dealing '{}' damage", [amount])
 	return true

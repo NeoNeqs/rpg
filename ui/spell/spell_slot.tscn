@@ -65,6 +65,7 @@ expand_mode = 1
 [node name="Cooldown" parent="TextureRect" instance=ExtResource("2_6sgnv")]
 z_index = 2
 layout_mode = 1
+mouse_filter = 2
 
 [node name="Label" type="Label" parent="."]
 visible = false

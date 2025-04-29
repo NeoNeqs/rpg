@@ -1,8 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=9 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://world/character/character.gd" id="1_e5tqa"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
-[ext_resource type="Script" uid="uid://3c6pdeawufd8" path="res://world/character/camera.gd" id="3_jrmkq"]
 [ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"]
 [ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"]
 [ext_resource type="Script" uid="uid://dg7ry0b3pmge8" path="res://world/character/combat_system.gd" id="6_8hqne"]
@@ -53,7 +52,6 @@ transform = Transform3D(-0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 
 
 [node name="Pivot" type="Node3D" parent="Body"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.426638, 0)
-script = ExtResource("3_jrmkq")
 
 [node name="Arm" type="SpringArm3D" parent="Body/Pivot"]
 spring_length = 5.0
@@ -74,4 +72,4 @@ model = NodePath("../Body/Model")
 [node name="CombatSystem" type="Node" parent="."]
 script = ExtResource("6_8hqne")
 attributes = SubResource("Resource_uy0re")
-metadata/_custom_type_script = ExtResource("6_8hqne")
+metadata/_custom_type_script = "uid://dg7ry0b3pmge8"

@@ -35,6 +35,7 @@ environment = SubResource("Environment_idvik")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 8, 0)
+light_color = Color(0.350977, 0.350977, 0.350977, 1)
 shadow_enabled = true
 
 [node name="Floor" type="MeshInstance3D" parent="."]
@@ -50,60 +51,60 @@ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop5" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -10.522, 2.43134, 0)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop8" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.42697, 2.43134, 0)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, 7.90601)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop6" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -10.9803, 2.43134, 7.90601)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop7" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.29876, 2.43134, 7.90601)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, -7.72012)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop4" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -9.91228, 2.43134, -7.72012)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop9" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.02344, 2.43134, -7.72012)
 material_override = SubResource("StandardMaterial3D_4ptq8")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")
-metadata/_custom_type_script = ExtResource("1_xtdv1")
+metadata/_custom_type_script = "uid://dwktvik6f4wrn"

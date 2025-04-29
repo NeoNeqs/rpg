@@ -3,7 +3,7 @@ class_name DebugUtils
 extends RefCounted
 
 
-static func nameof(p_obj: Variant) -> StringName:
+static func nameof(p_obj: Object) -> StringName:
 	var stringified: String = str(p_obj)
 	
 	if p_obj == null:

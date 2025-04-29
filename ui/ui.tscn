@@ -64,11 +64,13 @@ metadata/_custom_type_script = "uid://w4m0yaqnaeq1"
 
 [node name="Tooltip" parent="InventoryManager" instance=ExtResource("6_jmxi2")]
 visible = false
+top_level = true
 layout_mode = 0
 mouse_filter = 1
 
 [node name="DragSlot" parent="InventoryManager" instance=ExtResource("7_kjw2a")]
 visible = false
+top_level = true
 layout_mode = 0
 offset_right = 64.0
 offset_bottom = 64.0

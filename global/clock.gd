@@ -19,8 +19,10 @@ func start() -> void:
 
 func stop() -> void:
 	var end := Time.get_ticks_usec()
-	print("{}::{} took {}".format([
+	Logger.core.info("{}::{} took {}",
+		[
 			DebugUtils.nameof(_calle.get_script()),
 			_section,
 			DebugUtils.humnaize_time(end - _start_time)
-	], "{}"))
+		]
+	)

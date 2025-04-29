@@ -1,6 +1,8 @@
 class_name CombatSystem
 extends Node
 
+signal on_death()
+
 enum DamageType {
 	Physical,
 	Shadow,
@@ -13,6 +15,7 @@ var attributes: Attributes
 var current_health: int
 var current_mana: int
 
+var _logger := Logger.combat
 
 func _ready() -> void:
 	current_health = attributes.get_max_health()
@@ -59,7 +62,7 @@ func damage_shadow(p_effect: DamageEffect, p_attacker: Attributes) -> void:
 func _damage(p_value: float) -> void:
 	var test_health := int(current_health - p_value)
 	if test_health <= 0:
-		print("DEAD")
+		on_death.emit()
 		return
 	current_health = test_health
 
@@ -71,7 +74,7 @@ func _handle_damage_effect(p_effect: DamageEffect, p_attacker: Attributes) -> vo
 		DamageType.Shadow:
 			damage_shadow(p_effect, p_attacker)
 		_:
-			Logger.cb.error("Unhandled \"{}\" case of DamageType enum.", [
+			_logger.error("Unhandled '{}' case of DamageType enum.", [
 				DamageType.keys()[p_effect.damage_type]
 			])
 
@@ -80,12 +83,12 @@ func _apply_effect(p_effect: Effect, p_attacker: Attributes) -> void:
 	match p_effect:
 		var damage_effect when damage_effect is DamageEffect:
 			_handle_damage_effect(damage_effect, p_attacker)
-			print("Damage effect: %d %s" % [p_effect.value, p_effect.get_damage_name()])
+			_logger.info("Damage effect: %d %s", [p_effect.value, p_effect.get_damage_name()])
 		var modifier_effect when modifier_effect is ModifierEffect:
 			attributes.apply(p_effect)
-			print("Applying effect: %d %s" % [p_effect.value, p_effect.get_modifier()])
+			_logger.info("Applying effect: %d %s", [p_effect.value, p_effect.get_modifier()])
 		_:
-			Logger.cb.error("Unhandled Effect of type {}, found @ \"{}\"", [
+			_logger.error("Unhandled Effect of type {}, found @ \"{}\"", [
 				DebugUtils.nameof(p_effect.get_script()),
 				p_effect.resource_path
 			])
@@ -94,7 +97,7 @@ func _apply_effect(p_effect: Effect, p_attacker: Attributes) -> void:
 func _remove_effect(p_effect: Effect) -> void:
 	if p_effect is ModifierEffect:
 		attributes.remove(p_effect)
-		print("Removing effect: %d %s" % [-p_effect.value * p_effect.ticks, p_effect.get_modifier()])
+		_logger.info("Removing effect: %d %s", [-p_effect.value * p_effect.ticks, p_effect.get_modifier()])
 	elif p_effect is DamageEffect:
 		pass
 

@@ -12,31 +12,43 @@ signal unhovered()
 
 func _gui_input(p_event: InputEvent) -> void:
 	if p_event is InputEventMouseButton and p_event.is_released():
-		#get_viewport().set_input_as_handled()
 		match p_event.button_index:
 			MOUSE_BUTTON_LEFT:
 				left_pressed.emit()
 			MOUSE_BUTTON_RIGHT:
 				right_pressed.emit()
 
+
 func set_on_cooldown(p_cooldown_in_usec: int) -> void:
-	var cooldown: Cooldown = icon_holder.get_node("Cooldown")
+	var cooldown: Cooldown = _get_cooldown_display()
 	if cooldown == null:
-		Logger.core.critical("Slot does not have a cooldown node attached.")
 		return
 	
 	cooldown.start(p_cooldown_in_usec)
 
+
 func reset_cooldown() -> void:
-	var cooldown: Cooldown = icon_holder.get_node("Cooldown")
+	var cooldown: Cooldown = _get_cooldown_display()
 	if cooldown == null:
-		Logger.core.critical("Slot does not have a cooldown node attached.")
 		return
 	
 	cooldown.reset()
 
-func update(p_item_stack: ItemStack) -> void:
+
+func _get_cooldown_display() -> Cooldown:
+	var cooldown: Cooldown = icon_holder.get_node_or_null("Cooldown")
+	if cooldown == null:
+		Logger.ui.critical(
+			"Slot id='{}', index='{}' does not have a cooldown node attached.",
+			[get_instance_id(), get_index()]
+		)
+		return null
+	
+	return cooldown
+
+func update(_p_item_stack: ItemStack) -> void:
 	assert(false, "Do not call this method.")
+
 
 func select() -> void:
 	modulate = Color(1.0, 1.0, 1.0, 0.5)

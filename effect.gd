@@ -42,7 +42,7 @@ func get_tooltip() -> String:
 	return "On hit (%d%%): " % int(apply_chance * 100.0)
 
 
-func apply(p_target: CombatSystem, p_attacker: CombatSystem) -> void:
+func apply(_p_target: CombatSystem, _p_attacker: CombatSystem) -> void:
 	assert(false, "Don't call apply on the base class Effect")
 
 

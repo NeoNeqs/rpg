@@ -2,12 +2,13 @@
 class_name Prop
 extends MeshInstance3D
 
+
 # Must match the filenames of props in res://prop/impl/
 @export_enum("box", "capsule", "cylinder", "sphere", "stairs") var prop_shape: String = "box":
 	set(value):
 		# Prevents Inspesctor dock redraw when editing the object
 		if not prop_shape == value:
-			_update_shape(value)  # must be called before assigning
+			_update_shape(value)  # must be called before assignment
 		if value == "stairs":
 			texture = 8
 		prop_shape = value
@@ -21,7 +22,7 @@ extends MeshInstance3D
 @export_range(1, 10) var texture: int = 1:
 	set(value):
 		if prop_shape == "stairs" and not value == 8:
-			printerr("Can't change texture for Stairs Shape")
+			Logger.physics.warn("Can't change texture for Stairs Shape")
 			texture = 8
 		else:
 			texture = value
@@ -79,9 +80,14 @@ func _update_collision() -> void:
 func _update_texture() -> void:
 	var mat: BaseMaterial3D = get_metarial()
 	if not mat:
+		Logger.physics.warn("Prop '{}' does not have any materials set", [get_instance_id()])
 		return
 
-	mat.albedo_texture = load("res://assets/textures/prototype/%s/texture_%s.png" % [color, str(texture).pad_zeros(2)])
+	mat.albedo_texture = load(
+		"res://assets/textures/prototype/%s/texture_%s.png" % [
+			color, str(texture).pad_zeros(2)
+		]
+	)
 
 
 func _get_prop_path(p_name: String) -> String:

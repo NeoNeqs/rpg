@@ -1,0 +1,1590 @@
+[1mdiff --git a/damage_effect.gd b/damage_effect.gd[m
+[1mindex e16c989..9948f0b 100644[m
+[1m--- a/damage_effect.gd[m
+[1m+++ b/damage_effect.gd[m
+[36m@@ -30,16 +30,17 @@[m [mfunc apply(p_target: CombatSystem, p_attacker: CombatSystem) -> void:[m
+ 	[m
+ 	match damage_type:[m
+ 		CombatSystem.DamageType.Physical:[m
+[31m-			damage = calculate_physical_damage(p_attacker.attributes, p_attacker.attributes)[m
+[32m+[m			[32mdamage = calculate_physical_damage(p_target.attributes, p_attacker.attributes)[m
+ 		CombatSystem.DamageType.Shadow:[m
+[31m-			damage = calculate_shadow_damage(p_attacker.attributes, p_attacker.attributes)[m
+[32m+[m			[32mdamage = calculate_shadow_damage(p_target.attributes, p_attacker.attributes)[m
+ 		CombatSystem.DamageType.Nature:[m
+[31m-			Logger.cb.critical("TODO: implement nature damage type and others.")[m
+[32m+[m			[32mLogger.combat.critical("TODO: implement nature damage type and others.")[m
+ 		_:[m
+[31m-			Logger.cb.error([m
+[32m+[m			[32mLogger.combat.error([m
+ 				"Unhandled DamageType case '{}'.", [m
+ 				CombatSystem.DamageType.keys()[damage_type][m
+ 			)[m
+[32m+[m	[32mLogger.combat.info("Damage={}", [damage])[m
+ [m
+ func calculate_physical_damage(p_target: Attributes, p_attacker: Attributes) -> int:[m
+ 	var damage_reduction: float = p_target.get_physical_damage_reduction() # 0.75[m
+[1mdiff --git a/effect.gd b/effect.gd[m
+[1mindex 6168da5..44abb6f 100644[m
+[1m--- a/effect.gd[m
+[1m+++ b/effect.gd[m
+[36m@@ -42,7 +42,7 @@[m [mfunc get_tooltip() -> String:[m
+ 	return "On hit (%d%%): " % int(apply_chance * 100.0)[m
+ [m
+ [m
+[31m-func apply(p_target: CombatSystem, p_attacker: CombatSystem) -> void:[m
+[32m+[m[32mfunc apply(_p_target: CombatSystem, _p_attacker: CombatSystem) -> void:[m
+ 	assert(false, "Don't call apply on the base class Effect")[m
+ [m
+ [m
+[1mdiff --git a/global/clock.gd b/global/clock.gd[m
+[1mindex 23bef0f..bb3a9fa 100644[m
+[1m--- a/global/clock.gd[m
+[1m+++ b/global/clock.gd[m
+[36m@@ -19,8 +19,10 @@[m [mfunc start() -> void:[m
+ [m
+ func stop() -> void:[m
+ 	var end := Time.get_ticks_usec()[m
+[31m-	print("{}::{} took {}".format([[m
+[32m+[m	[32mLogger.core.info("{}::{} took {}",[m
+[32m+[m		[32m[[m
+ 			DebugUtils.nameof(_calle.get_script()),[m
+ 			_section,[m
+ 			DebugUtils.humnaize_time(end - _start_time)[m
+[31m-	], "{}"))[m
+[32m+[m		[32m][m
+[32m+[m	[32m)[m
+[1mdiff --git a/global/debug_utils.gd b/global/debug_utils.gd[m
+[1mindex 7a3d55e..2e6e590 100644[m
+[1m--- a/global/debug_utils.gd[m
+[1m+++ b/global/debug_utils.gd[m
+[36m@@ -3,7 +3,7 @@[m [mclass_name DebugUtils[m
+ extends RefCounted[m
+ [m
+ [m
+[31m-static func nameof(p_obj: Variant) -> StringName:[m
+[32m+[m[32mstatic func nameof(p_obj: Object) -> StringName:[m
+ 	var stringified: String = str(p_obj)[m
+ 	[m
+ 	if p_obj == null:[m
+[1mdiff --git a/global/logger.gd b/global/logger.gd[m
+[1mindex 6741108..91e6105 100644[m
+[1m--- a/global/logger.gd[m
+[1m+++ b/global/logger.gd[m
+[36m@@ -11,10 +11,10 @@[m [menum LogLevel {[m
+ }[m
+ [m
+ static var core: Logger = Logger.new("Core", LogLevel.Debug)[m
+[31m-static var cb: Logger = Logger.new("Combat", LogLevel.Debug)[m
+[32m+[m[32mstatic var combat: Logger = Logger.new("Combat", LogLevel.Debug)[m
+ static var ui: Logger = Logger.new("UI", LogLevel.Debug)[m
+[31m-#static var be: Logger = Logger.new("Backend", LogLevel.Debug)[m
+[31m-#static var physics: Logger = Logger.new("Physics", LogLevel.Debug)[m
+[32m+[m[32mstatic var physics: Logger = Logger.new("Physics", LogLevel.Debug)[m
+[32m+[m[32mstatic var input: Logger = Logger.new("Input", LogLevel.Debug)[m
+ [m
+ const message_format: String = "[{}] [{}] [{}] [{}]: {}"[m
+ const placeholder: String = "{}"[m
+[1mdiff --git a/global/singleton/asset_db.gd b/global/singleton/asset_db.gd[m
+[1mindex 1c924b3..2b6fcc5 100644[m
+[1m--- a/global/singleton/asset_db.gd[m
+[1m+++ b/global/singleton/asset_db.gd[m
+[36m@@ -3,6 +3,3 @@[m [mextends Node[m
+ const ItemViewScene: PackedScene = preload("res://ui/item/item_view.tscn")[m
+ const SpellViewScene: PackedScene = preload("res://ui/spell/spell_view.tscn")[m
+ const HotbarViewScene: PackedScene = preload("res://ui/hotbar/hotbar_view.tscn")[m
+[31m-#const ItemSlotScene: PackedScene = preload("res://ui/item/item_slot.tscn")[m
+[31m-[m
+[31m-#const SpellSlotScene: PackedScene = preload("res://ui/spell/spell_slot.tscn")[m
+[1mdiff --git a/new_script.gd b/new_script.gd[m
+[1mdeleted file mode 100644[m
+[1mindex acb7fb2..0000000[m
+[1m--- a/new_script.gd[m
+[1m+++ /dev/null[m
+[36m@@ -1,28 +0,0 @@[m
+[31m-extends CharacterBody3D[m
+[31m-[m
+[31m-[m
+[31m-const SPEED = 5.0[m
+[31m-const JUMP_VELOCITY = 4.5[m
+[31m-[m
+[31m-[m
+[31m-func _physics_process(delta: float) -> void:[m
+[31m-	# Add the gravity.[m
+[31m-	if not is_on_floor():[m
+[31m-		velocity += get_gravity() * delta[m
+[31m-[m
+[31m-	# Handle jump.[m
+[31m-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():[m
+[31m-		velocity.y = JUMP_VELOCITY[m
+[31m-[m
+[31m-	# Get the input direction and handle the movement/deceleration.[m
+[31m-	# As good practice, you should replace UI actions with custom gameplay actions.[m
+[31m-	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")[m
+[31m-	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()[m
+[31m-	if direction:[m
+[31m-		velocity.x = direction.x * SPEED[m
+[31m-		velocity.z = direction.z * SPEED[m
+[31m-	else:[m
+[31m-		velocity.x = move_toward(velocity.x, 0, SPEED)[m
+[31m-		velocity.z = move_toward(velocity.z, 0, SPEED)[m
+[31m-[m
+[31m-	move_and_slide()[m
+[1mdiff --git a/new_script.gd.uid b/new_script.gd.uid[m
+[1mdeleted file mode 100644[m
+[1mindex 3a14eb6..0000000[m
+[1m--- a/new_script.gd.uid[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-uid://dpyib88x12ev3[m
+[1mdiff --git a/project.godot b/project.godot[m
+[1mindex d066250..ed5b617 100644[m
+[1m--- a/project.godot[m
+[1m+++ b/project.godot[m
+[36m@@ -20,6 +20,7 @@[m [mconfig/icon="res://icon.svg"[m
+ [m
+ EventBus="*res://global/singleton/event_bus.gd"[m
+ AssetDB="*res://global/singleton/asset_db.gd"[m
+[32m+[m[32mDebug="*res://ui/debug/debug.tscn"[m
+ [m
+ [debug][m
+ [m
+[36m@@ -130,26 +131,6 @@[m [mcamera_turn={[m
+ "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":2,"position":Vector2(155, 11),"global_position":Vector2(164, 57),"factor":1.0,"button_index":2,"canceled":false,"pressed":true,"double_click":false,"script":null)[m
+ ][m
+ }[m
+[31m-hotbar_1={[m
+[31m-"deadzone": 0.2,[m
+[31m-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":49,"key_label":0,"unicode":49,"location":0,"echo":false,"script":null)[m
+[31m-][m
+[31m-}[m
+[31m-hotbar_2={[m
+[31m-"deadzone": 0.2,[m
+[31m-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":50,"key_label":0,"unicode":50,"location":0,"echo":false,"script":null)[m
+[31m-][m
+[31m-}[m
+[31m-hotbar_3={[m
+[31m-"deadzone": 0.2,[m
+[31m-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":51,"key_label":0,"unicode":51,"location":0,"echo":false,"script":null)[m
+[31m-][m
+[31m-}[m
+[31m-hotbar_4={[m
+[31m-"deadzone": 0.2,[m
+[31m-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":52,"key_label":0,"unicode":52,"location":0,"echo":false,"script":null)[m
+[31m-][m
+[31m-}[m
+ [m
+ [input_devices][m
+ [m
+[1mdiff --git a/resources/items/chest_guard.tres b/resources/items/chest_guard.tres[m
+[1mindex 91050af..931db06 100644[m
+[1m--- a/resources/items/chest_guard.tres[m
+[1m+++ b/resources/items/chest_guard.tres[m
+[36m@@ -1,40 +1,31 @@[m
+[31m-[gd_resource type="Resource" script_class="Item" load_steps=14 format=3 uid="uid://ctfxdgmbxm2ph"][m
+[32m+[m[32m[gd_resource type="Resource" script_class="Item" load_steps=9 format=3 uid="uid://ctfxdgmbxm2ph"][m
+ [m
+[32m+[m[32m[ext_resource type="Script" uid="uid://lrwvlhsj1j88" path="res://scripts/components/stats_component.gd" id="1_0cowq"][m
+ [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_axbdf"][m
+[31m-[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="2_4shsu"][m
+[31m-[ext_resource type="Script" uid="uid://4pj5sdduayka" path="res://effect.gd" id="3_6k2c7"][m
+[31m-[ext_resource type="Resource" uid="uid://efslua3s7ayu" path="res://corruption.tres" id="4_vpo8f"][m
+[31m-[ext_resource type="Script" uid="uid://cxmvufju02ony" path="res://scripts/components/effect_component.gd" id="5_0jq8u"][m
+[31m-[ext_resource type="Resource" uid="uid://cvs0caxfj2ia6" path="res://blade_flurry.tres" id="5_4shsu"][m
+[31m-[ext_resource type="Script" uid="uid://lrwvlhsj1j88" path="res://scripts/components/stats_component.gd" id="6_6jk7c"][m
+[31m-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="7_4shsu"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="2_v8qy0"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="3_v8qy0"][m
+ [ext_resource type="Texture2D" uid="uid://c38cxio63gkyn" path="res://assets/textures/item/chest-armor.svg" id="7_vpo8f"][m
+ [m
+[31m-[sub_resource type="Resource" id="Resource_dkf1g"][m
+[31m-script = ExtResource("2_4shsu")[m
+[31m-armor = 1931[m
+[32m+[m[32m[sub_resource type="Resource" id="Resource_cbx8f"][m
+[32m+[m[32mscript = ExtResource("2_v8qy0")[m
+[32m+[m[32marmor = 498[m
+ slot = 2[m
+[31m-armor_type = 1[m
+[31m-current_durability = 30[m
+[31m-max_durability = 60[m
+[31m-metadata/_custom_type_script = ExtResource("2_4shsu")[m
+[32m+[m[32marmor_type = 2[m
+[32m+[m[32mcurrent_durability = 120[m
+[32m+[m[32mmax_durability = 120[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://cg5gyd5hs4gj"[m
+ [m
+[31m-[sub_resource type="Resource" id="Resource_6k2c7"][m
+[31m-script = ExtResource("7_4shsu")[m
+[31m-rarity = 2[m
+[31m-level = 100[m
+[31m-metadata/_custom_type_script = ExtResource("7_4shsu")[m
+[32m+[m[32m[sub_resource type="Resource" id="Resource_vpo8f"][m
+[32m+[m[32mscript = ExtResource("3_v8qy0")[m
+[32m+[m[32mrarity = 4[m
+[32m+[m[32mlevel = 60[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+[31m-[sub_resource type="Resource" id="Resource_metsg"][m
+[31m-script = ExtResource("5_0jq8u")[m
+[31m-effects = Array[ExtResource("3_6k2c7")]([ExtResource("4_vpo8f"), ExtResource("5_4shsu")])[m
+[31m-metadata/_custom_type_script = ExtResource("5_0jq8u")[m
+[31m-[m
+[31m-[sub_resource type="Resource" id="Resource_ek0on"][m
+[31m-script = ExtResource("6_6jk7c")[m
+[31m-strength = 10[m
+[31m-stamina = 20[m
+[31m-metadata/_custom_type_script = ExtResource("6_6jk7c")[m
+[32m+[m[32m[sub_resource type="Resource" id="Resource_bvl2o"][m
+[32m+[m[32mscript = ExtResource("1_0cowq")[m
+[32m+[m[32mstrength = 20[m
+[32m+[m[32mstamina = 40[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://lrwvlhsj1j88"[m
+ [m
+ [resource][m
+ script = ExtResource("1_axbdf")[m
+[36m@@ -45,8 +36,7 @@[m [mprice = 0[m
+ stack_size = 1[m
+ cooldown = 1.0[m
+ _components = {[m
+[31m-&"ArmorComponent": SubResource("Resource_dkf1g"),[m
+[31m-&"DetailedItemComponent": SubResource("Resource_6k2c7"),[m
+[31m-&"EffectComponent": SubResource("Resource_metsg"),[m
+[31m-&"StatsComponent": SubResource("Resource_ek0on")[m
+[32m+[m[32m&"ArmorComponent": SubResource("Resource_cbx8f"),[m
+[32m+[m[32m&"DetailedItemComponent": SubResource("Resource_vpo8f"),[m
+[32m+[m[32m&"StatsComponent": SubResource("Resource_bvl2o")[m
+ }[m
+[1mdiff --git a/resources/items/dagger.tres b/resources/items/dagger.tres[m
+[1mindex f14688d..b63dc81 100644[m
+[1m--- a/resources/items/dagger.tres[m
+[1m+++ b/resources/items/dagger.tres[m
+[36m@@ -1,24 +1,14 @@[m
+[31m-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://ik6wg6tp4x08"][m
+[32m+[m[32m[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://ik6wg6tp4x08"][m
+ [m
+ [ext_resource type="Texture2D" uid="uid://cshwa7gkp2nmb" path="res://assets/textures/item/plain-dagger.svg" id="1_25keo"][m
+[31m-[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_fgw4y"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_fgw4y"][m
+ [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_mkiuy"][m
+[31m-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_luexb"][m
+ [m
+ [sub_resource type="Resource" id="Resource_luexb"][m
+ script = ExtResource("1_fgw4y")[m
+[31m-damage_type = 0[m
+[31m-weapon_type = 2[m
+[31m-min_damage = 20[m
+[31m-max_damage = 60[m
+[31m-speed = 1.5[m
+[31m-metadata/_custom_type_script = ExtResource("1_fgw4y")[m
+[31m-[m
+[31m-[sub_resource type="Resource" id="Resource_c25pr"][m
+[31m-script = ExtResource("2_luexb")[m
+[31m-rarity = 2[m
+[32m+[m[32mrarity = 1[m
+ level = 0[m
+[31m-metadata/_custom_type_script = ExtResource("2_luexb")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+ [resource][m
+ script = ExtResource("1_mkiuy")[m
+[36m@@ -29,7 +19,6 @@[m [mprice = 0[m
+ stack_size = 1[m
+ cooldown = 1.0[m
+ _components = {[m
+[31m-&"DamageComponent": SubResource("Resource_luexb"),[m
+[31m-&"DetailedItemComponent": SubResource("Resource_c25pr")[m
+[32m+[m[32m&"DetailedItemComponent": SubResource("Resource_luexb")[m
+ }[m
+[31m-metadata/_custom_type_script = ExtResource("1_mkiuy")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://ni37hjpima3q"[m
+[1mdiff --git a/resources/items/feather.tres b/resources/items/feather.tres[m
+[1mindex 5f93bbe..4cdea6b 100644[m
+[1m--- a/resources/items/feather.tres[m
+[1m+++ b/resources/items/feather.tres[m
+[36m@@ -8,7 +8,7 @@[m
+ script = ExtResource("1_ajdph")[m
+ rarity = 0[m
+ level = 0[m
+[31m-metadata/_custom_type_script = ExtResource("1_ajdph")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+ [resource][m
+ script = ExtResource("1_mpd2f")[m
+[1mdiff --git a/resources/items/helm.tres b/resources/items/helm.tres[m
+[1mindex 4d7296a..7a56d8d 100644[m
+[1m--- a/resources/items/helm.tres[m
+[1m+++ b/resources/items/helm.tres[m
+[36m@@ -1,24 +1,14 @@[m
+[31m-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://flnekij20n64"][m
+[32m+[m[32m[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://flnekij20n64"][m
+ [m
+[31m-[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="1_qh7p2"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_qh7p2"][m
+ [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_w2675"][m
+[31m-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_1vs8j"][m
+ [ext_resource type="Texture2D" uid="uid://cfw5hdo5hjwy6" path="res://assets/textures/item/brutal-helm.svg" id="2_t8o6l"][m
+ [m
+[31m-[sub_resource type="Resource" id="Resource_1vs8j"][m
+[32m+[m[32m[sub_resource type="Resource" id="Resource_t8o6l"][m
+ script = ExtResource("1_qh7p2")[m
+[31m-armor = 200[m
+[31m-slot = 0[m
+[31m-armor_type = 2[m
+[31m-current_durability = 60[m
+[31m-max_durability = 60[m
+[31m-metadata/_custom_type_script = ExtResource("1_qh7p2")[m
+[31m-[m
+[31m-[sub_resource type="Resource" id="Resource_bfjqc"][m
+[31m-script = ExtResource("2_1vs8j")[m
+[31m-rarity = 4[m
+[32m+[m[32mrarity = 2[m
+ level = 0[m
+[31m-metadata/_custom_type_script = ExtResource("2_1vs8j")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+ [resource][m
+ script = ExtResource("1_w2675")[m
+[36m@@ -29,7 +19,6 @@[m [mprice = 0[m
+ stack_size = 1[m
+ cooldown = 1.0[m
+ _components = {[m
+[31m-&"ArmorComponent": SubResource("Resource_1vs8j"),[m
+[31m-&"DetailedItemComponent": SubResource("Resource_bfjqc")[m
+[32m+[m[32m&"DetailedItemComponent": SubResource("Resource_t8o6l")[m
+ }[m
+[31m-metadata/_custom_type_script = ExtResource("1_w2675")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://ni37hjpima3q"[m
+[1mdiff --git a/resources/items/mace.tres b/resources/items/mace.tres[m
+[1mindex 27a77e5..6315996 100644[m
+[1m--- a/resources/items/mace.tres[m
+[1m+++ b/resources/items/mace.tres[m
+[36m@@ -1,24 +1,14 @@[m
+[31m-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://00yw3emhpn77"][m
+[32m+[m[32m[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://00yw3emhpn77"][m
+ [m
+ [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_5t5m3"][m
+[31m-[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_4743m"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_kg7v8"][m
+ [ext_resource type="Texture2D" uid="uid://cwm5741761nm6" path="res://assets/textures/item/flanged-mace.svg" id="2_kg7v8"][m
+[31m-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_rcf87"][m
+ [m
+[31m-[sub_resource type="Resource" id="Resource_kg7v8"][m
+[31m-script = ExtResource("1_4743m")[m
+[31m-damage_type = 0[m
+[31m-weapon_type = 0[m
+[31m-min_damage = 1[m
+[31m-max_damage = 2[m
+[31m-speed = 1.5[m
+[31m-metadata/_custom_type_script = ExtResource("1_4743m")[m
+[31m-[m
+[31m-[sub_resource type="Resource" id="Resource_wg47n"][m
+[31m-script = ExtResource("2_rcf87")[m
+[32m+[m[32m[sub_resource type="Resource" id="Resource_rcf87"][m
+[32m+[m[32mscript = ExtResource("1_kg7v8")[m
+ rarity = 3[m
+ level = 0[m
+[31m-metadata/_custom_type_script = ExtResource("2_rcf87")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+ [resource][m
+ script = ExtResource("1_5t5m3")[m
+[36m@@ -29,7 +19,6 @@[m [mprice = 0[m
+ stack_size = 1[m
+ cooldown = 1.0[m
+ _components = {[m
+[31m-&"DamageComponent": SubResource("Resource_kg7v8"),[m
+[31m-&"DetailedItemComponent": SubResource("Resource_wg47n")[m
+[32m+[m[32m&"DetailedItemComponent": SubResource("Resource_rcf87")[m
+ }[m
+[31m-metadata/_custom_type_script = ExtResource("1_5t5m3")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://ni37hjpima3q"[m
+[1mdiff --git a/resources/items/sword.tres b/resources/items/sword.tres[m
+[1mindex a338cb1..825a353 100644[m
+[1m--- a/resources/items/sword.tres[m
+[1m+++ b/resources/items/sword.tres[m
+[36m@@ -1,24 +1,14 @@[m
+[31m-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://dmc6ivj6ocq8p"][m
+[32m+[m[32m[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://dmc6ivj6ocq8p"][m
+ [m
+[31m-[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_5eq2r"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_5eq2r"][m
+ [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_h0edt"][m
+ [ext_resource type="Texture2D" uid="uid://do2wmv7d8ttsd" path="res://assets/textures/item/stick.svg" id="2_5eq2r"][m
+[31m-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_580ar"][m
+ [m
+ [sub_resource type="Resource" id="Resource_580ar"][m
+ script = ExtResource("1_5eq2r")[m
+[31m-damage_type = 0[m
+[31m-weapon_type = 3[m
+[31m-min_damage = 1[m
+[31m-max_damage = 9999[m
+[31m-speed = 2.0[m
+[31m-metadata/_custom_type_script = ExtResource("1_5eq2r")[m
+[31m-[m
+[31m-[sub_resource type="Resource" id="Resource_vf4rj"][m
+[31m-script = ExtResource("2_580ar")[m
+[31m-rarity = 1[m
+[32m+[m[32mrarity = 2[m
+ level = 0[m
+[31m-metadata/_custom_type_script = ExtResource("2_580ar")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+ [resource][m
+ script = ExtResource("1_h0edt")[m
+[36m@@ -29,7 +19,6 @@[m [mprice = 99999[m
+ stack_size = 1[m
+ cooldown = 1.0[m
+ _components = {[m
+[31m-&"DamageComponent": SubResource("Resource_580ar"),[m
+[31m-&"DetailedItemComponent": SubResource("Resource_vf4rj")[m
+[32m+[m[32m&"DetailedItemComponent": SubResource("Resource_580ar")[m
+ }[m
+[31m-metadata/_custom_type_script = ExtResource("1_h0edt")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://ni37hjpima3q"[m
+[1mdiff --git a/resources/test_inventory.tres b/resources/test_inventory.tres[m
+[1mindex 9414763..04ce859 100644[m
+[1m--- a/resources/test_inventory.tres[m
+[1m+++ b/resources/test_inventory.tres[m
+[36m@@ -1,9 +1,10 @@[m
+[31m-[gd_resource type="Resource" script_class="Inventory" load_steps=11 format=3 uid="uid://di8nlf6cn6lsn"][m
+[32m+[m[32m[gd_resource type="Resource" script_class="Inventory" load_steps=12 format=3 uid="uid://di8nlf6cn6lsn"][m
+ [m
+ [ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="1_5y6pi"][m
+ [ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/components/item_component.gd" id="2_qr55p"][m
+ [ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="3_lkgws"][m
+ [ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="3_qr55p"][m
+[32m+[m[32m[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="4_lkgws"][m
+ [m
+ [sub_resource type="Resource" id="Resource_lkgws"][m
+ script = ExtResource("3_qr55p")[m
+[36m@@ -34,14 +35,17 @@[m [mscript = ExtResource("1_5y6pi")[m
+ quantity = 0[m
+ allowed_components = Array[ExtResource("2_qr55p")]([])[m
+ [m
+[31m-[sub_resource type="Resource" id="Resource_qr55p"][m
+[31m-script = ExtResource("2_qr55p")[m
+[31m-metadata/_custom_type_script = "uid://xnatas68sjm5"[m
+[32m+[m[32m[sub_resource type="Resource" id="Resource_0i508"][m
+[32m+[m[32mscript = ExtResource("4_lkgws")[m
+[32m+[m[32mrarity = 0[m
+[32m+[m[32mlevel = 0[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dj2nv6dq3np88"[m
+ [m
+ [resource][m
+ script = ExtResource("3_lkgws")[m
+ _items = Array[ExtResource("1_5y6pi")]([SubResource("Resource_yp0nn"), SubResource("Resource_5xa5w"), SubResource("Resource_y0dbl"), SubResource("Resource_qa8cy")])[m
+ columns = 2[m
+ editable = true[m
+[31m-allowed_components = Array[ExtResource("2_qr55p")]([SubResource("Resource_qr55p")])[m
+[32m+[m[32mowns = true[m
+[32m+[m[32mallowed_components = Array[ExtResource("2_qr55p")]([SubResource("Resource_0i508")])[m
+ metadata/_custom_type_script = "uid://q48d62ldtwma"[m
+[1mdiff --git a/scripts/behaviors/damage_behavior.gd b/scripts/behaviors/damage_behavior.gd[m
+[1mindex 3e77f42..b0c337b 100644[m
+[1m--- a/scripts/behaviors/damage_behavior.gd[m
+[1m+++ b/scripts/behaviors/damage_behavior.gd[m
+[36m@@ -7,5 +7,5 @@[m [mfunc _init() -> void:[m
+ 	pass[m
+ [m
+ func on_cast() -> bool:[m
+[31m-	print("Dealt %d Damage" % amount)[m
+[32m+[m	[32mLogger.core.info("Dealing '{}' damage", [amount])[m
+ 	return true[m
+[1mdiff --git a/scripts/components/chain_spell_component.gd b/scripts/components/chain_spell_component.gd[m
+[1mindex 19e496e..4639ee8 100644[m
+[1m--- a/scripts/components/chain_spell_component.gd[m
+[1m+++ b/scripts/components/chain_spell_component.gd[m
+[36m@@ -1,3 +1,4 @@[m
+[32m+[m[32m@tool[m
+ class_name ChainSpellComponent[m
+ extends SpellComponent[m
+ [m
+[36m@@ -5,9 +6,6 @@[m [mvar current: int = -1[m
+ [m
+ @export var spells: Array[Item][m
+ [m
+[31m-func _init() -> void:[m
+[31m-	pass[m
+[31m-[m
+ [m
+ func chain() -> void:[m
+ 	current = wrapi(current + 1, -1, spells.size())[m
+[36m@@ -23,36 +21,13 @@[m [mfunc get_next_spell() -> Item:[m
+ 		return null[m
+ 	return spells[next][m
+ [m
+[32m+[m
+ func cast() -> Result:[m
+ 	if current == -1:[m
+ 		return super.cast()[m
+ 	[m
+[31m-	#spells[current].use()[m
+ 	return Result.Next[m
+ [m
+[31m-#func cast() -> bool:[m
+[31m-	#if current == -1:[m
+[31m-		#current = wrapi(current + 1, -1, spells.size())[m
+[31m-		#return false[m
+[31m-	#[m
+[31m-	## TODO: add a guard to prevent recurrsion.[m
+[31m-	#spells[current].use()[m
+[31m-	#current = wrapi(current + 1, -1, spells.size())[m
+[31m-	#[m
+[31m-	#return true[m
+[31m-[m
+[31m-func get_icon_override() -> Texture2D:[m
+[31m-	if current == -1:[m
+[31m-		return null[m
+[31m-	[m
+[31m-	return spells[current].icon[m
+[31m-[m
+[31m-[m
+[31m-func get_display_name_override() -> String:[m
+[31m-	if current == -1:[m
+[31m-		return ""[m
+[31m-	return spells[current].display_name[m
+[31m-[m
+ [m
+ func get_spell() -> Item:[m
+ 	if current == -1:[m
+[1mdiff --git a/scripts/components/detailed_item_component.gd b/scripts/components/detailed_item_component.gd[m
+[1mindex 3973802..812d7b3 100644[m
+[1m--- a/scripts/components/detailed_item_component.gd[m
+[1m+++ b/scripts/components/detailed_item_component.gd[m
+[36m@@ -1,3 +1,4 @@[m
+[32m+[m[32m@tool[m
+ class_name DetailedItemComponent[m
+ extends ItemComponent[m
+ [m
+[1mdiff --git a/scripts/components/spell_component.gd b/scripts/components/spell_component.gd[m
+[1mindex 11e17d1..22157b4 100644[m
+[1m--- a/scripts/components/spell_component.gd[m
+[1m+++ b/scripts/components/spell_component.gd[m
+[36m@@ -1,3 +1,4 @@[m
+[32m+[m[32m@tool[m
+ class_name SpellComponent[m
+ extends ItemComponent[m
+ [m
+[1mdiff --git a/scripts/components/stats_component.gd b/scripts/components/stats_component.gd[m
+[1mindex 74a300e..e9918bc 100644[m
+[1m--- a/scripts/components/stats_component.gd[m
+[1m+++ b/scripts/components/stats_component.gd[m
+[36m@@ -10,6 +10,7 @@[m [mextends ItemComponent[m
+ func get_tooltip() -> String:[m
+ 	var tooltip := ""[m
+ [m
+[32m+[m	[32m# TODO: extract this array through get_property_list in a static_init[m
+ 	var stats := ["strength", "stamina"][m
+ 	for stat: String in stats:[m
+ 		var val: Variant = get(stat)[m
+[1mdiff --git a/scripts/inventory/inventory.gd b/scripts/inventory/inventory.gd[m
+[1mindex 8882369..4006874 100644[m
+[1m--- a/scripts/inventory/inventory.gd[m
+[1m+++ b/scripts/inventory/inventory.gd[m
+[36m@@ -138,7 +138,7 @@[m [mfunc set_item(p_item: Item, p_index: int, p_quantity: int = 1) -> bool:[m
+ [m
+ [m
+ func is_item_empty(p_index: int) -> bool:[m
+[31m-	return _items[p_index].quantity == 0[m
+[32m+[m	[32mreturn _items[p_index].is_empty()[m
+ [m
+ [m
+ func get_items() -> Array[ItemStack]:[m
+[36m@@ -167,8 +167,7 @@[m [mfunc _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemA[m
+ 	else:[m
+ 		_swap(p_from, p_inv_to, p_to)[m
+ 	[m
+[31m-	if _items[p_from].quantity == 0:[m
+[31m-		#return ItemActionResult.NoLeftOver[m
+[32m+[m	[32mif _items[p_from].is_empty():[m
+ 		return ItemActionResult.NoAction[m
+ 		[m
+ 	return ItemActionResult.LeftOver[m
+[36m@@ -208,8 +207,7 @@[m [mfunc _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> Item[m
+ 	items_changed.emit()[m
+ 	p_inv_to.items_changed.emit()[m
+ 	[m
+[31m-	if _items[p_from].quantity == 0:[m
+[31m-		#return ItemActionResult.NoLeftOver[m
+[32m+[m	[32mif _items[p_from].is_empty():[m
+ 		return ItemActionResult.NoAction[m
+ 		[m
+ 	return ItemActionResult.LeftOver[m
+[1mdiff --git a/scripts/inventory/inventory_manager.gd b/scripts/inventory/inventory_manager.gd[m
+[1mindex 9de043f..15cbbc3 100644[m
+[1m--- a/scripts/inventory/inventory_manager.gd[m
+[1m+++ b/scripts/inventory/inventory_manager.gd[m
+[36m@@ -19,7 +19,9 @@[m [mfunc _ready() -> void:[m
+ 	set_process(false)[m
+ 	create_item_inventory(load("res://resources/test_inventory.tres"))[m
+ 	create_spell_inventory(load("res://resources/spell_book.tres"))[m
+[31m-	create_hotbar_inventory(load("res://resources/hotbar.tres"))[m
+[32m+[m	[32mcreate_hotbar_inventory([m
+[32m+[m		[32mload("res://resources/hotbar.tres"), HotbarView.Type.Main, HotbarView.Modifiers.Alt[m
+[32m+[m	[32m)[m
+ [m
+ func _process(_delta: float) -> void:[m
+ 	if _drag_slot.visible:[m
+[36m@@ -52,23 +54,25 @@[m [mfunc create_spell_inventory(p_spell_inventory: Inventory) -> void:[m
+ 	[m
+ 	add_child(spell_book)[m
+ [m
+[31m-func create_hotbar_inventory(p_hotbar_inventory: Inventory) -> void:[m
+[31m-	var hotbar: ItemView = AssetDB.HotbarViewScene.instantiate()[m
+[32m+[m[32mfunc create_hotbar_inventory([m
+[32m+[m	[32mp_hotbar_inventory: Inventory,[m
+[32m+[m	[32mp_type: HotbarView.Type, p_modifiers: HotbarView.Modifiers[m
+[32m+[m[32m) -> void:[m
+[32m+[m	[32mvar hotbar: HotbarView = AssetDB.HotbarViewScene.instantiate()[m
+ 	[m
+ 	hotbar.position = Vector2(400, 800)[m
+ 	hotbar.slot_pressed.connect(_on_slot_pressed)[m
+ 	hotbar.slot_hovered.connect(_on_slot_hovered.bind(hotbar))[m
+ 	hotbar.slot_unhovered.connect(_on_slot_unhovered)[m
+ 	hotbar.set_data(p_hotbar_inventory)[m
+[31m-	[m
+[32m+[m	[32mhotbar.hotbar_type = p_type[m
+[32m+[m	[32mhotbar.modifiers = p_modifiers[m
+ 	add_child(hotbar)[m
+ [m
+ [m
+ func delete_selected() -> void:[m
+[31m-	[m
+ 	DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)[m
+ 	selected_inventory_view.get_slot(selected_index).unselect()[m
+[31m-	#_tooltip.update(p_view.inventory.get_item_stack(p_slot.get_index()))[m
+ 	_drag_slot.visible = false[m
+ 	set_process(false)[m
+ 	selected_inventory_view.inventory.delete(selected_index)[m
+[36m@@ -107,7 +111,6 @@[m [mfunc _on_slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bo[m
+ 			var pressed_item_stack: ItemStack = p_view.inventory.get_item_stack(p_slot.get_index())[m
+ 			p_slot.update(pressed_item_stack)[m
+ 		Inventory.ItemActionResult.NoAction:[m
+[31m-#		var rest when rest in [Inventory.ItemActionResult.NoAction, Inventory.ItemActionResult.NoLeftOver]:[m
+ 			DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)[m
+ 			selected_inventory_view.get_slot(selected_index).unselect()[m
+ 			_tooltip.update(p_view.inventory.get_item_stack(p_slot.get_index()))[m
+[1mdiff --git a/scripts/inventory/item.gd b/scripts/inventory/item.gd[m
+[1mindex 4f45a15..96aa4e8 100644[m
+[1m--- a/scripts/inventory/item.gd[m
+[1m+++ b/scripts/inventory/item.gd[m
+[36m@@ -96,11 +96,11 @@[m [mfunc get_icon() -> Texture2D:[m
+ 	if chain_spell_component == null:[m
+ 		return icon[m
+ 	[m
+[31m-	var spell_icon: Texture2D = chain_spell_component.get_icon_override()[m
+[31m-	if spell_icon == null:[m
+[32m+[m	[32mvar overridden_spell: Item = chain_spell_component.get_spell()[m
+[32m+[m	[32mif overridden_spell == null:[m
+ 		return icon[m
+ 	[m
+[31m-	return spell_icon[m
+[32m+[m	[32mreturn overridden_spell.icon[m
+ [m
+ [m
+ func get_display_name() -> String:[m
+[36m@@ -109,12 +109,11 @@[m [mfunc get_display_name() -> String:[m
+ 	if chain_spell_component == null:[m
+ 		return display_name[m
+ 	[m
+[31m-	var spell_display_name: String = chain_spell_component.get_display_name_override()[m
+[31m-	[m
+[31m-	if spell_display_name.is_empty():[m
+[32m+[m	[32mvar overridden_spell: Item = chain_spell_component.get_spell()[m
+[32m+[m	[32mif overridden_spell == null:[m
+ 		return display_name[m
+ 	[m
+[31m-	return spell_display_name[m
+[32m+[m	[32mreturn overridden_spell.display_name[m
+ [m
+ #region[m
+ [m
+[36m@@ -135,7 +134,7 @@[m [mfunc _handle_spell_component(p_spell_component: SpellComponent) -> void:[m
+ 	var cooldown_usec := int(cooldown * 1_000_000)[m
+ [m
+ 	if is_on_cooldown(cooldown_usec):[m
+[31m-		_logger.debug([m
+[32m+[m		[32m_logger.info([m
+ 			"Spell '{}' is still on cooldown for {}.", [m
+ 			[[m
+ 				get_display_name(), [m
+[36m@@ -164,7 +163,7 @@[m [mfunc _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)[m
+ 	var cooldown_usec := int(spell.cooldown * 1_000_000)[m
+ [m
+ 	if is_on_cooldown(cooldown_usec):[m
+[31m-		_logger.debug([m
+[32m+[m		[32m_logger.info([m
+ 			"Spell '{}' is still on cooldown for {}.", [m
+ 			[[m
+ 				spell.get_display_name(), [m
+[36m@@ -175,7 +174,7 @@[m [mfunc _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)[m
+ 	var result := p_chain_spell_component.cast()[m
+ 	match result:[m
+ 		SpellComponent.Result.Casted:[m
+[31m-			_logger.debug("Casting spell '{}'.", [spell.get_display_name()])[m
+[32m+[m			[32m_logger.info("Casting spell '{}'.", [spell.get_display_name()])[m
+ 			_complete_cast(p_chain_spell_component)[m
+ 		SpellComponent.Result.Next:[m
+ 			var spell_comp: SpellComponent = spell.get_component(SpellComponent)[m
+[36m@@ -244,7 +243,8 @@[m [mfunc _get_property_list() -> Array[Dictionary]:[m
+ 		"name": &"_components",[m
+ 		"type": TYPE_DICTIONARY,[m
+ 		"usage": PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_SCRIPT_VARIABLE[m
+[31m-	}][m
+[32m+[m	[32m}[m
+[32m+[m	[32m][m
+ [m
+ [m
+ func _validate_property(property: Dictionary) -> void:[m
+[1mdiff --git a/scripts/inventory/item_stack.gd b/scripts/inventory/item_stack.gd[m
+[1mindex 36480bf..14efeb1 100644[m
+[1m--- a/scripts/inventory/item_stack.gd[m
+[1m+++ b/scripts/inventory/item_stack.gd[m
+[36m@@ -5,7 +5,7 @@[m [mextends Resource[m
+ # (item == null) => (quantity == 0)[m
+ # (not item == null) => (quantity > 0)[m
+ [m
+[31m-@export var item: Item:[m
+[32m+[m[32m@export var item: Item = null:[m
+ 	set = set_item[m
+ [m
+ @export var quantity: int = 0:[m
+[1mdiff --git a/scripts/inventory/spell.gd b/scripts/inventory/spell.gd[m
+[1mdeleted file mode 100644[m
+[1mindex 3e023b8..0000000[m
+[1m--- a/scripts/inventory/spell.gd[m
+[1m+++ /dev/null[m
+[36m@@ -1,12 +0,0 @@[m
+[31m-class_name Spell[m
+[31m-extends Resource[m
+[31m-[m
+[31m-@export var name: String[m
+[31m-@export var effects: EffectComponent[m
+[31m-@export var icon: Texture2D[m
+[31m-@export var range_: int[m
+[31m-@export var gcd: float[m
+[31m-[m
+[31m-# TODO: [m
+[31m-#	- cost depending on a resource (mana, rage, etc.) component based?[m
+[31m-#	- flags[m
+[1mdiff --git a/scripts/inventory/spell.gd.uid b/scripts/inventory/spell.gd.uid[m
+[1mdeleted file mode 100644[m
+[1mindex a57d782..0000000[m
+[1m--- a/scripts/inventory/spell.gd.uid[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-uid://c511e5ryyhof7[m
+[1mdiff --git a/test_level.tscn b/test_level.tscn[m
+[1mindex fa82b08..f1eeb26 100644[m
+[1m--- a/test_level.tscn[m
+[1m+++ b/test_level.tscn[m
+[36m@@ -35,6 +35,7 @@[m [menvironment = SubResource("Environment_idvik")[m
+ [m
+ [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."][m
+ transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 8, 0)[m
+[32m+[m[32mlight_color = Color(0.350977, 0.350977, 0.350977, 1)[m
+ shadow_enabled = true[m
+ [m
+ [node name="Floor" type="MeshInstance3D" parent="."][m
+[36m@@ -50,60 +51,60 @@[m [mtransform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop5" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -10.522, 2.43134, 0)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop8" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.42697, 2.43134, 0)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop2" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, 7.90601)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop6" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -10.9803, 2.43134, 7.90601)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop7" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.29876, 2.43134, 7.90601)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop3" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, -7.72012)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop4" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -9.91228, 2.43134, -7.72012)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+ [m
+ [node name="Prop9" type="MeshInstance3D" parent="."][m
+ transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.02344, 2.43134, -7.72012)[m
+ material_override = SubResource("StandardMaterial3D_4ptq8")[m
+ mesh = SubResource("BoxMesh_ukyni")[m
+ script = ExtResource("1_xtdv1")[m
+[31m-metadata/_custom_type_script = ExtResource("1_xtdv1")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dwktvik6f4wrn"[m
+[1mdiff --git a/ui/fps_label.gd b/ui/fps_label.gd[m
+[1mindex 15fcd6a..9e61e16 100644[m
+[1m--- a/ui/fps_label.gd[m
+[1m+++ b/ui/fps_label.gd[m
+[36m@@ -1,6 +1,5 @@[m
+ extends Label[m
+ [m
+ [m
+[31m-#  Called every frame. 'delta' is the elapsed time since the previous frame.[m
+[31m-func _process(_delta: float) -> void:[m
+[31m-	text = str(Engine.get_frames_per_second())[m
+[32m+[m[32mfunc _physics_process(_delta: float) -> void:[m
+[32m+[m	[32mtext = "FPS: " + str(Engine.get_frames_per_second())[m
+[1mdiff --git a/ui/hotbar/hotbar_view.gd b/ui/hotbar/hotbar_view.gd[m
+[1mindex b9ea048..9cfe1d6 100644[m
+[1m--- a/ui/hotbar/hotbar_view.gd[m
+[1m+++ b/ui/hotbar/hotbar_view.gd[m
+[36m@@ -1,9 +1,49 @@[m
+ class_name HotbarView[m
+ extends ItemView[m
+ [m
+[32m+[m[32menum Type {[m
+[32m+[m	[32mMain,[m
+[32m+[m	[32mAux1[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32menum Modifiers {[m
+[32m+[m	[32mNone = 0,[m
+[32m+[m	[32mShift = (1 << 0),[m
+[32m+[m	[32mAlt = (1 << 1),[m
+[32m+[m	[32mCtrl = (1 << 2),[m
+[32m+[m	[32mMeta = (1 << 3)[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@export[m
+[32m+[m[32mvar hotbar_type: Type = Type.Main[m
+[32m+[m
+[32m+[m[32m@export_flags("Shift:1", "Alt:2", "Ctrl:4", "Meta:16")[m
+[32m+[m[32mvar modifiers: int = 0[m
+[32m+[m
+[32m+[m[32mconst PREFIX: String = "hotbar_"[m
+[32m+[m[32mconst MAX_HOTBAR_SIZE: int = 9[m
+[32m+[m
+[32m+[m[32mconst PRIMARY_KEYS: Array[Key] = [[m
+[32m+[m	[32mKEY_1, KEY_2, KEY_3,[m[41m [m
+[32m+[m	[32mKEY_4, KEY_5, KEY_Q,[m[41m [m
+[32m+[m	[32mKEY_E, KEY_R, KEY_F[m
+[32m+[m[32m][m
+[32m+[m
+[32m+[m[32mfunc _init() -> void:[m
+[32m+[m	[32massert(PRIMARY_KEYS.size() <= MAX_HOTBAR_SIZE)[m
+[32m+[m
+ [m
+ func _ready() -> void:[m
+[31m-	inventory.items_changed.connect(on_items_changed)[m
+[32m+[m	[32mif inventory:[m
+[32m+[m		[32minventory.items_changed.connect(on_items_changed)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mfunc set_data(p_inventory: Inventory) -> void:[m
+[32m+[m	[32m# Special case where await is used:[m
+[32m+[m	[32m# necessary so that the container has it's children init-ed.[m
+[32m+[m	[32mawait super.set_data(p_inventory)[m
+[32m+[m[41m	[m
+[32m+[m	[32m_set_default_keybinds()[m
+ [m
+ [m
+ func on_items_changed() -> void:[m
+[36m@@ -13,11 +53,45 @@[m [mfunc on_items_changed() -> void:[m
+ 		_setup_item_used_signaling(item_stack, slot)[m
+ 		index += 1[m
+ [m
+[32m+[m
+ func _unhandled_key_input(event: InputEvent) -> void:[m
+[31m-	for i: int in mini(4, container.get_child_count()):[m
+[31m-		if event.is_action_pressed("hotbar_%s" % (i + 1)):[m
+[32m+[m	[32mfor i: int in container.get_child_count():[m
+[32m+[m		[32mif event.is_action_pressed((PREFIX + _get_hotbar_name()) + ("_%s" % i)):[m
+ 			var item_stack: ItemStack = inventory.get_item_stack(i)[m
+ 			if item_stack.item == null:[m
+ 				continue[m
+ 			[m
+ 			item_stack.item.use()[m
+[32m+[m			[32mbreak[m
+[32m+[m
+[32m+[m[32m# TODO: Implement NFInputMap singleton which will handle registering of actions[m
+[32m+[m[32m#       and events and key collisions[m
+[32m+[m[32mfunc _set_default_keybinds() -> void:[m
+[32m+[m	[32mvar action: String[m
+[32m+[m	[32mfor i: int in container.get_child_count():[m
+[32m+[m		[32maction = (PREFIX + _get_hotbar_name()) + ("_%s" % i)[m
+[32m+[m		[32mif not InputMap.has_action(action):[m
+[32m+[m			[32mInputMap.add_action(action)[m
+[32m+[m			[32mLogger.input.info("Registered action '{}' for hotbar '{}'", [action, _get_hotbar_name()])[m
+[32m+[m[41m		[m
+[32m+[m		[32mvar action_events: Array[InputEvent] = InputMap.action_get_events(action)[m
+[32m+[m[41m		[m
+[32m+[m		[32mif action_events.size() > 0:[m
+[32m+[m			[32mcontinue[m
+[32m+[m[41m		[m
+[32m+[m		[32mvar event := InputEventKey.new()[m
+[32m+[m		[32mevent.keycode = _as_key(PRIMARY_KEYS[i])[m
+[32m+[m		[32mevent.shift_pressed = modifiers & (1 << 0)[m
+[32m+[m		[32mevent.alt_pressed = modifiers & (1 << 1)[m
+[32m+[m		[32mevent.ctrl_pressed = modifiers & (1 << 2)[m
+[32m+[m		[32mevent.meta_pressed = modifiers & (1 << 3)[m
+[32m+[m		[32mInputMap.action_add_event(action, event)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mfunc _get_hotbar_name() -> String:[m
+[32m+[m	[32mreturn str(Type.keys()[hotbar_type]).to_lower()[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# Funny little helper function to stop the parser from complaining :)[m
+[32m+[m[32mfunc _as_key(p_index: Key) -> Key:[m
+[32m+[m	[32mreturn p_index[m
+[1mdiff --git a/ui/hotbar/hotbar_view.tscn b/ui/hotbar/hotbar_view.tscn[m
+[1mindex 1e0f277..662a12a 100644[m
+[1m--- a/ui/hotbar/hotbar_view.tscn[m
+[1m+++ b/ui/hotbar/hotbar_view.tscn[m
+[36m@@ -4,7 +4,6 @@[m
+ [ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://ui/item/item_slot.tscn" id="2_ncn4q"][m
+ [m
+ [node name="Hotbar" type="PanelContainer" node_paths=PackedStringArray("container")][m
+[31m-z_index = -1[m
+ script = ExtResource("1_0uvli")[m
+ container = NodePath("HBoxContainer")[m
+ slot_scene = ExtResource("2_ncn4q")[m
+[1mdiff --git a/ui/inventory/inventory_slot.gd b/ui/inventory/inventory_slot.gd[m
+[1mindex a443119..ca7c776 100644[m
+[1m--- a/ui/inventory/inventory_slot.gd[m
+[1m+++ b/ui/inventory/inventory_slot.gd[m
+[36m@@ -12,32 +12,44 @@[m [msignal unhovered()[m
+ [m
+ func _gui_input(p_event: InputEvent) -> void:[m
+ 	if p_event is InputEventMouseButton and p_event.is_released():[m
+[31m-		#get_viewport().set_input_as_handled()[m
+ 		match p_event.button_index:[m
+ 			MOUSE_BUTTON_LEFT:[m
+ 				left_pressed.emit()[m
+ 			MOUSE_BUTTON_RIGHT:[m
+ 				right_pressed.emit()[m
+ [m
+[32m+[m
+ func set_on_cooldown(p_cooldown_in_usec: int) -> void:[m
+[31m-	var cooldown: Cooldown = icon_holder.get_node("Cooldown")[m
+[32m+[m	[32mvar cooldown: Cooldown = _get_cooldown_display()[m
+ 	if cooldown == null:[m
+[31m-		Logger.core.critical("Slot does not have a cooldown node attached.")[m
+ 		return[m
+ 	[m
+ 	cooldown.start(p_cooldown_in_usec)[m
+ [m
+[32m+[m
+ func reset_cooldown() -> void:[m
+[31m-	var cooldown: Cooldown = icon_holder.get_node("Cooldown")[m
+[32m+[m	[32mvar cooldown: Cooldown = _get_cooldown_display()[m
+ 	if cooldown == null:[m
+[31m-		Logger.core.critical("Slot does not have a cooldown node attached.")[m
+ 		return[m
+ 	[m
+ 	cooldown.reset()[m
+ [m
+[31m-func update(p_item_stack: ItemStack) -> void:[m
+[32m+[m
+[32m+[m[32mfunc _get_cooldown_display() -> Cooldown:[m
+[32m+[m	[32mvar cooldown: Cooldown = icon_holder.get_node_or_null("Cooldown")[m
+[32m+[m	[32mif cooldown == null:[m
+[32m+[m		[32mLogger.ui.critical([m
+[32m+[m			[32m"Slot id='{}', index='{}' does not have a cooldown node attached.",[m
+[32m+[m			[32m[get_instance_id(), get_index()][m
+[32m+[m		[32m)[m
+[32m+[m		[32mreturn null[m
+[32m+[m[41m	[m
+[32m+[m	[32mreturn cooldown[m
+[32m+[m
+[32m+[m[32mfunc update(_p_item_stack: ItemStack) -> void:[m
+ 	assert(false, "Do not call this method.")[m
+ [m
+[32m+[m
+ func select() -> void:[m
+ 	modulate = Color(1.0, 1.0, 1.0, 0.5)[m
+ [m
+[1mdiff --git a/ui/inventory/inventory_view.gd b/ui/inventory/inventory_view.gd[m
+[1mindex dcc0557..8acef34 100644[m
+[1m--- a/ui/inventory/inventory_view.gd[m
+[1m+++ b/ui/inventory/inventory_view.gd[m
+[36m@@ -6,7 +6,6 @@[m [msignal slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bool[m
+ signal slot_hovered(p_slot: InventorySlot)[m
+ signal slot_unhovered()[m
+ [m
+[31m-#var _grid: GridContainer = $Grid[m
+ @export[m
+ var container: Container[m
+ [m
+[36m@@ -25,17 +24,20 @@[m [mfunc set_data(p_inventory: Inventory) -> void:[m
+ 	if not is_node_ready():[m
+ 		await ready[m
+ 	[m
+[31m-	#_grid.columns = p_inventory.columns[m
+ 	_setup_container()[m
+ 	[m
+ 	resize()[m
+ 	[m
+ 	# shrink container to tightly fit all of the slots[m
+[32m+[m	[32m# TODO: figure out why godot is complaining about this.[m[41m [m
+[32m+[m	[32m#       Might have sth to do with await above[m
+ 	size = custom_minimum_size[m
+[32m+[m	[32m#set_deferred("size", custom_minimum_size)[m
+ [m
+ [m
+ func _setup_container() -> void:[m
+[31m-	pass[m
+[32m+[m	[32massert(false, "Do not call this method.")[m
+[32m+[m
+ [m
+ func resize() -> void:[m
+ 	var old_size: int = container.get_child_count()[m
+[36m@@ -81,9 +83,9 @@[m [mfunc _setup_item_used_signaling(p_item_stack: ItemStack, p_slot: InventorySlot)[m
+ 			on_item_used(remaining_cooldown, p_item_stack, p_slot)[m
+ [m
+ [m
+[31m-func on_item_used(l_cooldown_in_usec: int, p_item_stack: ItemStack, p_slot: InventorySlot) -> void:[m
+[32m+[m[32mfunc on_item_used(p_cooldown_in_usec: int, p_item_stack: ItemStack, p_slot: InventorySlot) -> void:[m
+ 	p_slot.update(p_item_stack)[m
+[31m-	p_slot.set_on_cooldown(l_cooldown_in_usec)[m
+[32m+[m	[32mp_slot.set_on_cooldown(p_cooldown_in_usec)[m
+ [m
+ [m
+ func get_slot(p_index: int) -> InventorySlot:[m
+[1mdiff --git a/ui/item/item_slot.gd b/ui/item/item_slot.gd[m
+[1mindex 61fcf29..ad92234 100644[m
+[1m--- a/ui/item/item_slot.gd[m
+[1m+++ b/ui/item/item_slot.gd[m
+[36m@@ -5,18 +5,6 @@[m [mextends InventorySlot[m
+ @export var border_holder: Panel[m
+ [m
+ [m
+[31m-func _set_border_color(p_color: Color) -> void:[m
+[31m-	if border_holder == null:[m
+[31m-		return[m
+[31m-	[m
+[31m-	var stylebox: StyleBoxFlat = border_holder.get_theme_stylebox("panel")[m
+[31m-	[m
+[31m-	if stylebox == null:[m
+[31m-		return[m
+[31m-	[m
+[31m-	stylebox.border_color = p_color[m
+[31m-[m
+[31m-[m
+ func update(p_item_stack: ItemStack) -> void:[m
+ 	if p_item_stack == null or p_item_stack.item == null:[m
+ 		_set_border_color(Color.BLACK)[m
+[36m@@ -32,3 +20,15 @@[m [mfunc update(p_item_stack: ItemStack) -> void:[m
+ 		text_holder.text = ""[m
+ 	else:[m
+ 		text_holder.text = str(p_item_stack.quantity)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mfunc _set_border_color(p_color: Color) -> void:[m
+[32m+[m	[32mif border_holder == null:[m
+[32m+[m		[32mreturn[m
+[32m+[m[41m	[m
+[32m+[m	[32mvar stylebox: StyleBoxFlat = border_holder.get_theme_stylebox("panel")[m
+[32m+[m[41m	[m
+[32m+[m	[32mif stylebox == null:[m
+[32m+[m		[32mreturn[m
+[32m+[m[41m	[m
+[32m+[m	[32mstylebox.border_color = p_color[m
+[1mdiff --git a/ui/item/item_slot.tscn b/ui/item/item_slot.tscn[m
+[1mindex 7757e45..b275599 100644[m
+[1m--- a/ui/item/item_slot.tscn[m
+[1m+++ b/ui/item/item_slot.tscn[m
+[36m@@ -68,10 +68,12 @@[m [manchor_right = 1.0[m
+ anchor_bottom = 1.0[m
+ grow_horizontal = 2[m
+ grow_vertical = 2[m
+[32m+[m[32mmouse_filter = 2[m
+ expand_mode = 1[m
+ [m
+ [node name="Cooldown" parent="TextureRect" instance=ExtResource("2_mhayv")][m
+ layout_mode = 1[m
+[32m+[m[32mmouse_filter = 2[m
+ [m
+ [node name="Border" type="Panel" parent="."][m
+ layout_mode = 1[m
+[1mdiff --git a/ui/item/item_view.gd b/ui/item/item_view.gd[m
+[1mindex 6e54722..4a18f4d 100644[m
+[1m--- a/ui/item/item_view.gd[m
+[1m+++ b/ui/item/item_view.gd[m
+[36m@@ -4,5 +4,6 @@[m [mextends InventoryView[m
+ [m
+ [m
+ func _setup_container() -> void:[m
+[31m-	if container is GridContainer:[m
+[31m-		(container as GridContainer).columns = inventory.columns[m
+[32m+[m	[32mvar grid_container := container as GridContainer[m
+[32m+[m	[32mif not grid_container == null:[m
+[32m+[m		[32mgrid_container.columns = inventory.columns[m
+[1mdiff --git a/ui/item/item_view.tscn b/ui/item/item_view.tscn[m
+[1mindex 3151827..153d963 100644[m
+[1m--- a/ui/item/item_view.tscn[m
+[1m+++ b/ui/item/item_view.tscn[m
+[36m@@ -13,7 +13,6 @@[m [mtexture_margin_bottom = 36.0[m
+ modulate_color = Color(0.054902, 0.054902, 0.054902, 0.823529)[m
+ [m
+ [node name="ItemView" type="PanelContainer" node_paths=PackedStringArray("container")][m
+[31m-z_index = -1[m
+ offset_right = 164.0[m
+ offset_bottom = 104.0[m
+ theme_override_styles/panel = SubResource("StyleBoxTexture_vl0br")[m
+[1mdiff --git a/ui/spell/spell_slot.tscn b/ui/spell/spell_slot.tscn[m
+[1mindex cc08f7d..d24c57c 100644[m
+[1m--- a/ui/spell/spell_slot.tscn[m
+[1m+++ b/ui/spell/spell_slot.tscn[m
+[36m@@ -65,6 +65,7 @@[m [mexpand_mode = 1[m
+ [node name="Cooldown" parent="TextureRect" instance=ExtResource("2_6sgnv")][m
+ z_index = 2[m
+ layout_mode = 1[m
+[32m+[m[32mmouse_filter = 2[m
+ [m
+ [node name="Label" type="Label" parent="."][m
+ visible = false[m
+[1mdiff --git a/ui/spell/spell_view.gd b/ui/spell/spell_view.gd[m
+[1mindex a89fc12..b8226da 100644[m
+[1m--- a/ui/spell/spell_view.gd[m
+[1m+++ b/ui/spell/spell_view.gd[m
+[36m@@ -1,28 +1,5 @@[m
+ class_name SpellView[m
+ extends InventoryView[m
+ [m
+[31m-[m
+[31m-[m
+[31m-#func _ready() -> void:[m
+[31m-	#var spell_slot: SpellSlot = AssetDB.SpellSlotScene.instantiate()[m
+[31m-	#spell_slot.right_pressed.connect(_on_slot_right_pressed.bind(spell_slot))[m
+[31m-	#var item_stack: ItemStack = inv.get_item_stack(0)[m
+[31m-	#if not item_stack.item == null:[m
+[31m-		#item_stack.item.used.connect(func on_used(cooldown_in_usec: int) -> void:[m
+[31m-			##spell_slot.update(item_stack)[m
+[31m-			#spell_slot.set_on_cooldown(cooldown_in_usec)[m
+[31m-		#)[m
+[31m-	#spell_slot.update(inv.get_item_stack(0))[m
+[31m-	#%List.add_child(spell_slot)[m
+[31m-#[m
+[31m-#func _on_slot_right_pressed(p_slot: InventorySlot) -> void:[m
+[31m-	#var index: int = p_slot.get_index()[m
+[31m-	#[m
+[31m-	#var item_stack: ItemStack = inv.get_item_stack(index)[m
+[31m-	#var spell: Item = item_stack.item[m
+[31m-	#if spell == null:[m
+[31m-		#print("Spell was null")[m
+[31m-		#return[m
+[31m-	#[m
+[31m-	#spell.use()[m
+[31m-	#p_slot.update(item_stack)[m
+[32m+[m[32mfunc _setup_container() -> void:[m
+[32m+[m	[32mpass[m
+[1mdiff --git a/ui/spell/spell_view.tscn b/ui/spell/spell_view.tscn[m
+[1mindex 4849c12..a93ece8 100644[m
+[1m--- a/ui/spell/spell_view.tscn[m
+[1m+++ b/ui/spell/spell_view.tscn[m
+[36m@@ -4,7 +4,6 @@[m
+ [ext_resource type="PackedScene" uid="uid://ng8yjyxxl7rl" path="res://ui/spell/spell_slot.tscn" id="2_ybdat"][m
+ [m
+ [node name="SpellBook" type="PanelContainer" node_paths=PackedStringArray("container")][m
+[31m-z_index = -1[m
+ anchors_preset = 15[m
+ anchor_right = 1.0[m
+ anchor_bottom = 1.0[m
+[1mdiff --git a/ui/tooltip.gd b/ui/tooltip.gd[m
+[1mindex bdcb20c..9197915 100644[m
+[1m--- a/ui/tooltip.gd[m
+[1m+++ b/ui/tooltip.gd[m
+[36m@@ -4,7 +4,7 @@[m [mextends PanelContainer[m
+ const s_offset := Vector2(20, 0)[m
+ [m
+ [m
+[31m-func _process(delta: float) -> void:[m
+[32m+[m[32mfunc _process(_delta: float) -> void:[m
+ 	if not visible:[m
+ 		return[m
+ 	[m
+[1mdiff --git a/ui/ui.gd b/ui/ui.gd[m
+[1mindex 9b1ecf7..25a080e 100644[m
+[1m--- a/ui/ui.gd[m
+[1m+++ b/ui/ui.gd[m
+[36m@@ -9,4 +9,5 @@[m [mfunc _gui_input(p_event: InputEvent) -> void:[m
+ 		var mouse_event := p_event as InputEventMouseButton[m
+ 		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.is_released():[m
+ 			if inventory_manager._is_selected() and inventory_manager.selected_inventory_view.inventory.editable:[m
+[32m+[m				[32m# TODO: prompt for deletion with a confirmation dialog[m[41m [m
+ 				inventory_manager.delete_selected()[m
+[1mdiff --git a/ui/ui.tscn b/ui/ui.tscn[m
+[1mindex baddb7c..2888fcf 100644[m
+[1m--- a/ui/ui.tscn[m
+[1m+++ b/ui/ui.tscn[m
+[36m@@ -64,11 +64,13 @@[m [mmetadata/_custom_type_script = "uid://w4m0yaqnaeq1"[m
+ [m
+ [node name="Tooltip" parent="InventoryManager" instance=ExtResource("6_jmxi2")][m
+ visible = false[m
+[32m+[m[32mtop_level = true[m
+ layout_mode = 0[m
+ mouse_filter = 1[m
+ [m
+ [node name="DragSlot" parent="InventoryManager" instance=ExtResource("7_kjw2a")][m
+ visible = false[m
+[32m+[m[32mtop_level = true[m
+ layout_mode = 0[m
+ offset_right = 64.0[m
+ offset_bottom = 64.0[m
+[1mdiff --git a/ui/ui_element.gd b/ui/ui_element.gd[m
+[1mindex 2a0e054..b581af9 100644[m
+[1m--- a/ui/ui_element.gd[m
+[1m+++ b/ui/ui_element.gd[m
+[36m@@ -4,11 +4,13 @@[m [mextends PanelContainer[m
+ var _drag_enabled: bool = false[m
+ [m
+ func _gui_input(p_event: InputEvent) -> void:[m
+[31m-	if p_event is InputEventMouseButton:[m
+[31m-		if p_event.button_index == MOUSE_BUTTON_LEFT:[m
+[31m-			_drag_enabled = p_event.is_pressed()[m
+[31m-		[m
+[31m-	elif p_event is InputEventMouseMotion and _drag_enabled:[m
+[32m+[m	[32mvar mouse_button_event := p_event as InputEventMouseButton[m
+[32m+[m	[32mif not mouse_button_event == null:[m
+[32m+[m		[32mif mouse_button_event.button_index == MOUSE_BUTTON_LEFT:[m
+[32m+[m			[32m_drag_enabled = mouse_button_event.is_pressed()[m
+[32m+[m[41m	[m
+[32m+[m	[32mvar mouse_motion_event := p_event as InputEventMouseMotion[m
+[32m+[m	[32mif not mouse_motion_event == null and _drag_enabled:[m
+ 		position += p_event.relative[m
+ 		position = position.clamp([m
+ 			Vector2.ZERO,[m
+[1mdiff --git a/world/character/camera.gd b/world/character/camera.gd[m
+[1mdeleted file mode 100644[m
+[1mindex 5cde94a..0000000[m
+[1m--- a/world/character/camera.gd[m
+[1m+++ /dev/null[m
+[36m@@ -1,60 +0,0 @@[m
+[31m-class_name CameraArm extends Node3D[m
+[31m-#[m
+[31m-#@export_subgroup("Spring", "spring")[m
+[31m-#@export var spring_max_length: float = 10.0[m
+[31m-#@export var spring_min_length: float = 1.0[m
+[31m-#@export var spring_step: float = 8.0[m
+[31m-#[m
+[31m-#@export_range(0.1, 5, 0.1) var sensitivity: float = 3[m
+[31m-#[m
+[31m-#@onready var _spring: SpringArm3D = $Arm[m
+[31m-#@onready var _player: PlayerCharacter = get_parent().get_parent_node_3d()[m
+[31m-#[m
+[31m-#var _free_look_enabled: bool = false[m
+[31m-#var _turn_enabled: bool = false[m
+[31m-#var _last_position := Vector2.INF[m
+[31m-#[m
+[31m-#[m
+[31m-#func _unhandled_input(event: InputEvent) -> void:[m
+[31m-	#if event is InputEventMouseButton:[m
+[31m-		#if event.is_action("camera_zoom_in"):[m
+[31m-			#_zoom(-spring_step)[m
+[31m-		#elif event.is_action("camera_zoom_out"):[m
+[31m-			#_zoom(spring_step)[m
+[31m-		#[m
+[31m-		#if event.is_action("camera_free_look"):[m
+[31m-			#_free_look_enabled = event.pressed[m
+[31m-		#elif event.is_action("camera_turn"):[m
+[31m-			#_turn_enabled = event.pressed[m
+[31m-		#if _turn_enabled:[m
+[31m-			#_align_model_with_camera()[m
+[31m-		#[m
+[31m-		#if _free_look_enabled and not _turn_enabled or not _free_look_enabled and _turn_enabled:[m
+[31m-			#_last_position = get_viewport().get_mouse_position()[m
+[31m-			#DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_CAPTURED)[m
+[31m-		#elif not _free_look_enabled and not _turn_enabled and not _last_position == Vector2.INF:[m
+[31m-			#DisplayServer.mouse_set_mode(DisplayServer.MOUSE_MODE_VISIBLE)[m
+[31m-			#get_viewport().warp_mouse(_last_position)[m
+[31m-			#_last_position = Vector2.INF[m
+[31m-	#elif event is InputEventMouseMotion:[m
+[31m-		#if _turn_enabled:[m
+[31m-			#_align_model_with_camera()[m
+[31m-			#_player.model.rotate_y(-event.relative.x * sensitivity * 0.001)[m
+[31m-			#[m
+[31m-		#if _free_look_enabled or _turn_enabled:[m
+[31m-			#rotate_y(-event.relative.x * sensitivity * 0.001)[m
+[31m-			#_spring.rotate_x(-event.relative.y * sensitivity * 0.001)[m
+[31m-			#_spring.rotation.x = clampf(_spring.rotation.x, -PI / 2, PI / 4)[m
+[31m-#[m
+[31m-#func _zoom(p_value: float) -> void:[m
+[31m-	#_spring.spring_length = lerp([m
+[31m-		#_spring.spring_length,[m
+[31m-		#_spring.spring_length + p_value, 0.1[m
+[31m-	#)[m
+[31m-	 #[m
+[31m-	#_spring.spring_length = clampf([m
+[31m-		#_spring.spring_length,[m
+[31m-		#spring_min_length,[m
+[31m-		#spring_max_length[m
+[31m-	#)[m
+[31m-#[m
+[1mdiff --git a/world/character/camera.gd.uid b/world/character/camera.gd.uid[m
+[1mdeleted file mode 100644[m
+[1mindex fec7268..0000000[m
+[1m--- a/world/character/camera.gd.uid[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-uid://3c6pdeawufd8[m
+[1mdiff --git a/world/character/camera_controller.gd b/world/character/camera_controller.gd[m
+[1mindex 0019a27..2b15273 100644[m
+[1m--- a/world/character/camera_controller.gd[m
+[1m+++ b/world/character/camera_controller.gd[m
+[36m@@ -16,8 +16,19 @@[m [mvar _free_look_enabled: bool = false[m
+ var _turn_enabled: bool = false[m
+ var _last_position := Vector2.INF[m
+ [m
+[32m+[m[32m# FIXME: when holding right clicking and scrolling at the same time, the camera[m
+[32m+[m[32m#        uncontrollably jumps around.[m
+[32m+[m[32m# TODO: reimplement this script from the ground up[m
+[32m+[m[32m# TODO: don't put Debug.visible like this. Possible solution:[m
+[32m+[m[32m#       - make another global class that will always be in a release build[m
+[32m+[m[32m#         with `process_input` flag[m
+[32m+[m[32m# TODO: implement MouseModeManager state machine. It must have clear states, at[m
+[32m+[m[32m#       least a default one[m[41m [m
+ [m
+ func _unhandled_input(event: InputEvent) -> void:[m
+[32m+[m	[32mif Debug.visible:[m
+[32m+[m		[32mreturn[m
+[32m+[m[41m	[m
+ 	if event is InputEventMouseButton:[m
+ 		_handle_mouse_button(event)[m
+ 	elif event is InputEventMouseMotion:[m
+[36m@@ -29,7 +40,7 @@[m [mfunc _handle_mouse_button(event: InputEventMouseButton) -> void:[m
+ 		_zoom(-spring_step)[m
+ 	elif event.is_action("camera_zoom_out"):[m
+ 		_zoom(spring_step)[m
+[31m-[m
+[32m+[m[41m	[m
+ 	# Prevent camera turn when dragging InventorySlot[m
+ 	if DisplayServer.mouse_get_mode() == DisplayServer.MOUSE_MODE_HIDDEN:[m
+ 		return[m
+[36m@@ -45,7 +56,6 @@[m [mfunc _handle_mouse_button(event: InputEventMouseButton) -> void:[m
+ 	[m
+ 	_update_mouse_mode()[m
+ [m
+[31m-[m
+ func _update_mouse_mode() -> void:[m
+ 	if not _free_look_enabled == _turn_enabled:[m
+ 		# Prevent warping when the mode didn't change[m
+[1mdiff --git a/world/character/character.tscn b/world/character/character.tscn[m
+[1mindex b9ebb2b..6db1ffa 100644[m
+[1m--- a/world/character/character.tscn[m
+[1m+++ b/world/character/character.tscn[m
+[36m@@ -1,8 +1,7 @@[m
+[31m-[gd_scene load_steps=10 format=3 uid="uid://iivb1yj1wg2a"][m
+[32m+[m[32m[gd_scene load_steps=9 format=3 uid="uid://iivb1yj1wg2a"][m
+ [m
+ [ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://world/character/character.gd" id="1_e5tqa"][m
+ [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"][m
+[31m-[ext_resource type="Script" uid="uid://3c6pdeawufd8" path="res://world/character/camera.gd" id="3_jrmkq"][m
+ [ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"][m
+ [ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"][m
+ [ext_resource type="Script" uid="uid://dg7ry0b3pmge8" path="res://world/character/combat_system.gd" id="6_8hqne"][m
+[36m@@ -53,7 +52,6 @@[m [mtransform = Transform3D(-0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2,[m
+ [m
+ [node name="Pivot" type="Node3D" parent="Body"][m
+ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.426638, 0)[m
+[31m-script = ExtResource("3_jrmkq")[m
+ [m
+ [node name="Arm" type="SpringArm3D" parent="Body/Pivot"][m
+ spring_length = 5.0[m
+[36m@@ -74,4 +72,4 @@[m [mmodel = NodePath("../Body/Model")[m
+ [node name="CombatSystem" type="Node" parent="."][m
+ script = ExtResource("6_8hqne")[m
+ attributes = SubResource("Resource_uy0re")[m
+[31m-metadata/_custom_type_script = ExtResource("6_8hqne")[m
+[32m+[m[32mmetadata/_custom_type_script = "uid://dg7ry0b3pmge8"[m
+[1mdiff --git a/world/character/combat_system.gd b/world/character/combat_system.gd[m
+[1mindex 57bf061..d6f4f2e 100644[m
+[1m--- a/world/character/combat_system.gd[m
+[1m+++ b/world/character/combat_system.gd[m
+[36m@@ -1,6 +1,8 @@[m
+ class_name CombatSystem[m
+ extends Node[m
+ [m
+[32m+[m[32msignal on_death()[m
+[32m+[m
+ enum DamageType {[m
+ 	Physical,[m
+ 	Shadow,[m
+[36m@@ -13,6 +15,7 @@[m [mvar attributes: Attributes[m
+ var current_health: int[m
+ var current_mana: int[m
+ [m
+[32m+[m[32mvar _logger := Logger.combat[m
+ [m
+ func _ready() -> void:[m
+ 	current_health = attributes.get_max_health()[m
+[36m@@ -59,7 +62,7 @@[m [mfunc damage_shadow(p_effect: DamageEffect, p_attacker: Attributes) -> void:[m
+ func _damage(p_value: float) -> void:[m
+ 	var test_health := int(current_health - p_value)[m
+ 	if test_health <= 0:[m
+[31m-		print("DEAD")[m
+[32m+[m		[32mon_death.emit()[m
+ 		return[m
+ 	current_health = test_health[m
+ [m
+[36m@@ -71,7 +74,7 @@[m [mfunc _handle_damage_effect(p_effect: DamageEffect, p_attacker: Attributes) -> vo[m
+ 		DamageType.Shadow:[m
+ 			damage_shadow(p_effect, p_attacker)[m
+ 		_:[m
+[31m-			Logger.cb.error("Unhandled \"{}\" case of DamageType enum.", [[m
+[32m+[m			[32m_logger.error("Unhandled '{}' case of DamageType enum.", [[m
+ 				DamageType.keys()[p_effect.damage_type][m
+ 			])[m
+ [m
+[36m@@ -80,12 +83,12 @@[m [mfunc _apply_effect(p_effect: Effect, p_attacker: Attributes) -> void:[m
+ 	match p_effect:[m
+ 		var damage_effect when damage_effect is DamageEffect:[m
+ 			_handle_damage_effect(damage_effect, p_attacker)[m
+[31m-			print("Damage effect: %d %s" % [p_effect.value, p_effect.get_damage_name()])[m
+[32m+[m			[32m_logger.info("Damage effect: %d %s", [p_effect.value, p_effect.get_damage_name()])[m
+ 		var modifier_effect when modifier_effect is ModifierEffect:[m
+ 			attributes.apply(p_effect)[m
+[31m-			print("Applying effect: %d %s" % [p_effect.value, p_effect.get_modifier()])[m
+[32m+[m			[32m_logger.info("Applying effect: %d %s", [p_effect.value, p_effect.get_modifier()])[m
+ 		_:[m
+[31m-			Logger.cb.error("Unhandled Effect of type {}, found @ \"{}\"", [[m
+[32m+[m			[32m_logger.error("Unhandled Effect of type {}, found @ \"{}\"", [[m
+ 				DebugUtils.nameof(p_effect.get_script()),[m
+ 				p_effect.resource_path[m
+ 			])[m
+[36m@@ -94,7 +97,7 @@[m [mfunc _apply_effect(p_effect: Effect, p_attacker: Attributes) -> void:[m
+ func _remove_effect(p_effect: Effect) -> void:[m
+ 	if p_effect is ModifierEffect:[m
+ 		attributes.remove(p_effect)[m
+[31m-		print("Removing effect: %d %s" % [-p_effect.value * p_effect.ticks, p_effect.get_modifier()])[m
+[32m+[m		[32m_logger.info("Removing effect: %d %s", [-p_effect.value * p_effect.ticks, p_effect.get_modifier()])[m
+ 	elif p_effect is DamageEffect:[m
+ 		pass[m
+ [m
+[1mdiff --git a/world/character/movement_controller.gd b/world/character/movement_controller.gd[m
+[1mindex 45c16bb..4a45113 100644[m
+[1m--- a/world/character/movement_controller.gd[m
+[1m+++ b/world/character/movement_controller.gd[m
+[36m@@ -8,17 +8,20 @@[m [mconst SPEED: float = 5.0[m
+ const JUMP_VELOCITY: float = 4.5[m
+ [m
+ [m
+[32m+[m[32m# TODO: Don't use Debug.visible checks here....[m
+[32m+[m
+ func _physics_process(delta: float) -> void:[m
+ 	if not body.is_on_floor():[m
+ 		body.velocity += body.get_gravity() * delta[m
+ 	[m
+[31m-	if Input.is_action_just_pressed("ui_accept") and body.is_on_floor():[m
+[32m+[m[41m	[m
+[32m+[m	[32mif Input.is_action_just_pressed("ui_accept") and body.is_on_floor() and not Debug.visible:[m
+ 		body.velocity.y = JUMP_VELOCITY[m
+ 	[m
+ 	var input_dir := Input.get_vector("strafe_left", "strafe_right", "forward", "backwards")[m
+ 	var direction := (model.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()[m
+ 	[m
+[31m-	if direction:[m
+[32m+[m	[32mif direction and not Debug.visible:[m
+ 		body.velocity.x = direction.x * SPEED[m
+ 		body.velocity.z = direction.z * SPEED[m
+ 	else:[m
+[1mdiff --git a/world/prop/prop.gd b/world/prop/prop.gd[m
+[1mindex f0f8da1..0839170 100644[m
+[1m--- a/world/prop/prop.gd[m
+[1m+++ b/world/prop/prop.gd[m
+[36m@@ -2,12 +2,13 @@[m
+ class_name Prop[m
+ extends MeshInstance3D[m
+ [m
+[32m+[m
+ # Must match the filenames of props in res://prop/impl/[m
+ @export_enum("box", "capsule", "cylinder", "sphere", "stairs") var prop_shape: String = "box":[m
+ 	set(value):[m
+ 		# Prevents Inspesctor dock redraw when editing the object[m
+ 		if not prop_shape == value:[m
+[31m-			_update_shape(value)  # must be called before assigning[m
+[32m+[m			[32m_update_shape(value)  # must be called before assignment[m
+ 		if value == "stairs":[m
+ 			texture = 8[m
+ 		prop_shape = value[m
+[36m@@ -21,7 +22,7 @@[m [mextends MeshInstance3D[m
+ @export_range(1, 10) var texture: int = 1:[m
+ 	set(value):[m
+ 		if prop_shape == "stairs" and not value == 8:[m
+[31m-			printerr("Can't change texture for Stairs Shape")[m
+[32m+[m			[32mLogger.physics.warn("Can't change texture for Stairs Shape")[m
+ 			texture = 8[m
+ 		else:[m
+ 			texture = value[m
+[36m@@ -79,9 +80,14 @@[m [mfunc _update_collision() -> void:[m
+ func _update_texture() -> void:[m
+ 	var mat: BaseMaterial3D = get_metarial()[m
+ 	if not mat:[m
+[32m+[m		[32mLogger.physics.warn("Prop '{}' does not have any materials set", [get_instance_id()])[m
+ 		return[m
+ [m
+[31m-	mat.albedo_texture = load("res://assets/textures/prototype/%s/texture_%s.png" % [color, str(texture).pad_zeros(2)])[m
+[32m+[m	[32mmat.albedo_texture = load([m
+[32m+[m		[32m"res://assets/textures/prototype/%s/texture_%s.png" % [[m
+[32m+[m			[32mcolor, str(texture).pad_zeros(2)[m
+[32m+[m		[32m][m
+[32m+[m	[32m)[m
+ [m
+ [m
+ func _get_prop_path(p_name: String) -> String:[m
+[1mdiff --git a/world/prop/prop_data.gd b/world/prop/prop_data.gd[m
+[1mindex b12f02f..425a648 100644[m
+[1m--- a/world/prop/prop_data.gd[m
+[1m+++ b/world/prop/prop_data.gd[m
+[36m@@ -2,14 +2,12 @@[m
+ class_name PropData[m
+ extends Resource[m
+ [m
+[31m-@export[m
+[31m-var use_triplanar: bool = false:[m
+[32m+[m[32m@export var use_triplanar: bool = false:[m
+ 	set(value):[m
+ 		use_triplanar = value[m
+ 		emit_changed()[m
+ [m
+[31m-@export[m
+[31m-var mesh: Mesh = null[m
+[32m+[m[32m@export var mesh: Mesh = null[m
+ [m
+ [m
+ #func get_mesh() -> Mesh:[m

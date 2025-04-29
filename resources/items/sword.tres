@@ -1,24 +1,14 @@
-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://dmc6ivj6ocq8p"]
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://dmc6ivj6ocq8p"]
 
-[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_5eq2r"]
+[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_5eq2r"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_h0edt"]
 [ext_resource type="Texture2D" uid="uid://do2wmv7d8ttsd" path="res://assets/textures/item/stick.svg" id="2_5eq2r"]
-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_580ar"]
 
 [sub_resource type="Resource" id="Resource_580ar"]
 script = ExtResource("1_5eq2r")
-damage_type = 0
-weapon_type = 3
-min_damage = 1
-max_damage = 9999
-speed = 2.0
-metadata/_custom_type_script = ExtResource("1_5eq2r")
-
-[sub_resource type="Resource" id="Resource_vf4rj"]
-script = ExtResource("2_580ar")
-rarity = 1
+rarity = 2
 level = 0
-metadata/_custom_type_script = ExtResource("2_580ar")
+metadata/_custom_type_script = "uid://dj2nv6dq3np88"
 
 [resource]
 script = ExtResource("1_h0edt")
@@ -29,7 +19,6 @@ price = 99999
 stack_size = 1
 cooldown = 1.0
 _components = {
-&"DamageComponent": SubResource("Resource_580ar"),
-&"DetailedItemComponent": SubResource("Resource_vf4rj")
+&"DetailedItemComponent": SubResource("Resource_580ar")
 }
-metadata/_custom_type_script = ExtResource("1_h0edt")
+metadata/_custom_type_script = "uid://ni37hjpima3q"

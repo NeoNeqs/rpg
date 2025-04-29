@@ -10,6 +10,7 @@ extends ItemComponent
 func get_tooltip() -> String:
 	var tooltip := ""
 
+	# TODO: extract this array through get_property_list in a static_init
 	var stats := ["strength", "stamina"]
 	for stat: String in stats:
 		var val: Variant = get(stat)

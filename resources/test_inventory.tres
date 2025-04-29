@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="Inventory" load_steps=11 format=3 uid="uid://di8nlf6cn6lsn"]
+[gd_resource type="Resource" script_class="Inventory" load_steps=12 format=3 uid="uid://di8nlf6cn6lsn"]
 
 [ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="1_5y6pi"]
 [ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/components/item_component.gd" id="2_qr55p"]
 [ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="3_lkgws"]
 [ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="3_qr55p"]
+[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="4_lkgws"]
 
 [sub_resource type="Resource" id="Resource_lkgws"]
 script = ExtResource("3_qr55p")
@@ -34,14 +35,17 @@ script = ExtResource("1_5y6pi")
 quantity = 0
 allowed_components = Array[ExtResource("2_qr55p")]([])
 
-[sub_resource type="Resource" id="Resource_qr55p"]
-script = ExtResource("2_qr55p")
-metadata/_custom_type_script = "uid://xnatas68sjm5"
+[sub_resource type="Resource" id="Resource_0i508"]
+script = ExtResource("4_lkgws")
+rarity = 0
+level = 0
+metadata/_custom_type_script = "uid://dj2nv6dq3np88"
 
 [resource]
 script = ExtResource("3_lkgws")
 _items = Array[ExtResource("1_5y6pi")]([SubResource("Resource_yp0nn"), SubResource("Resource_5xa5w"), SubResource("Resource_y0dbl"), SubResource("Resource_qa8cy")])
 columns = 2
 editable = true
-allowed_components = Array[ExtResource("2_qr55p")]([SubResource("Resource_qr55p")])
+owns = true
+allowed_components = Array[ExtResource("2_qr55p")]([SubResource("Resource_0i508")])
 metadata/_custom_type_script = "uid://q48d62ldtwma"

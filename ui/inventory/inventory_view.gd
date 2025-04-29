@@ -6,7 +6,6 @@ signal slot_pressed(p_view: InventoryView, p_slot: InventorySlot, p_single: bool
 signal slot_hovered(p_slot: InventorySlot)
 signal slot_unhovered()
 
-#var _grid: GridContainer = $Grid
 @export
 var container: Container
 
@@ -25,17 +24,20 @@ func set_data(p_inventory: Inventory) -> void:
 	if not is_node_ready():
 		await ready
 	
-	#_grid.columns = p_inventory.columns
 	_setup_container()
 	
 	resize()
 	
 	# shrink container to tightly fit all of the slots
+	# TODO: figure out why godot is complaining about this. 
+	#       Might have sth to do with await above
 	size = custom_minimum_size
+	#set_deferred("size", custom_minimum_size)
 
 
 func _setup_container() -> void:
-	pass
+	assert(false, "Do not call this method.")
+
 
 func resize() -> void:
 	var old_size: int = container.get_child_count()
@@ -81,9 +83,9 @@ func _setup_item_used_signaling(p_item_stack: ItemStack, p_slot: InventorySlot) 
 			on_item_used(remaining_cooldown, p_item_stack, p_slot)
 
 
-func on_item_used(l_cooldown_in_usec: int, p_item_stack: ItemStack, p_slot: InventorySlot) -> void:
+func on_item_used(p_cooldown_in_usec: int, p_item_stack: ItemStack, p_slot: InventorySlot) -> void:
 	p_slot.update(p_item_stack)
-	p_slot.set_on_cooldown(l_cooldown_in_usec)
+	p_slot.set_on_cooldown(p_cooldown_in_usec)
 
 
 func get_slot(p_index: int) -> InventorySlot:

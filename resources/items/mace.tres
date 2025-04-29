@@ -1,24 +1,14 @@
-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://00yw3emhpn77"]
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://00yw3emhpn77"]
 
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_5t5m3"]
-[ext_resource type="Script" uid="uid://ubyb4dwt5n3u" path="res://scripts/components/damage_component.gd" id="1_4743m"]
+[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_kg7v8"]
 [ext_resource type="Texture2D" uid="uid://cwm5741761nm6" path="res://assets/textures/item/flanged-mace.svg" id="2_kg7v8"]
-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="2_rcf87"]
 
-[sub_resource type="Resource" id="Resource_kg7v8"]
-script = ExtResource("1_4743m")
-damage_type = 0
-weapon_type = 0
-min_damage = 1
-max_damage = 2
-speed = 1.5
-metadata/_custom_type_script = ExtResource("1_4743m")
-
-[sub_resource type="Resource" id="Resource_wg47n"]
-script = ExtResource("2_rcf87")
+[sub_resource type="Resource" id="Resource_rcf87"]
+script = ExtResource("1_kg7v8")
 rarity = 3
 level = 0
-metadata/_custom_type_script = ExtResource("2_rcf87")
+metadata/_custom_type_script = "uid://dj2nv6dq3np88"
 
 [resource]
 script = ExtResource("1_5t5m3")
@@ -29,7 +19,6 @@ price = 0
 stack_size = 1
 cooldown = 1.0
 _components = {
-&"DamageComponent": SubResource("Resource_kg7v8"),
-&"DetailedItemComponent": SubResource("Resource_wg47n")
+&"DetailedItemComponent": SubResource("Resource_rcf87")
 }
-metadata/_custom_type_script = ExtResource("1_5t5m3")
+metadata/_custom_type_script = "uid://ni37hjpima3q"

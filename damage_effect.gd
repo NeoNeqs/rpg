@@ -30,16 +30,17 @@ func apply(p_target: CombatSystem, p_attacker: CombatSystem) -> void:
 	
 	match damage_type:
 		CombatSystem.DamageType.Physical:
-			damage = calculate_physical_damage(p_attacker.attributes, p_attacker.attributes)
+			damage = calculate_physical_damage(p_target.attributes, p_attacker.attributes)
 		CombatSystem.DamageType.Shadow:
-			damage = calculate_shadow_damage(p_attacker.attributes, p_attacker.attributes)
+			damage = calculate_shadow_damage(p_target.attributes, p_attacker.attributes)
 		CombatSystem.DamageType.Nature:
-			Logger.cb.critical("TODO: implement nature damage type and others.")
+			Logger.combat.critical("TODO: implement nature damage type and others.")
 		_:
-			Logger.cb.error(
+			Logger.combat.error(
 				"Unhandled DamageType case '{}'.", 
 				CombatSystem.DamageType.keys()[damage_type]
 			)
+	Logger.combat.info("Damage={}", [damage])
 
 func calculate_physical_damage(p_target: Attributes, p_attacker: Attributes) -> int:
 	var damage_reduction: float = p_target.get_physical_damage_reduction() # 0.75

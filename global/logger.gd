@@ -11,10 +11,10 @@ enum LogLevel {
 }
 
 static var core: Logger = Logger.new("Core", LogLevel.Debug)
-static var cb: Logger = Logger.new("Combat", LogLevel.Debug)
+static var combat: Logger = Logger.new("Combat", LogLevel.Debug)
 static var ui: Logger = Logger.new("UI", LogLevel.Debug)
-#static var be: Logger = Logger.new("Backend", LogLevel.Debug)
-#static var physics: Logger = Logger.new("Physics", LogLevel.Debug)
+static var physics: Logger = Logger.new("Physics", LogLevel.Debug)
+static var input: Logger = Logger.new("Input", LogLevel.Debug)
 
 const message_format: String = "[{}] [{}] [{}] [{}]: {}"
 const placeholder: String = "{}"

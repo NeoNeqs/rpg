@@ -96,11 +96,11 @@ func get_icon() -> Texture2D:
 	if chain_spell_component == null:
 		return icon
 	
-	var spell_icon: Texture2D = chain_spell_component.get_icon_override()
-	if spell_icon == null:
+	var overridden_spell: Item = chain_spell_component.get_spell()
+	if overridden_spell == null:
 		return icon
 	
-	return spell_icon
+	return overridden_spell.icon
 
 
 func get_display_name() -> String:
@@ -109,12 +109,11 @@ func get_display_name() -> String:
 	if chain_spell_component == null:
 		return display_name
 	
-	var spell_display_name: String = chain_spell_component.get_display_name_override()
-	
-	if spell_display_name.is_empty():
+	var overridden_spell: Item = chain_spell_component.get_spell()
+	if overridden_spell == null:
 		return display_name
 	
-	return spell_display_name
+	return overridden_spell.display_name
 
 #region
 
@@ -135,7 +134,7 @@ func _handle_spell_component(p_spell_component: SpellComponent) -> void:
 	var cooldown_usec := int(cooldown * 1_000_000)
 
 	if is_on_cooldown(cooldown_usec):
-		_logger.debug(
+		_logger.info(
 			"Spell '{}' is still on cooldown for {}.", 
 			[
 				get_display_name(), 
@@ -164,7 +163,7 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 	var cooldown_usec := int(spell.cooldown * 1_000_000)
 
 	if is_on_cooldown(cooldown_usec):
-		_logger.debug(
+		_logger.info(
 			"Spell '{}' is still on cooldown for {}.", 
 			[
 				spell.get_display_name(), 
@@ -175,7 +174,7 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 	var result := p_chain_spell_component.cast()
 	match result:
 		SpellComponent.Result.Casted:
-			_logger.debug("Casting spell '{}'.", [spell.get_display_name()])
+			_logger.info("Casting spell '{}'.", [spell.get_display_name()])
 			_complete_cast(p_chain_spell_component)
 		SpellComponent.Result.Next:
 			var spell_comp: SpellComponent = spell.get_component(SpellComponent)
@@ -244,7 +243,8 @@ func _get_property_list() -> Array[Dictionary]:
 		"name": &"_components",
 		"type": TYPE_DICTIONARY,
 		"usage": PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_SCRIPT_VARIABLE
-	}]
+	}
+	]
 
 
 func _validate_property(property: Dictionary) -> void:
