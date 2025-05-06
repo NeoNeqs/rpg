@@ -1,78 +1,60 @@
-[gd_scene load_steps=27 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=21 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://world/character/character.gd" id="1_e5tqa"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
-[ext_resource type="Resource" uid="uid://q6akjdd51jsk" path="res://resources/player_inventory.tres" id="2_ipb0f"]
+[ext_resource type="Resource" uid="uid://q6akjdd51jsk" path="res://resources/player_inventory.tres" id="2_f1wg7"]
 [ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"]
 [ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"]
-[ext_resource type="Script" uid="uid://dg7ry0b3pmge8" path="res://world/character/combat_system.gd" id="6_8hqne"]
-[ext_resource type="Script" uid="uid://biarh73bj61u7" path="res://world/character/attribute_system.gd" id="7_c4acw"]
-[ext_resource type="Script" uid="uid://e0j7co42v7yq" path="res://stats.gd" id="7_ipb0f"]
-[ext_resource type="Script" uid="uid://djuglop5l5fy" path="res://attributes.gd" id="8_vqai4"]
-[ext_resource type="Resource" uid="uid://dijj24ietitik" path="res://resources/player_armory.tres" id="9_c4acw"]
-[ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="11_f1wg7"]
-[ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/components/item_component.gd" id="12_m0gsu"]
-[ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="13_qdl7p"]
+[ext_resource type="Script" uid="uid://bkm1b7umvsdba" path="res://scripts/combat/combat_manager.gd" id="5_to3ne"]
+[ext_resource type="Script" uid="uid://cr1ujq8sj7pxh" path="res://scripts/combat/attribute_system.gd" id="6_msheq"]
+[ext_resource type="Script" uid="uid://xi5aa6qhe7j7" path="res://scripts/combat/stat_system.gd" id="7_ipb0f"]
+[ext_resource type="Script" uid="uid://d7k2b5myyka1" path="res://scripts/combat/attributes.gd" id="8_ipb0f"]
+[ext_resource type="Resource" uid="uid://dijj24ietitik" path="res://resources/player_armory.tres" id="10_pdabv"]
+[ext_resource type="Script" uid="uid://de1w4y6b7arij" path="res://scripts/combat_resources.gd" id="12_qdl7p"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1jngo"]
 radius = 0.3
 height = 1.5
 
-[sub_resource type="Resource" id="Resource_fn1hb"]
-script = ExtResource("8_vqai4")
-strength = 101
-dexterity = 92
-intelligence = 104
-wisdom = 134
-stamina = 836
-spirit = 0
-strength_multiplier = 1.0
-dexterity_multiplier = 1.0
-intelligence_multiplier = 1.0
-wisdom_multiplier = 1.0
-stamina_multiplier = 1.0
-spirit_multiplier = 1.0
-armor = 1483
-armor_multiplier = 1.0
-armor_penetration = 0
-armor_penetration_multiplier = 1.0
-shadow_resistance = 0
-shadow_resistance_multiplier = 1.0
-shadow_penetration = 0
-shadow_penetration_multiplier = 1.0
-nature_resistance = 0
-nature_resistance_multiplier = 1.0
-nature_penetration = 0
-nature_penetration_multiplier = 1.0
-metadata/_custom_type_script = "uid://djuglop5l5fy"
-
-[sub_resource type="Curve" id="Curve_vqai4"]
-_limits = [0.25, 1.0, 0.0, 4000.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(2000, 0.25), 0.0, 0.0, 0, 0, Vector2(4000, 1), 0.0, 0.0, 0, 0]
-point_count = 3
+[sub_resource type="Resource" id="Resource_ipb0f"]
+script = ExtResource("6_msheq")
+metadata/_custom_type_script = "uid://cr1ujq8sj7pxh"
 
 [sub_resource type="Curve" id="Curve_pdabv"]
-_limits = [0.0, 0.4, 0.0, 4000.0]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2000, 0.4), 0.0, 0.0, 0, 0, Vector2(4000, 0), 0.0, 0.0, 0, 0]
+_limits = [0.25, 1.0, 0.0, 4000.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(2000, 0.25), 0.0, 0.0, 0, 0, Vector2(4000, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="Curve" id="Curve_fn1hb"]
-_limits = [0.25, 1.0, 0.0, 4000.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(2000, 0.25), 0.0, 0.0, 0, 0, Vector2(4000, 1), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Curve" id="Curve_f1wg7"]
 _limits = [0.0, 0.4, 0.0, 4000.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2000, 0.4), 0.0, 0.0, 0, 0, Vector2(4000, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="Resource" id="Resource_ggcj5"]
-script = ExtResource("8_vqai4")
-strength = 0
+[sub_resource type="Curve" id="Curve_f1wg7"]
+_limits = [0.0, 10000.0, 0.0, 1000.0]
+_data = [Vector2(0, 0), 0.0, 10.0, 0, 1, Vector2(1000, 10000), 10.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_m0gsu"]
+_limits = [0.0, 2500.0, 0.0, 1000.0]
+_data = [Vector2(0, 0), 0.0, 2.5, 0, 1, Vector2(1000, 2500), 2.5, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_c4acw"]
+script = ExtResource("7_ipb0f")
+armor_curve = SubResource("Curve_pdabv")
+armor_penetration_curve = SubResource("Curve_fn1hb")
+stamina_curve = SubResource("Curve_f1wg7")
+strength_curve = SubResource("Curve_m0gsu")
+metadata/_custom_type_script = "uid://xi5aa6qhe7j7"
+
+[sub_resource type="Resource" id="Resource_vqai4"]
+script = ExtResource("8_ipb0f")
+strength = 10
 dexterity = 0
 intelligence = 0
 wisdom = 0
-stamina = 10000
+stamina = 0
 spirit = 0
 strength_multiplier = 1.0
 dexterity_multiplier = 1.0
@@ -92,33 +74,16 @@ nature_resistance = 0
 nature_resistance_multiplier = 1.0
 nature_penetration = 0
 nature_penetration_multiplier = 1.0
-metadata/_custom_type_script = "uid://djuglop5l5fy"
-
-[sub_resource type="Resource" id="Resource_yux1m"]
-script = ExtResource("11_f1wg7")
-quantity = 0
-allowed_components = Array[ExtResource("12_m0gsu")]([])
+metadata/_custom_type_script = "uid://d7k2b5myyka1"
 
 [sub_resource type="Resource" id="Resource_d882m"]
-script = ExtResource("13_qdl7p")
-_items = Array[ExtResource("11_f1wg7")]([SubResource("Resource_yux1m")])
-columns = 2
-editable = true
-owns = true
-allowed_components = Array[ExtResource("12_m0gsu")]([])
-metadata/_custom_type_script = "uid://q48d62ldtwma"
+script = ExtResource("12_qdl7p")
+metadata/_custom_type_script = "uid://de1w4y6b7arij"
 
-[sub_resource type="Curve" id="Curve_m0gsu"]
-
-[sub_resource type="Curve" id="Curve_qdl7p"]
-
-[sub_resource type="Curve" id="Curve_ggcj5"]
-
-[sub_resource type="Curve" id="Curve_yux1m"]
-
-[node name="Character" type="Node3D"]
+[node name="Character" type="Node3D" node_paths=PackedStringArray("combat_manager")]
 script = ExtResource("1_e5tqa")
-inventory = ExtResource("2_ipb0f")
+inventory = ExtResource("2_f1wg7")
+combat_manager = NodePath("CombatManager")
 
 [node name="Body" type="CharacterBody3D" parent="."]
 
@@ -150,45 +115,11 @@ arm = NodePath("../Body/Pivot/Arm")
 pivot = NodePath("../Body/Pivot")
 model = NodePath("../Body/Model")
 
-[node name="CombatSystem" type="Node" parent="." node_paths=PackedStringArray("attribute_system", "stat_system")]
-script = ExtResource("6_8hqne")
-is_player = true
-attribute_system = NodePath("AttributeSystem")
-stat_system = NodePath("StatSystem")
-character_attributes = SubResource("Resource_fn1hb")
-armory = ExtResource("9_c4acw")
-metadata/_custom_type_script = "uid://dg7ry0b3pmge8"
-
-[node name="AttributeSystem" type="Node" parent="CombatSystem"]
-script = ExtResource("7_c4acw")
-metadata/_custom_type_script = "uid://biarh73bj61u7"
-
-[node name="StatSystem" type="Node" parent="CombatSystem" node_paths=PackedStringArray("attribute_system")]
-script = ExtResource("7_ipb0f")
-attribute_system = NodePath("../AttributeSystem")
-armor_curve = SubResource("Curve_vqai4")
-armor_penetration_curve = SubResource("Curve_pdabv")
-shadow_resistance_curve = SubResource("Curve_fn1hb")
-shadow_penetration_curve = SubResource("Curve_f1wg7")
-metadata/_custom_type_script = "uid://e0j7co42v7yq"
-
-[node name="TestTarget" type="Node" parent="." node_paths=PackedStringArray("attribute_system", "stat_system")]
-script = ExtResource("6_8hqne")
-attribute_system = NodePath("AttributeSystem")
-stat_system = NodePath("StatSystem")
-character_attributes = SubResource("Resource_ggcj5")
-armory = SubResource("Resource_d882m")
-metadata/_custom_type_script = "uid://dg7ry0b3pmge8"
-
-[node name="AttributeSystem" type="Node" parent="TestTarget"]
-script = ExtResource("7_c4acw")
-metadata/_custom_type_script = "uid://biarh73bj61u7"
-
-[node name="StatSystem" type="Node" parent="TestTarget" node_paths=PackedStringArray("attribute_system")]
-script = ExtResource("7_ipb0f")
-attribute_system = NodePath("../AttributeSystem")
-armor_curve = SubResource("Curve_m0gsu")
-armor_penetration_curve = SubResource("Curve_qdl7p")
-shadow_resistance_curve = SubResource("Curve_ggcj5")
-shadow_penetration_curve = SubResource("Curve_yux1m")
-metadata/_custom_type_script = "uid://e0j7co42v7yq"
+[node name="CombatManager" type="Node" parent="."]
+script = ExtResource("5_to3ne")
+attribute_system = SubResource("Resource_ipb0f")
+stat_system = SubResource("Resource_c4acw")
+base_attributes = SubResource("Resource_vqai4")
+armory = ExtResource("10_pdabv")
+combat_resources = SubResource("Resource_d882m")
+metadata/_custom_type_script = "uid://bkm1b7umvsdba"

@@ -1,6 +1,6 @@
-@tool
 class_name Attributes
 extends Resource
+
 
 signal value_changed(p_attribute: StringName, p_delta: float)
 
@@ -165,25 +165,28 @@ static var _attributes: Array[StringName] = []
 		#nature_penetration_curve = new_value
 		#value_changed.emit(&"nature_penetration_curve", new_value - nature_penetration_curve)
 
-func apply(p_effect: ModifierEffect) -> void:
-	var modifier_name: StringName = p_effect.get_modifier()
-	
-	# NOTE: Currently this is left untyped since not all attributes might be int
-	var current_value: Variant = get(modifier_name)
-	set(modifier_name, current_value + p_effect.value)
-
-
-func remove(p_effect: ModifierEffect) -> void:
-	var modifier_name: StringName = p_effect.get_modifier()
-	
-	# NOTE: Currently this is left untyped since not all attributes might be int
-	var current_value: Variant = get(modifier_name)
-	set(modifier_name, current_value - p_effect.value)
+#func apply(p_effect: ModifierEffect) -> void:
+	#var modifier_name: StringName = p_effect.get_modifier()
+	#
+	## NOTE: Currently this is left untyped since not all attributes might be int
+	#var current_value: Variant = get(modifier_name)
+	#set(modifier_name, current_value + p_effect.value)
+#
+#
+#func remove(p_effect: ModifierEffect) -> void:
+	#var modifier_name: StringName = p_effect.get_modifier()
+	#
+	## NOTE: Currently this is left untyped since not all attributes might be int
+	#var current_value: Variant = get(modifier_name)
+	#set(modifier_name, current_value - p_effect.value)
 
 
 func get_stamina() -> int:
 	return int(stamina * stamina_multiplier)
 
+
+func get_strength() -> int:
+	return int(strength * strength_multiplier)
 
 func get_armor() -> int:
 	return int(armor * armor_multiplier)
@@ -210,37 +213,3 @@ static func _static_init() -> void:
 
 static func get_attributes_as_hint_string() -> String:
 	return ','.join(_attributes)
-
-
-#func get_max_mana() -> int:
-	#return wisdom * MANA_MULTIPLIER
-#
-#
-#func get_physical_damage_reduction() -> float:
-	#return armor_curve.sample(get_real_armor())
-#
-#
-#func get_physical_damage_penetration() -> float:
-	#return get_real_armor_penetration() / (PENETRATION_CAP * 6.0)
-#
-#
-#func get_shadow_damage_reduction() -> float:
-	#return 1.0 - (get_real_shadow_resistance() / (RESISTANCE_CAP * 4.0))
-#
-#
-#func get_shadow_damage_penetration() -> float:
-	#return get_real_shadow_penetration() / (PENETRATION_CAP * 6.0)
-#
-#
-#func get_real_armor() -> int:
-	#return int(armor * armor_multiplier)
-#
-#func get_real_armor_penetration() -> int:
-	#return clampi(int(armor_penetration * armor_penetration_multiplier), 0, PENETRATION_CAP)
-#
-#func get_real_shadow_resistance() -> int:
-	#return clampi(int(shadow_resistance * shadow_resistance_multiplier), 0, RESISTANCE_CAP)
-#
-#
-#func get_real_shadow_penetration() -> int:
-	#return clampi(int(shadow_penetration * shadow_resistance_multiplier), 0, PENETRATION_CAP)

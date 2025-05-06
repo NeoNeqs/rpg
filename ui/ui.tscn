@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://k0m4b32u3fyd"]
+[gd_scene load_steps=9 format=3 uid="uid://k0m4b32u3fyd"]
 
 [ext_resource type="Script" uid="uid://bcq24at5bh5bm" path="res://ui/ui.gd" id="1_gdcp5"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="2_ajbqs"]
@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://w4m0yaqnaeq1" path="res://scripts/inventory/inventory_manager.gd" id="5_fmbix"]
 [ext_resource type="PackedScene" uid="uid://dc68bk011ci4s" path="res://ui/tooltip.tscn" id="6_jmxi2"]
 [ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://ui/item/item_slot.tscn" id="7_kjw2a"]
-[ext_resource type="PackedScene" uid="uid://bgftddgnyd2kb" path="res://ui/attributes/attribute_view.tscn" id="8_gycre"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_lv10c"]
 font = ExtResource("2_ajbqs")
@@ -77,15 +76,3 @@ offset_right = 64.0
 offset_bottom = 64.0
 scale = Vector2(0.7, 0.7)
 mouse_filter = 2
-
-[node name="Control" parent="." instance=ExtResource("8_gycre")]
-layout_mode = 0
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 1619.0
-offset_top = 8.0
-offset_right = 1912.0
-offset_bottom = 369.0
-grow_horizontal = 1
-grow_vertical = 1

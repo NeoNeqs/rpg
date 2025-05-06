@@ -3,7 +3,7 @@ class_name Item
 extends Resource
 
 signal used(p_time_usec: int)
-signal spell_casted(p_effect: Effect)
+signal spell_casted(p_effects: Array[Effect])
 
 static var _logger: Logger = Logger.new("Item", Logger.LogLevel.Debug)
 
@@ -49,6 +49,14 @@ func get_component(p_script: Script) -> ItemComponent:
 	
 	return null
 
+
+func get_attributes() -> Attributes:
+	var attribute_component := get_component(AttributeComponent) as AttributeComponent
+	
+	if attribute_component == null:
+		return null
+	
+	return attribute_component.attributes
 
 #region Item.get_tooltip() and helpers
 
@@ -153,7 +161,7 @@ func _handle_spell_component(p_spell_component: SpellComponent) -> void:
 		return
 	
 	used.emit(cooldown_usec)
-	spell_casted.emit(p_spell_component.effect)
+	spell_casted.emit(p_spell_component.effects)
 	_last_cast_time = Time.get_ticks_usec()
 
 
@@ -179,7 +187,7 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 	match result:
 		SpellComponent.Result.Casted:
 			_logger.info("Casting spell '{}'.", [spell.get_display_name()])
-			_complete_cast(p_chain_spell_component, p_chain_spell_component.effect)
+			_complete_cast(p_chain_spell_component, p_chain_spell_component.effects)
 		SpellComponent.Result.Next:
 			var spell_comp: SpellComponent = spell.get_component(SpellComponent)
 			if spell_comp == null:
@@ -195,12 +203,15 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 			
 			var _result: SpellComponent.Result = spell_comp.cast()
 			_logger.debug("Casting spell '{}'.", [spell.get_display_name()])
-			_complete_cast(p_chain_spell_component, spell_comp.effect)
+			_complete_cast(p_chain_spell_component, spell_comp.effects)
 		SpellComponent.Result.NoCast:
 			_logger.debug("Spell '{}' has no behavior!", [spell.get_display_name()])
 
 
-func _complete_cast(p_chain_spell_component: ChainSpellComponent, p_effect: Effect) -> void:
+func _complete_cast(
+	p_chain_spell_component: ChainSpellComponent, 
+	p_effects: Array[Effect]
+) -> void:
 	p_chain_spell_component.chain()
 	var next_spell: Item = p_chain_spell_component.get_spell()
 	if next_spell == null:
@@ -208,7 +219,8 @@ func _complete_cast(p_chain_spell_component: ChainSpellComponent, p_effect: Effe
 	used.emit(next_spell.cooldown * 1_000_000)
 	
 	#var next_spell_spell_component := next_spell.get_component(SpellComponent)
-	spell_casted.emit(p_effect)
+	if not p_effects.is_empty():
+		spell_casted.emit(p_effects)
 	_last_cast_time = Time.get_ticks_usec()
 
 

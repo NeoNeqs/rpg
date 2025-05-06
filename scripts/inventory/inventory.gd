@@ -11,8 +11,8 @@ extends Resource
 
 signal items_changed
 signal size_changed
-signal item_about_to_change(p_item: Item, p_index: int)
-signal item_changed(p_item: Item, p_index: int)
+signal item_about_to_change(p_item: Item)
+signal item_changed(p_item: Item)
 
 # Todo: Find better names. There are 2 (3?) states:
 #       1. After action is done there are still items left in the source slot (Leftover)
@@ -152,7 +152,7 @@ func get_size() -> int:
 
 func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemActionResult:
 	if p_single and owns:
-		item_about_to_change.emit(p_inv_to._items[p_to].item, p_to)
+		item_about_to_change.emit(_items[p_from].item)
 		p_inv_to._items[p_to].item = _items[p_from].item
 		_items[p_from].quantity -= 1
 		# IMPORTANT: This is weird, I know. Let me explain:
@@ -164,8 +164,8 @@ func _move(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> ItemA
 		if p_inv_to._items[p_to].quantity > 1:
 			p_inv_to._items[p_to].quantity += 1
 		
-		item_changed.emit(p_inv_to._items[p_to].item, p_to)
 		items_changed.emit()
+		p_inv_to.item_changed.emit(p_inv_to._items[p_to].item)
 		p_inv_to.items_changed.emit()
 	else:
 		_swap(p_from, p_inv_to, p_to)
@@ -180,7 +180,7 @@ func _swap(p_from: int, p_inv_to: Inventory, p_to: int) -> ItemActionResult:
 	var temp_item: Item = p_inv_to._items[p_to].item
 	var temp_quantity: int = p_inv_to._items[p_to].quantity
 	
-	item_about_to_change.emit(p_inv_to._items[p_to].item, p_to)
+	item_about_to_change.emit(_items[p_from].item)
 	
 	p_inv_to._items[p_to].item = _items[p_from].item
 	p_inv_to._items[p_to].quantity = _items[p_from].quantity
@@ -188,8 +188,8 @@ func _swap(p_from: int, p_inv_to: Inventory, p_to: int) -> ItemActionResult:
 	_items[p_from].item = temp_item
 	_items[p_from].quantity = temp_quantity
 	
-	item_changed.emit(p_inv_to._items[p_to].item, p_to)
 	items_changed.emit()
+	p_inv_to.item_changed.emit(p_inv_to._items[p_to].item)
 	p_inv_to.items_changed.emit()
 	return ItemActionResult.LeftOver
 
@@ -206,14 +206,12 @@ func _stack(p_from: int, p_inv_to: Inventory, p_to: int, p_single: bool) -> Item
 	else:
 		take_from_total = mini(total, p_inv_to._items[p_to].item.stack_size)
 	
-	item_about_to_change.emit(p_inv_to._items[p_to].item, p_to)
 	
 	p_inv_to._items[p_to].quantity = take_from_total
 
 	var quantity_left: int = maxi(0, total - take_from_total)
 	_items[p_from].quantity = quantity_left
 	
-	item_changed.emit(p_inv_to._items[p_to].item, p_to)
 	items_changed.emit()
 	p_inv_to.items_changed.emit()
 	

@@ -9,7 +9,7 @@ enum WeaponType {
 	Sword,
 }
 
-@export var damage_type := CombatSystem.DamageType.Physical
+@export var damage_type := DamageEffect.DamageType.Physical
 @export var weapon_type: WeaponType = WeaponType.Mace
 @export var min_damage: int = 0
 @export var max_damage: int = 1
@@ -25,7 +25,7 @@ func is_allowed(p_other: ItemComponent) -> bool:
 
 func get_tooltip() -> String:
 	var tooltip := "%d - %d %s damage #right# %0.2f speed" % [
-		min_damage, max_damage, CombatSystem.DamageType.keys()[damage_type],
+		min_damage, max_damage, DamageEffect.DamageType.keys()[damage_type],
 		speed
 	]
 	

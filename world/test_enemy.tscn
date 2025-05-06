@@ -1,0 +1,114 @@
+[gd_scene load_steps=22 format=3 uid="uid://blk21fp6k13se"]
+
+[ext_resource type="Script" uid="uid://bgiwm3pks1aok" path="res://world/enemy.gd" id="1_p26hj"]
+[ext_resource type="Script" uid="uid://bkm1b7umvsdba" path="res://scripts/combat/combat_manager.gd" id="2_p2sdy"]
+[ext_resource type="Script" uid="uid://cr1ujq8sj7pxh" path="res://scripts/combat/attribute_system.gd" id="3_3i4c7"]
+[ext_resource type="Script" uid="uid://xi5aa6qhe7j7" path="res://scripts/combat/stat_system.gd" id="4_ahlyo"]
+[ext_resource type="Script" uid="uid://d7k2b5myyka1" path="res://scripts/combat/attributes.gd" id="5_gye4m"]
+[ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="6_1ap8l"]
+[ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/components/item_component.gd" id="7_da4c3"]
+[ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="8_vig3h"]
+[ext_resource type="Script" uid="uid://de1w4y6b7arij" path="res://scripts/combat_resources.gd" id="9_2n4xm"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_p26hj"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_p2sdy"]
+
+[sub_resource type="Resource" id="Resource_bc6gm"]
+script = ExtResource("3_3i4c7")
+metadata/_custom_type_script = "uid://cr1ujq8sj7pxh"
+
+[sub_resource type="Curve" id="Curve_3i4c7"]
+_limits = [0.1, 1.0, 0.0, 6000.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(6000, 0.1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_ahlyo"]
+_limits = [0.0, 1.0, 0.0, 4000.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2005.64, 1), 0.0, 0.0, 0, 0, Vector2(4000, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_gye4m"]
+_limits = [0.0, 10000.0, 0.0, 1000.0]
+_data = [Vector2(0, 0), 0.0, 10.0, 0, 1, Vector2(1000, 10000), 10.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_1ap8l"]
+_limits = [0.0, 10000.0, 0.0, 1000.0]
+_data = [Vector2(0, 0), 0.0, 10.0, 0, 1, Vector2(1000, 10000), 10.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_pgug3"]
+script = ExtResource("4_ahlyo")
+armor_curve = SubResource("Curve_3i4c7")
+armor_penetration_curve = SubResource("Curve_ahlyo")
+stamina_curve = SubResource("Curve_gye4m")
+strength_curve = SubResource("Curve_1ap8l")
+metadata/_custom_type_script = "uid://xi5aa6qhe7j7"
+
+[sub_resource type="Resource" id="Resource_1671e"]
+script = ExtResource("5_gye4m")
+strength = 0
+dexterity = 0
+intelligence = 0
+wisdom = 0
+stamina = 300
+spirit = 0
+strength_multiplier = 1.0
+dexterity_multiplier = 1.0
+intelligence_multiplier = 1.0
+wisdom_multiplier = 1.0
+stamina_multiplier = 1.0
+spirit_multiplier = 1.0
+armor = 0
+armor_multiplier = 1.0
+armor_penetration = 0
+armor_penetration_multiplier = 1.0
+shadow_resistance = 0
+shadow_resistance_multiplier = 1.0
+shadow_penetration = 0
+shadow_penetration_multiplier = 1.0
+nature_resistance = 0
+nature_resistance_multiplier = 1.0
+nature_penetration = 0
+nature_penetration_multiplier = 1.0
+metadata/_custom_type_script = "uid://d7k2b5myyka1"
+
+[sub_resource type="Resource" id="Resource_jvtio"]
+script = ExtResource("6_1ap8l")
+quantity = 0
+allowed_components = Array[ExtResource("7_da4c3")]([])
+
+[sub_resource type="Resource" id="Resource_tbd5t"]
+script = ExtResource("8_vig3h")
+_items = Array[ExtResource("6_1ap8l")]([SubResource("Resource_jvtio")])
+columns = 2
+editable = true
+owns = true
+allowed_components = Array[ExtResource("7_da4c3")]([])
+metadata/_custom_type_script = "uid://q48d62ldtwma"
+
+[sub_resource type="Resource" id="Resource_is4g7"]
+script = ExtResource("9_2n4xm")
+metadata/_custom_type_script = "uid://de1w4y6b7arij"
+
+[node name="TestEnemy" type="Node3D" node_paths=PackedStringArray("combat_manager")]
+script = ExtResource("1_p26hj")
+combat_manager = NodePath("CombatManager")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("BoxShape3D_p26hj")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_p2sdy")
+
+[node name="CombatManager" type="Node" parent="."]
+script = ExtResource("2_p2sdy")
+attribute_system = SubResource("Resource_bc6gm")
+stat_system = SubResource("Resource_pgug3")
+base_attributes = SubResource("Resource_1671e")
+armory = SubResource("Resource_tbd5t")
+combat_resources = SubResource("Resource_is4g7")
+metadata/_custom_type_script = "uid://bkm1b7umvsdba"

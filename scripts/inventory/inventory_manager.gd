@@ -13,8 +13,15 @@ var selected_inventory_view: InventoryView
 
 func _init() -> void:
 	EventBus.player_inventory_loaded.connect(create_item_inventory)
-
-
+	EventBus.character_attributes_loaded.connect(
+		create_attribute_view.bind("Base Attributes")
+	)
+	
+	EventBus.total_attributes_loaded.connect(
+		create_attribute_view.bind("Character Sheet")
+	)
+	
+	
 func _ready() -> void:
 	set_process(false)
 	create_item_inventory(load("res://resources/test_inventory.tres"))
@@ -68,6 +75,19 @@ func create_hotbar_inventory(
 	hotbar.hotbar_type = p_type
 	hotbar.modifiers = p_modifiers
 	add_child(hotbar)
+
+
+func create_attribute_view(p_attributes: Attributes, p_title: String) -> void:
+	var attribute_view: AttributeView = AssetDB.AttributeViewScene.instantiate()
+
+	attribute_view.title = p_title
+	attribute_view.update(p_attributes)
+	attribute_view.position = Vector2(1100, 20)
+	p_attributes.value_changed.connect(func _on_changed(p_attribute: StringName, p_delta: float) -> void:
+		attribute_view.update(p_attributes)
+	)
+	add_child(attribute_view)
+	
 
 
 func delete_selected() -> void:

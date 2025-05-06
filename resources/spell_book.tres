@@ -23,4 +23,4 @@ columns = 2
 editable = false
 owns = true
 allowed_components = Array[ExtResource("2_bilqo")]([])
-metadata/_custom_type_script = ExtResource("3_xkqd0")
+metadata/_custom_type_script = "uid://q48d62ldtwma"

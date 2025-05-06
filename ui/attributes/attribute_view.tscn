@@ -2,13 +2,23 @@
 
 [ext_resource type="Script" uid="uid://c2aarpp2dcx5u" path="res://ui/attributes/attribute_view.gd" id="1_m3323"]
 
-[node name="Control" type="PanelContainer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="AttributeView" type="PanelContainer" node_paths=PackedStringArray("list")]
+offset_right = 267.0
+offset_bottom = 303.0
 script = ExtResource("1_m3323")
+list = NodePath("VBoxContainer/List")
+title = "Attribute View"
 
-[node name="List" type="RichTextLabel" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Attribute View"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="List" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2

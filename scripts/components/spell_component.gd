@@ -8,8 +8,8 @@ enum Result {
 	NoCast,
 }
 
-@export var behavior: SpellBehavior
-@export var effect: Effect
+#@export var behavior: SpellBehavior
+@export var effects: Array[Effect]
 
 
 func is_allowed(p_other: ItemComponent) -> bool:
@@ -19,8 +19,8 @@ func is_allowed(p_other: ItemComponent) -> bool:
 
 
 func cast() -> Result:
-	if behavior == null:
-		return Result.NoCast
+	#if behavior == null:
+		#return Result.NoCast
 	
-	behavior.on_cast()
+	#behavior.on_cast()
 	return Result.Casted

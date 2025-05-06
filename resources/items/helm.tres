@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://flnekij20n64"]
+[gd_resource type="Resource" script_class="Item" load_steps=11 format=3 uid="uid://flnekij20n64"]
 
 [ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_qh7p2"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_w2675"]
 [ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="2_1vs8j"]
 [ext_resource type="Texture2D" uid="uid://cfw5hdo5hjwy6" path="res://assets/textures/item/brutal-helm.svg" id="2_t8o6l"]
+[ext_resource type="Script" uid="uid://d7k2b5myyka1" path="res://scripts/combat/attributes.gd" id="3_bfjqc"]
+[ext_resource type="Script" uid="uid://lrwvlhsj1j88" path="res://scripts/components/attribute_component.gd" id="4_uwg0y"]
 
 [sub_resource type="Resource" id="Resource_bfjqc"]
 script = ExtResource("2_1vs8j")
@@ -20,6 +22,39 @@ rarity = 2
 level = 0
 metadata/_custom_type_script = "uid://dj2nv6dq3np88"
 
+[sub_resource type="Resource" id="Resource_uer0d"]
+script = ExtResource("3_bfjqc")
+strength = 10
+dexterity = 0
+intelligence = 0
+wisdom = 0
+stamina = 0
+spirit = 0
+strength_multiplier = 1.0
+dexterity_multiplier = 1.0
+intelligence_multiplier = 1.0
+wisdom_multiplier = 1.0
+stamina_multiplier = 1.0
+spirit_multiplier = 1.0
+armor = 0
+armor_multiplier = 1.0
+armor_penetration = 0
+armor_penetration_multiplier = 1.0
+shadow_resistance = 0
+shadow_resistance_multiplier = 1.0
+shadow_penetration = 0
+shadow_penetration_multiplier = 1.0
+nature_resistance = 0
+nature_resistance_multiplier = 1.0
+nature_penetration = 0
+nature_penetration_multiplier = 1.0
+metadata/_custom_type_script = "uid://d7k2b5myyka1"
+
+[sub_resource type="Resource" id="Resource_dya5h"]
+script = ExtResource("4_uwg0y")
+attributes = SubResource("Resource_uer0d")
+metadata/_custom_type_script = "uid://lrwvlhsj1j88"
+
 [resource]
 script = ExtResource("1_w2675")
 display_name = "Helm"
@@ -30,6 +65,7 @@ stack_size = 1
 cooldown = 1.0
 _components = {
 &"ArmorComponent": SubResource("Resource_bfjqc"),
+&"AttributeComponent": SubResource("Resource_dya5h"),
 &"DetailedItemComponent": SubResource("Resource_t8o6l")
 }
 metadata/_custom_type_script = "uid://ni37hjpima3q"

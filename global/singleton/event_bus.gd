@@ -10,4 +10,8 @@ signal hotbar_key_pressed(p_spell: Item)
 
 
 @warning_ignore("unused_signal")
-signal character_attributes_changed(p_attributes: Attributes)
+signal character_attributes_loaded(p_attributes: Attributes)
+
+
+@warning_ignore("unused_signal")
+signal total_attributes_loaded(p_attributes: Attributes)
