@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="Item" load_steps=9 format=3 uid="uid://dslddi37yvwjk"]
+[gd_resource type="Resource" script_class="Item" load_steps=10 format=3 uid="uid://dslddi37yvwjk"]
 
 [ext_resource type="Script" uid="uid://dhyw5hkewtxnq" path="res://scripts/behaviors/damage_behavior.gd" id="1_kggnb"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_paykc"]
 [ext_resource type="Script" uid="uid://md122n0kb0ba" path="res://scripts/components/chain_spell_component.gd" id="1_xqiny"]
 [ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="2_kggnb"]
+[ext_resource type="Resource" uid="uid://bbkb8732dvmnc" path="res://resources/effects/burn.tres" id="2_ptoff"]
 [ext_resource type="Resource" uid="uid://c8n0efeh54hpr" path="res://resources/spells/fire_rain.tres" id="4_47hi4"]
 [ext_resource type="Resource" uid="uid://c7njom0us2gls" path="res://resources/spells/fire_bomb.tres" id="5_7o5gr"]
 
@@ -16,6 +17,7 @@ metadata/_custom_type_script = ExtResource("1_kggnb")
 script = ExtResource("1_xqiny")
 spells = Array[ExtResource("1_paykc")]([ExtResource("4_47hi4"), ExtResource("5_7o5gr")])
 behavior = SubResource("Resource_47hi4")
+effect = ExtResource("2_ptoff")
 metadata/_custom_type_script = ExtResource("1_xqiny")
 
 [resource]
@@ -29,4 +31,4 @@ cooldown = 2.0
 _components = {
 &"ChainSpellComponent": SubResource("Resource_kggnb")
 }
-metadata/_custom_type_script = ExtResource("1_paykc")
+metadata/_custom_type_script = "uid://ni37hjpima3q"

@@ -1,6 +1,7 @@
 class_name HotbarView
 extends ItemView
 
+
 enum Type {
 	Main,
 	Aux1
@@ -61,7 +62,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			if item_stack.item == null:
 				continue
 			
-			item_stack.item.use()
+			EventBus.hotbar_key_pressed.emit(item_stack.item)
+			#item_stack.item.use()
 			break
 
 # TODO: Implement NFInputMap singleton which will handle registering of actions
@@ -80,7 +82,7 @@ func _set_default_keybinds() -> void:
 			continue
 		
 		var event := InputEventKey.new()
-		event.keycode = _as_key(PRIMARY_KEYS[i])
+		event.keycode = PRIMARY_KEYS[i]
 		event.shift_pressed = modifiers & (1 << 0)
 		event.alt_pressed = modifiers & (1 << 1)
 		event.ctrl_pressed = modifiers & (1 << 2)
@@ -90,8 +92,3 @@ func _set_default_keybinds() -> void:
 
 func _get_hotbar_name() -> String:
 	return str(Type.keys()[hotbar_type]).to_lower()
-
-
-# Funny little helper function to stop the parser from complaining :)
-func _as_key(p_index: Key) -> Key:
-	return p_index

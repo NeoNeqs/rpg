@@ -9,12 +9,14 @@ enum Result {
 }
 
 @export var behavior: SpellBehavior
+@export var effect: Effect
 
 
 func is_allowed(p_other: ItemComponent) -> bool:
 	return (
 		p_other is SpellComponent or p_other is ChainSpellComponent
 	)
+
 
 func cast() -> Result:
 	if behavior == null:

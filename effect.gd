@@ -42,8 +42,9 @@ func get_tooltip() -> String:
 	return "On hit (%d%%): " % int(apply_chance * 100.0)
 
 
-func apply(_p_target: CombatSystem, _p_attacker: CombatSystem) -> void:
+func apply(_p_target: CombatSystem, _p_attacker: CombatSystem) -> int:
 	assert(false, "Don't call apply on the base class Effect")
+	return 0
 
 
 func _get_property_list() -> Array[Dictionary]:

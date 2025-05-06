@@ -3,6 +3,7 @@ class_name Item
 extends Resource
 
 signal used(p_time_usec: int)
+signal spell_casted(p_effect: Effect)
 
 static var _logger: Logger = Logger.new("Item", Logger.LogLevel.Debug)
 
@@ -25,7 +26,7 @@ var _components := {}
 static var registered_components: Array[Script] = [
 	ArmorComponent, 
 	DamageComponent,
-	StatsComponent,
+	AttributeComponent,
 	EffectComponent,
 ]
 
@@ -115,7 +116,7 @@ func get_display_name() -> String:
 	
 	return overridden_spell.display_name
 
-#region
+#endregion
 
 
 #region Item.use() and helpers
@@ -152,6 +153,7 @@ func _handle_spell_component(p_spell_component: SpellComponent) -> void:
 		return
 	
 	used.emit(cooldown_usec)
+	spell_casted.emit(p_spell_component.effect)
 	_last_cast_time = Time.get_ticks_usec()
 
 
@@ -167,40 +169,46 @@ func _handle_chain_spell_component(p_chain_spell_component: ChainSpellComponent)
 			"Spell '{}' is still on cooldown for {}.", 
 			[
 				spell.get_display_name(), 
-				DebugUtils.humnaize_time(get_remaining_cooldown())]
+				DebugUtils.humnaize_time(get_remaining_cooldown())
+			]
 		)
 		return
 
-	var result := p_chain_spell_component.cast()
+	var result: SpellComponent.Result = p_chain_spell_component.cast()
+	
 	match result:
 		SpellComponent.Result.Casted:
 			_logger.info("Casting spell '{}'.", [spell.get_display_name()])
-			_complete_cast(p_chain_spell_component)
+			_complete_cast(p_chain_spell_component, p_chain_spell_component.effect)
 		SpellComponent.Result.Next:
 			var spell_comp: SpellComponent = spell.get_component(SpellComponent)
 			if spell_comp == null:
 				_logger.error(
 					"Spell '{}' in a spell chain of '{}' does not have a SpellComponent.",
-					[spell.get_display_name(), display_name] 
 					# IMPORTANT: display_name here is intended
+					[spell.get_display_name(), display_name] 
 				)
 				return
 			
 			if is_on_cooldown(cooldown_usec):
 				return
+			
 			var _result: SpellComponent.Result = spell_comp.cast()
 			_logger.debug("Casting spell '{}'.", [spell.get_display_name()])
-			_complete_cast(p_chain_spell_component)
+			_complete_cast(p_chain_spell_component, spell_comp.effect)
 		SpellComponent.Result.NoCast:
 			_logger.debug("Spell '{}' has no behavior!", [spell.get_display_name()])
 
 
-func _complete_cast(p_chain_spell_component: ChainSpellComponent) -> void:
+func _complete_cast(p_chain_spell_component: ChainSpellComponent, p_effect: Effect) -> void:
 	p_chain_spell_component.chain()
 	var next_spell: Item = p_chain_spell_component.get_spell()
 	if next_spell == null:
 		next_spell = self
 	used.emit(next_spell.cooldown * 1_000_000)
+	
+	#var next_spell_spell_component := next_spell.get_component(SpellComponent)
+	spell_casted.emit(p_effect)
 	_last_cast_time = Time.get_ticks_usec()
 
 
@@ -243,8 +251,7 @@ func _get_property_list() -> Array[Dictionary]:
 		"name": &"_components",
 		"type": TYPE_DICTIONARY,
 		"usage": PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_SCRIPT_VARIABLE
-	}
-	]
+	}]
 
 
 func _validate_property(property: Dictionary) -> void:

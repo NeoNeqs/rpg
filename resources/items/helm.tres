@@ -1,8 +1,18 @@
-[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://flnekij20n64"]
+[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://flnekij20n64"]
 
 [ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_qh7p2"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_w2675"]
+[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="2_1vs8j"]
 [ext_resource type="Texture2D" uid="uid://cfw5hdo5hjwy6" path="res://assets/textures/item/brutal-helm.svg" id="2_t8o6l"]
+
+[sub_resource type="Resource" id="Resource_bfjqc"]
+script = ExtResource("2_1vs8j")
+armor = 200
+slot = 0
+armor_type = 0
+current_durability = 0
+max_durability = 0
+metadata/_custom_type_script = "uid://cg5gyd5hs4gj"
 
 [sub_resource type="Resource" id="Resource_t8o6l"]
 script = ExtResource("1_qh7p2")
@@ -19,6 +29,7 @@ price = 0
 stack_size = 1
 cooldown = 1.0
 _components = {
+&"ArmorComponent": SubResource("Resource_bfjqc"),
 &"DetailedItemComponent": SubResource("Resource_t8o6l")
 }
 metadata/_custom_type_script = "uid://ni37hjpima3q"

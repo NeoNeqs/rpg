@@ -1,18 +1,30 @@
-[gd_resource type="Resource" script_class="Item" load_steps=7 format=3 uid="uid://c8n0efeh54hpr"]
+[gd_resource type="Resource" script_class="Item" load_steps=9 format=3 uid="uid://c8n0efeh54hpr"]
 
 [ext_resource type="Texture2D" uid="uid://oauwek8drqx4" path="res://assets/textures/spell/heavy-rain.svg" id="1_3ifp4"]
 [ext_resource type="Script" uid="uid://dhyw5hkewtxnq" path="res://scripts/behaviors/damage_behavior.gd" id="1_4hwfl"]
 [ext_resource type="Script" uid="uid://dw5fgliskaak3" path="res://scripts/components/spell_component.gd" id="1_7k1si"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_vnh6b"]
+[ext_resource type="Script" uid="uid://hpmtjwcgiafl" path="res://modifier_effect.gd" id="2_ts5sy"]
 
 [sub_resource type="Resource" id="Resource_4hwfl"]
 script = ExtResource("1_4hwfl")
 amount = 100
 metadata/_custom_type_script = ExtResource("1_4hwfl")
 
+[sub_resource type="Resource" id="Resource_se32c"]
+script = ExtResource("2_ts5sy")
+modifier = "intelligence"
+value = 20.0
+apply_chance = 1.0
+tick_timeout = 30
+ticks = 1
+flags = 1
+metadata/_custom_type_script = "uid://hpmtjwcgiafl"
+
 [sub_resource type="Resource" id="Resource_ts5sy"]
 script = ExtResource("1_7k1si")
 behavior = SubResource("Resource_4hwfl")
+effect = SubResource("Resource_se32c")
 metadata/_custom_type_script = ExtResource("1_7k1si")
 
 [resource]

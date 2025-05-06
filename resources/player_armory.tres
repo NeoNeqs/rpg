@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="Inventory" load_steps=9 format=3 uid="uid://dijj24ietitik"]
+
+[ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="1_jw304"]
+[ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/components/item_component.gd" id="2_ifik4"]
+[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="3_ifik4"]
+[ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="3_pvjm6"]
+
+[sub_resource type="Resource" id="Resource_pvjm6"]
+script = ExtResource("3_ifik4")
+armor = 0
+slot = 0
+armor_type = 0
+current_durability = 0
+max_durability = 0
+metadata/_custom_type_script = "uid://cg5gyd5hs4gj"
+
+[sub_resource type="Resource" id="Resource_stcmr"]
+script = ExtResource("1_jw304")
+quantity = 0
+allowed_components = Array[ExtResource("2_ifik4")]([SubResource("Resource_pvjm6")])
+
+[sub_resource type="Resource" id="Resource_kobsi"]
+script = ExtResource("3_ifik4")
+armor = 0
+slot = 2
+armor_type = 0
+current_durability = 0
+max_durability = 0
+metadata/_custom_type_script = "uid://cg5gyd5hs4gj"
+
+[sub_resource type="Resource" id="Resource_di2h2"]
+script = ExtResource("1_jw304")
+quantity = 0
+allowed_components = Array[ExtResource("2_ifik4")]([SubResource("Resource_kobsi")])
+
+[resource]
+script = ExtResource("3_pvjm6")
+_items = Array[ExtResource("1_jw304")]([SubResource("Resource_stcmr"), SubResource("Resource_di2h2")])
+columns = 2
+editable = true
+owns = true
+allowed_components = Array[ExtResource("2_ifik4")]([])
+metadata/_custom_type_script = "uid://q48d62ldtwma"

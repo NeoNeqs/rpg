@@ -17,9 +17,13 @@ func _ready() -> void:
 
 # this is ~ok~
 func _on_log_selected(p_index: int) -> void:
+	if p_index == 0:
+		%Output.text = ""
+		return
+	
 	var file: String = %LogsOption.get_item_text(p_index)
-	#%Output.text =
-	var log_file := FileAccess.open(logs_path.path_join("test.log"), FileAccess.READ)
+
+	var log_file := FileAccess.open(logs_path.path_join(file), FileAccess.READ)
 	if log_file == null:
 		print("file null, error ", FileAccess.get_open_error())
 		return

@@ -15,7 +15,7 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	if panel:
 		panel.queue_free()
-	queue_free()
+	#queue_free()
 
 
 func _get_plugin_icon() -> Texture2D:

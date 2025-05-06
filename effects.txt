@@ -1,7 +1,0 @@
-DamageEffect:
-	- Instant Poison
-	- Deadly Poison
-
-ModifierEffect:
-	- Slowness
-	- Cheep Shot

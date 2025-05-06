@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DamageEffect" load_steps=2 format=3 uid="uid://bbkb8732dvmnc"]
+
+[ext_resource type="Script" uid="uid://fh5abtlh6jdo" path="res://damage_effect.gd" id="1_o40wo"]
+
+[resource]
+script = ExtResource("1_o40wo")
+damage_type = 3
+value = 20.0
+apply_chance = 1.0
+tick_timeout = 3
+ticks = 10
+flags = 0
+metadata/_custom_type_script = "uid://fh5abtlh6jdo"

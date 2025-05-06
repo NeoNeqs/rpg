@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Item" load_steps=9 format=3 uid="uid://ctfxdgmbxm2ph"]
 
-[ext_resource type="Script" uid="uid://lrwvlhsj1j88" path="res://scripts/components/stats_component.gd" id="1_0cowq"]
+[ext_resource type="Script" uid="uid://lrwvlhsj1j88" path="res://scripts/components/attribute_component.gd" id="1_0cowq"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_axbdf"]
 [ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="2_v8qy0"]
 [ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="3_v8qy0"]
@@ -23,8 +23,6 @@ metadata/_custom_type_script = "uid://dj2nv6dq3np88"
 
 [sub_resource type="Resource" id="Resource_bvl2o"]
 script = ExtResource("1_0cowq")
-strength = 20
-stamina = 40
 metadata/_custom_type_script = "uid://lrwvlhsj1j88"
 
 [resource]

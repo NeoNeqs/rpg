@@ -9,8 +9,10 @@ var modifier: String
 func _init() -> void:
 	pass
 
+
 func get_modifier() -> String:
 	return modifier
+
 
 func get_tooltip() -> String:
 	var tooltip := "#color=f111ff#" + super.get_tooltip()
@@ -24,8 +26,9 @@ func get_tooltip() -> String:
 	if not ticks == 0:
 		tooltip += " for %d seconds" % (ticks * tick_timeout)
 	tooltip += '.\n'
-
+	
 	return tooltip
+
 
 func _get_property_list() -> Array[Dictionary]:
 	return [{
