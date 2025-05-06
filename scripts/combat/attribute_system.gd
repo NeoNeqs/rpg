@@ -11,10 +11,10 @@ func link(p_attributes: Attributes) -> void:
 		return
 	
 	for attr_name: StringName in Attributes._attributes:
-		var current_total: Variant = _total_attributes.get(attr_name)
-		var removed_value: Variant = p_attributes.get(attr_name)
-		current_total += removed_value
 		
+		var current_total: Variant = _total_attributes.get(attr_name)
+		var added_value: Variant = p_attributes.get(attr_name)
+		current_total += added_value
 		_total_attributes.set(attr_name, current_total)
 	
 	p_attributes.value_changed.connect(_on_attribute_changed)
@@ -35,7 +35,7 @@ func unlink(p_attributes: Attributes) -> void:
 
 func _on_attribute_changed(p_attribute: StringName, p_delta: int) -> void:
 	var current_total: int = _total_attributes.get(p_attribute)
-	
+	print(p_attribute, p_delta)
 	_total_attributes.set(p_attribute, current_total + p_delta)
 
 

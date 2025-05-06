@@ -14,7 +14,6 @@ enum Type {
 	Heavy,
 }
 
-@export var armor: int
 @export var slot: Slot
 @export var armor_type: Type
 @export var current_durability: int
@@ -31,5 +30,5 @@ func is_allowed(p_other: ItemComponent) -> bool:
 
 func get_tooltip() -> String:
 	return """%s#right##color=red##right#%s
-%d Armor (%d/%d)
-""" % [Slot.keys()[slot], Type.keys()[armor_type], armor, current_durability, max_durability]
+ Armor (%d/%d)
+""" % [Slot.keys()[slot], Type.keys()[armor_type], current_durability, max_durability]

@@ -8,12 +8,14 @@ extends ItemComponent
 func get_tooltip() -> String:
 	var tooltip := ""
 #
-	## TODO: extract this array through get_property_list in a static_init
-	#var stats := ["strength", "stamina"]
-	#for stat: String in stats:
-		#var val: Variant = get(stat)
-		#if not val == 0:
-			#var sign_symbol: String = "+" if val > 0 else "-"
-			#tooltip += "%s%d %s\n" % [sign_symbol, val, stat.capitalize()]
+	# TODO: extract this array through get_property_list in a static_init
+	for attr: StringName in Attributes._attributes:
+		var val: Variant = attributes.get(attr)
+		if attr.contains("_"):
+			continue
+		
+		if not val == 0:
+			var sign_symbol: String = "+" if val > 0 else "-"
+			tooltip += "%s%d %s\n" % [sign_symbol, val, attr]
 
 	return tooltip

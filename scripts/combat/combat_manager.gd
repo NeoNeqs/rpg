@@ -38,21 +38,17 @@ func _link_armor_attribute(p_item: Item) -> void:
 	if p_item == null:
 		return
 	var l_attributes := p_item.get_attributes()
-	if l_attributes == null:
-		return
+	if not l_attributes == null:
+		attribute_system.link(l_attributes)
 		
-	attribute_system.link(l_attributes)
 
 
 func _unlink_armor_attribute(p_item: Item) -> void:
 	if p_item == null:
 		return
 	var l_attributes := p_item.get_attributes()
-	if l_attributes == null:
-		return
-	
-	attribute_system.unlink(l_attributes)
-
+	if not l_attributes == null:
+		attribute_system.unlink(l_attributes)
 
 func apply_effects(p_effects: Array[Effect]) -> void:
 	for effect: Effect in p_effects:
