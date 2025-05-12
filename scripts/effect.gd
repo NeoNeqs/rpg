@@ -39,8 +39,6 @@ func apply(p_attacker: CombatManager, p_target: CombatManager) -> Timer:
 		if chance > apply_chance:
 			return null
 	
-	var damage: int = 0
-	
 	# Instant and permament effect
 	if ticks == 0:
 		_apply(p_attacker, p_target)

@@ -13,30 +13,6 @@ func _ready() -> void:
 	
 	EventBus.character_attributes_loaded.emit(combat_manager.base_attributes)
 	EventBus.total_attributes_loaded.emit(combat_manager.attribute_system._total_attributes)
-	#_setup_attribute_callbacks(
-		#EventBus.character_attributes_changed, 
-		#combat_manager.base_attributes
-	#)
-	#
-	#_setup_attribute_callbacks(
-		#EventBus.total_attributes_changed,
-		#combat_manager.attribute_system._total_attributes
-	#)
-	
-	#var l_callable := \
-		#func on_attribute_change(p_attribute: StringName, p_delta: float) -> void:
-			#EventBus.character_attributes_changed.emit(combat_manager.base_attributes)
-	#
-	#combat_manager.base_attributes.value_changed.connect(l_callable)
-	#l_callable.call(&"", 0)
-#
-#func _setup_attribute_callbacks(p_signal: Signal, p_attributes: Attributes) -> void:
-	#var l_callable := \
-		#func on_attribute_change(p_attribute: StringName, p_delta: float) -> void:
-			#p_signal.emit(p_attributes)
-	#
-	#p_attributes.value_changed.connect(l_callable)
-	#l_callable.call(&"", 0)
 
 
 func _on_hotbar_key_pressed(p_item: Item) -> void:

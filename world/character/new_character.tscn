@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://3adc3kxn20pa"]
+
+[ext_resource type="PackedScene" uid="uid://ctyqvgxjy3ccw" path="res://assets/models/character/Knight_Male.gltf" id="1_bns78"]
+
+[node name="Character" type="Node3D"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+
+[node name="Knight_Male" parent="CharacterBody3D" instance=ExtResource("1_bns78")]
