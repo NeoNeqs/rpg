@@ -9,7 +9,10 @@ func _ready() -> void:
 	EventBus.player_inventory_loaded.emit(inventory)
 	EventBus.player_inventory_loaded.emit(combat_manager.armory)
 	EventBus.hotbar_key_pressed.connect(_on_hotbar_key_pressed)
-	
+	EventBus.entity_selected.connect(
+		func(p_entity: Entity) -> void:
+			combat_manager._current_target = p_entity
+	)
 	
 	EventBus.character_attributes_loaded.emit(combat_manager.base_attributes)
 	EventBus.total_attributes_loaded.emit(combat_manager.attribute_system._total_attributes)

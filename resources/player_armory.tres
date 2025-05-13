@@ -7,7 +7,6 @@
 
 [sub_resource type="Resource" id="Resource_pvjm6"]
 script = ExtResource("3_ifik4")
-armor = 0
 slot = 0
 armor_type = 0
 current_durability = 0
@@ -21,7 +20,6 @@ allowed_components = Array[ExtResource("2_ifik4")]([SubResource("Resource_pvjm6"
 
 [sub_resource type="Resource" id="Resource_kobsi"]
 script = ExtResource("3_ifik4")
-armor = 0
 slot = 2
 armor_type = 0
 current_durability = 0

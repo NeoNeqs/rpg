@@ -15,3 +15,7 @@ signal character_attributes_loaded(p_attributes: Attributes)
 
 @warning_ignore("unused_signal")
 signal total_attributes_loaded(p_attributes: Attributes)
+
+
+@warning_ignore("unused_signal")
+signal entity_selected(p_entity: Entity)

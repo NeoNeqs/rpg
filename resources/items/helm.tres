@@ -15,12 +15,6 @@ current_durability = 0
 max_durability = 0
 metadata/_custom_type_script = "uid://cg5gyd5hs4gj"
 
-[sub_resource type="Resource" id="Resource_t8o6l"]
-script = ExtResource("1_qh7p2")
-rarity = 2
-level = 0
-metadata/_custom_type_script = "uid://dj2nv6dq3np88"
-
 [sub_resource type="Resource" id="Resource_uer0d"]
 script = ExtResource("3_bfjqc")
 strength = 10
@@ -53,6 +47,12 @@ metadata/_custom_type_script = "uid://d7k2b5myyka1"
 script = ExtResource("4_uwg0y")
 attributes = SubResource("Resource_uer0d")
 metadata/_custom_type_script = "uid://lrwvlhsj1j88"
+
+[sub_resource type="Resource" id="Resource_t8o6l"]
+script = ExtResource("1_qh7p2")
+rarity = 2
+level = 0
+metadata/_custom_type_script = "uid://dj2nv6dq3np88"
 
 [resource]
 script = ExtResource("1_w2675")
