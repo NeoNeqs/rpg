@@ -45,6 +45,8 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
 
     public void Critical(string pMessage, bool pVerbose = false) {
         _Log(Level.Critical, pMessage, pVerbose);
+        
+        System.Diagnostics.Debug.Assert(false, pMessage);
     }
 
     private void _LogStackTrace() {

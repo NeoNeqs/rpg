@@ -17,7 +17,7 @@ public partial class DamageEffect : Effect {
     
     public DamageType Type;
 
-    protected override void _Setup() {
+    protected override void SetupImpl() {
         EmitSignalTick(this);
     }
 }

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Test" load_steps=3 format=3 uid="uid://brftq4wgjvpj5"]
+
+[ext_resource type="Curve" uid="uid://cmxi4a6y36pfb" path="res://new_curve.tres" id="1_1ivwu"]
+[ext_resource type="Script" uid="uid://deg8aua0fi6j3" path="res://Test.cs" id="2_uauhc"]
+
+[resource]
+script = ExtResource("2_uauhc")
+Cur = ExtResource("1_1ivwu")
+metadata/_custom_type_script = "uid://deg8aua0fi6j3"

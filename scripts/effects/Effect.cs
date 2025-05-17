@@ -36,17 +36,17 @@ public abstract partial class Effect : Resource {
         }
 
         if (_ticks == 0) {
-            _Setup();
+            SetupImpl();
             return null;
         }
 
         if (IsImmediate()) {
-            _Setup();
+            SetupImpl();
         }
 
         var timer = new Timer();
         timer.Autostart = true;
-        timer.Timeout += () => _SetupPeriodicEffect(timer);
+        timer.Timeout += () => SetupPeriodicEffect(timer);
         timer.WaitTime = TickTimeout;
 
         return timer;
@@ -56,26 +56,26 @@ public abstract partial class Effect : Resource {
         return (Flags & EffectFlags.Immediate) == 0;
     }
 
-    private void _SetupPeriodicEffect(Timer pTimer) {
+    private void SetupPeriodicEffect(Timer pTimer) {
         _currentTick--;
 
         if (_currentTick > 0) {
-            _Setup();
+            SetupImpl();
             return;
         }
 
         if (!IsImmediate()) {
-            _Setup();
+            SetupImpl();
         }
 
-        _Kill(pTimer);
+        Kill(pTimer);
     }
 
 
-    private void _Kill(Timer pTimer) {
+    private void Kill(Timer pTimer) {
         pTimer.Stop();
         pTimer.QueueFree();
     }
 
-    protected abstract void _Setup();
+    protected abstract void SetupImpl();
 }
