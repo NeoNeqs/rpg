@@ -6,7 +6,7 @@ using RPG.global;
 using Godot;
 using Godot.Collections;
 
-namespace RPG.Global;
+namespace RPG.global;
 
 public class Logger(string pTag, Logger.Level pCurrentLevel) {
     public enum Level {
@@ -17,9 +17,10 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
         Critical,
     }
 
-    public static readonly Logger Core = new Logger("Core", Level.Debug);
-    public static readonly Logger Inventory = new Logger("Inventory", Level.Debug);
-    public static readonly Logger Combat = new Logger("Combat", Level.Debug);
+    public static readonly Logger Core = new("Core", Level.Debug);
+    public static readonly Logger Inventory = new("Inventory", Level.Debug);
+    public static readonly Logger Combat = new("Combat", Level.Debug);
+    public static readonly Logger UI = new("UI", Level.Debug);
 
 
     static Logger() {

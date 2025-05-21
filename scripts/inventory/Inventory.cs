@@ -2,8 +2,8 @@ using System;
 using System.Runtime.CompilerServices;
 using Godot;
 using Godot.Collections;
-using RPG.Global;
-using RPG.scripts.components;
+using RPG.global;
+using GizmoComponent = RPG.scripts.inventory.components.GizmoComponent;
 
 namespace RPG.scripts.inventory;
 
@@ -12,12 +12,13 @@ namespace RPG.scripts.inventory;
 ///     <para>1. Every <see cref="GizmoStack"/> is initialized and never null</para>
 ///     <para>2. <see cref="GizmoStack"/> never changes the position.</para>
 /// </summary>
+[Tool, GlobalClass]
 public partial class Inventory : Resource {
     [Signal]
-    public delegate void GizmoAboutToChangeEventHandler(GizmoStack pGizmo);
+    public delegate void GizmoAboutToChangeEventHandler(GizmoStack pGizmo, int pIndex);
 
     [Signal]
-    public delegate void GizmoChangedEventHandler(GizmoStack pGizmo);
+    public delegate void GizmoChangedEventHandler(GizmoStack pGizmo, int pIndex);
 
     [Signal]
     public delegate void SizeChangedEventHandler();
@@ -41,6 +42,8 @@ public partial class Inventory : Resource {
 
     private Array<GizmoStack> _gizmos = [];
 
+    // TODO: Not every view makes use of Columns property. Might be a good idea to make into a component, 
+    //       when more of those properties come up.
     [Export] public int Columns;
     [Export] public required Array<GizmoComponent> AllowedComponents;
     [Export] public InventoryFlags Flags;
@@ -67,14 +70,14 @@ public partial class Inventory : Resource {
 
         if (!IsEditable()) {
             if (pToInventory.IsEditable()) {
-                return Reference(fromGizmoStack, pToInventory, toGizmoStack);
+                return Reference(pFrom, pToInventory, pTo);
             }
 
             return ActionResult.None;
         }
 
         if (IsOwning() && !pToInventory.IsOwning()) {
-            return Reference(fromGizmoStack, pToInventory, toGizmoStack);
+            return Reference(pFrom, pToInventory, pTo);
         }
 
         if (!IsOwning() && pToInventory.IsOwning()) {
@@ -82,7 +85,8 @@ public partial class Inventory : Resource {
         }
 
         if (toGizmoStack.IsEmpty()) {
-            return Move(fromGizmoStack, pToInventory, toGizmoStack, pSingle);
+            return Move(pFrom, pToInventory, pTo, pSingle);
+            // return Move(fromGizmoStack, pToInventory, toGizmoStack, pSingle);
         }
 
         if (!IsAllowed(toGizmoStack, this, fromGizmoStack)) {
@@ -90,20 +94,37 @@ public partial class Inventory : Resource {
         }
 
         if (toGizmoStack.Quantity == toGizmoStack.Gizmo?.StackSize) {
-            return Swap(fromGizmoStack, pToInventory, toGizmoStack);
+            return Swap(pFrom, pToInventory, pTo);
         }
 
         if (fromGizmoStack.Gizmo == toGizmoStack.Gizmo && IsOwning() && !pToInventory.IsOwning()) {
-            return Stack(fromGizmoStack, pToInventory, toGizmoStack, pSingle);
+            return Stack(pFrom, pToInventory, pTo, pSingle);
         }
 
-        return Swap(fromGizmoStack, pToInventory, toGizmoStack);
+        return Swap(pFrom, pToInventory, pTo);
     }
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public GizmoStack At(int pIndex) {
         return _gizmos[pIndex];
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int GetSize() {
+        return Gizmos.Count;
+    }
+
+    public bool Delete(int pFrom) {
+        if (!IsEditable()) {
+            return false;
+        }
+        
+        EmitSignalGizmoAboutToChange(_gizmos[pFrom], pFrom);
+        _gizmos[pFrom].Gizmo = null;
+        EmitSignalGizmoChanged(_gizmos[pFrom], pFrom);
+
+        return true;
     }
 
     private static bool IsAllowed(GizmoStack pFromGizmoStack, Inventory pToInventory, GizmoStack pToGizmoStack) {
@@ -138,83 +159,98 @@ public partial class Inventory : Resource {
         return false;
     }
 
-    private ActionResult Move(GizmoStack pFromGizmoStack, Inventory pToInv, GizmoStack pToGizmoStack, bool pSingle) {
+    private ActionResult Move(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {
+        GizmoStack fromGizmoStack = At(pFrom);
+        GizmoStack toGizmoStack = pToInventory.At(pTo);
+        
         if (pSingle && IsOwning()) {
-            EmitSignalGizmoAboutToChange(pFromGizmoStack);
-            pToInv.EmitSignalGizmoAboutToChange(pToGizmoStack);
+            EmitSignalGizmoAboutToChange(fromGizmoStack, pFrom);
+            pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
 
-            pToGizmoStack.Gizmo = pFromGizmoStack.Gizmo;
+            toGizmoStack.Gizmo = fromGizmoStack.Gizmo;
 
-            pFromGizmoStack.Quantity -= 1;
+            fromGizmoStack.Quantity -= 1;
 
-            if (pToGizmoStack.Quantity > 1) {
-                pToGizmoStack.Quantity += 1;
+            if (toGizmoStack.Quantity > 1) {
+                toGizmoStack.Quantity += 1;
             }
 
-            EmitSignalGizmoChanged(pFromGizmoStack);
-            pToInv.EmitSignalGizmoChanged(pToGizmoStack);
+            EmitSignalGizmoChanged(fromGizmoStack, pFrom);
+            pToInventory.EmitSignalGizmoChanged(toGizmoStack, pTo);
         } else {
-            Swap(pFromGizmoStack, pToInv, pToGizmoStack);
+            Swap(pFrom, pToInventory, pTo);
         }
 
-        if (pToGizmoStack.IsEmpty()) {
+        if (fromGizmoStack.IsEmpty()) {
             return ActionResult.None;
         }
 
         return ActionResult.Leftover;
     }
 
-    private ActionResult Swap(GizmoStack pFromGizmoStack, Inventory pToInventory, GizmoStack pToGizmoStack) {
-        Gizmo? tempGizmo = pToGizmoStack.Gizmo;
-        long tempQuantity = pToGizmoStack.Quantity;
+    private ActionResult Swap(int pFrom, Inventory pToInventory, int pTo) {
+        GizmoStack fromGizmoStack = At(pFrom);
+        GizmoStack toGizmoStack = pToInventory.At(pTo);
+        
+        Gizmo? tempGizmo = toGizmoStack.Gizmo;
+        long tempQuantity = toGizmoStack.Quantity;
 
-        EmitSignalGizmoAboutToChange(pFromGizmoStack);
-        pToInventory.EmitSignalGizmoAboutToChange(pToGizmoStack);
+        EmitSignalGizmoAboutToChange(fromGizmoStack, pFrom);
+        pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
 
-        pToGizmoStack.Gizmo = pFromGizmoStack.Gizmo;
-        pToGizmoStack.Quantity = pFromGizmoStack.Quantity;
+        toGizmoStack.Gizmo = fromGizmoStack.Gizmo;
+        toGizmoStack.Quantity = fromGizmoStack.Quantity;
 
-        pFromGizmoStack.Gizmo = tempGizmo;
-        pFromGizmoStack.Quantity = tempQuantity;
+        fromGizmoStack.Gizmo = tempGizmo;
+        fromGizmoStack.Quantity = tempQuantity;
 
-        EmitSignalGizmoChanged(pFromGizmoStack);
-        pToInventory.EmitSignalGizmoChanged(pToGizmoStack);
+        EmitSignalGizmoChanged(fromGizmoStack, pFrom);
+        pToInventory.EmitSignalGizmoChanged(toGizmoStack, pTo);
 
         return ActionResult.Leftover;
     }
 
-    private ActionResult Stack(GizmoStack pFromGizmoStack, Inventory pToInv, GizmoStack pToGizmoStack, bool pSingle) {
-        long total = pFromGizmoStack.Quantity + pToGizmoStack.Quantity;
+    private ActionResult Stack(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {
+        GizmoStack fromGizmoStack = At(pFrom);
+        GizmoStack toGizmoStack = pToInventory.At(pTo);
+        
+        long total = fromGizmoStack.Quantity + toGizmoStack.Quantity;
         long takeFromTotal;
 
         if (pSingle) {
-            takeFromTotal = Math.Min(pToGizmoStack.Quantity + 1, pToGizmoStack.Gizmo?.StackSize ?? 0);
+            takeFromTotal = Math.Min(toGizmoStack.Quantity + 1, toGizmoStack.Gizmo?.StackSize ?? 0);
         } else {
-            takeFromTotal = Math.Min(total, pToGizmoStack.Gizmo?.StackSize ?? 0);
+            takeFromTotal = Math.Min(total, toGizmoStack.Gizmo?.StackSize ?? 0);
         }
 
         long quantityLeft = Math.Min(0, total - takeFromTotal);
 
-        pToGizmoStack.Quantity = takeFromTotal;
-        pFromGizmoStack.Quantity = quantityLeft;
+        EmitSignalGizmoAboutToChange(fromGizmoStack, pFrom);
+        pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
+        
+        toGizmoStack.Quantity = takeFromTotal;
+        fromGizmoStack.Quantity = quantityLeft;
 
-        EmitSignalGizmoChanged(pFromGizmoStack);
-        pToInv.EmitSignalGizmoChanged(pToGizmoStack);
+        EmitSignalGizmoChanged(fromGizmoStack, pFrom);
+        pToInventory.EmitSignalGizmoChanged(toGizmoStack, pTo);
 
-        if (pFromGizmoStack.IsEmpty()) {
+        if (fromGizmoStack.IsEmpty()) {
             return ActionResult.None;
         }
 
         return ActionResult.Leftover;
     }
 
-    private static ActionResult Reference(GizmoStack pFromGizmoStack, Inventory pToInv, GizmoStack pToGizmoStack) {
-        pToInv.EmitSignalGizmoAboutToChange(pToGizmoStack);
+    private ActionResult Reference(int pFrom, Inventory pToInventory, int pTo) {
+        GizmoStack fromGizmoStack = At(pFrom);
+        GizmoStack toGizmoStack = pToInventory.At(pTo);
+        
+        pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
 
-        pToGizmoStack.Gizmo = pFromGizmoStack.Gizmo;
-        pToGizmoStack.Quantity = pFromGizmoStack.Quantity;
+        toGizmoStack.Gizmo = fromGizmoStack.Gizmo;
+        toGizmoStack.Quantity = fromGizmoStack.Quantity;
 
-        pToInv.EmitSignalGizmoChanged(pToGizmoStack);
+        pToInventory.EmitSignalGizmoChanged(toGizmoStack, pTo);
 
         return ActionResult.None;
     }
@@ -242,7 +278,7 @@ public partial class Inventory : Resource {
         }
 
         _gizmos = pNewGizmos;
-        for (var i = 0; i < _gizmos.Count; i++) {
+        for (int i = 0; i < _gizmos.Count; i++) {
             if ((GizmoStack?)_gizmos[i] is null) {
                 _gizmos[i] = new GizmoStack();
             }

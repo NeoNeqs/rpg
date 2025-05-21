@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://b7xu5k302lfn1"]
+[gd_scene load_steps=13 format=3 uid="uid://b7xu5k302lfn1"]
 
-[ext_resource type="Script" uid="uid://dvdalfeqh5g1g" path="res://ui/item/item_slot.gd" id="1_difxo"]
-[ext_resource type="PackedScene" uid="uid://bfcwwknne4ffo" path="res://cooldown.tscn" id="2_mhayv"]
+[ext_resource type="Script" uid="uid://cexowsi487thm" path="res://ui/item/ItemSlot.cs" id="1_mhayv"]
+[ext_resource type="Script" uid="uid://b5hosqg80wnwb" path="res://ui/CooldownDisplay.cs" id="2_mhayv"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="3_fdv6p"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]
@@ -31,6 +31,12 @@ content_margin_right = 4.0
 content_margin_bottom = 4.0
 texture = SubResource("GradientTexture2D_3nf06")
 
+[sub_resource type="Gradient" id="Gradient_nqyqr"]
+colors = PackedColorArray(0, 0, 0, 0.470588, 0, 0, 0, 0.470588)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_feaih"]
+gradient = SubResource("Gradient_nqyqr")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e5rcf"]
 resource_local_to_scene = true
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -47,7 +53,7 @@ font_size = 20
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
 
-[node name="ItemSlot" type="Button" node_paths=PackedStringArray("border_holder", "text_holder", "icon_holder")]
+[node name="ItemSlot" type="Button" node_paths=PackedStringArray("_borderHolder", "TextHolder", "IconHolder")]
 custom_minimum_size = Vector2(50, 50)
 offset_right = 60.0
 offset_bottom = 60.0
@@ -56,10 +62,10 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_gbfhx")
 theme_override_styles/hover = SubResource("StyleBoxTexture_gbfhx")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_ji56f")
 theme_override_styles/normal = SubResource("StyleBoxTexture_ji56f")
-script = ExtResource("1_difxo")
-border_holder = NodePath("Border")
-text_holder = NodePath("Quantity")
-icon_holder = NodePath("TextureRect")
+script = ExtResource("1_mhayv")
+_borderHolder = NodePath("Border")
+TextHolder = NodePath("Quantity")
+IconHolder = NodePath("TextureRect")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1
@@ -71,9 +77,19 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 
-[node name="Cooldown" parent="TextureRect" instance=ExtResource("2_mhayv")]
+[node name="CooldownDisplay" type="TextureProgressBar" parent="TextureRect"]
 layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
+step = 0.1
+fill_mode = 5
+nine_patch_stretch = true
+texture_progress = SubResource("GradientTexture2D_feaih")
+script = ExtResource("2_mhayv")
 
 [node name="Border" type="Panel" parent="."]
 layout_mode = 1

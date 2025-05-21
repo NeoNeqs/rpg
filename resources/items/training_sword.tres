@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Gizmo" load_steps=8 format=3 uid="uid://c1to7l0bbvobn"]
+
+[ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="1_enuvo"]
+[ext_resource type="Texture2D" uid="uid://do2wmv7d8ttsd" path="res://assets/textures/item/stick.svg" id="1_nvwiv"]
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_q5sj8"]
+[ext_resource type="Script" uid="uid://cyd1y5aqm7k2y" path="res://scripts/inventory/components/ItemComponent.cs" id="2_recvg"]
+[ext_resource type="Script" uid="uid://bvposkjpnprlf" path="res://scripts/inventory/components/DamageComponent.cs" id="3_bi5jj"]
+
+[sub_resource type="Resource" id="Resource_k44vn"]
+script = ExtResource("3_bi5jj")
+DamageType = 0
+Damage = 20.0
+metadata/_custom_type_script = "uid://bvposkjpnprlf"
+
+[sub_resource type="Resource" id="Resource_bi5jj"]
+script = ExtResource("2_recvg")
+ItemRarity = 0
+Level = 1
+metadata/_custom_type_script = "uid://cyd1y5aqm7k2y"
+
+[resource]
+script = ExtResource("1_enuvo")
+DisplayName = "Training Sword"
+Icon = ExtResource("1_nvwiv")
+StackSize = 1
+Components = Dictionary[String, ExtResource("1_q5sj8")]({
+"DamageComponent": SubResource("Resource_k44vn"),
+"ItemComponent": SubResource("Resource_bi5jj")
+})
+metadata/_custom_type_script = "uid://be1ycgpodowgh"

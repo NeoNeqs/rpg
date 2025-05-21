@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Inventory" load_steps=11 format=3 uid="uid://cy52kgcuvj2pc"]
+
+[ext_resource type="Script" uid="uid://do8hg8vd5v8ui" path="res://scripts/inventory/GizmoStack.cs" id="1_jtqv5"]
+[ext_resource type="Script" uid="uid://cyd1y5aqm7k2y" path="res://scripts/inventory/components/ItemComponent.cs" id="1_mcbr8"]
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="2_dbvw4"]
+[ext_resource type="Resource" uid="uid://c1to7l0bbvobn" path="res://resources/items/training_sword.tres" id="3_dbvw4"]
+[ext_resource type="Script" uid="uid://b2yjmi2mufyqh" path="res://scripts/inventory/Inventory.cs" id="3_mcbr8"]
+
+[sub_resource type="Resource" id="Resource_dln5k"]
+script = ExtResource("1_mcbr8")
+ItemRarity = 0
+Level = 1
+metadata/_custom_type_script = "uid://cyd1y5aqm7k2y"
+
+[sub_resource type="Resource" id="Resource_qdl7p"]
+script = ExtResource("1_jtqv5")
+Gizmo = ExtResource("3_dbvw4")
+Quantity = 1
+AllowedComponents = Array[ExtResource("2_dbvw4")]([])
+
+[sub_resource type="Resource" id="Resource_ggcj5"]
+script = ExtResource("1_jtqv5")
+Quantity = 0
+AllowedComponents = Array[ExtResource("2_dbvw4")]([])
+
+[sub_resource type="Resource" id="Resource_r2p0t"]
+script = ExtResource("1_jtqv5")
+Quantity = 0
+AllowedComponents = Array[ExtResource("2_dbvw4")]([])
+
+[sub_resource type="Resource" id="Resource_m6k5q"]
+script = ExtResource("1_jtqv5")
+Quantity = 0
+AllowedComponents = Array[ExtResource("2_dbvw4")]([])
+
+[resource]
+script = ExtResource("3_mcbr8")
+Gizmos = Array[ExtResource("1_jtqv5")]([SubResource("Resource_qdl7p"), SubResource("Resource_ggcj5"), SubResource("Resource_r2p0t"), SubResource("Resource_m6k5q")])
+Columns = 2
+AllowedComponents = [SubResource("Resource_dln5k")]
+Flags = 3
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"

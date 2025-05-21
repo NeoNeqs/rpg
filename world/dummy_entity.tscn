@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwqk02m3lsujx"]
+
+[ext_resource type="Script" uid="uid://copluoykji72n" path="res://world/Entity.cs" id="1_b42e5"]
+[ext_resource type="Script" uid="uid://bkm1b7umvsdba" path="res://scripts/combat/combat_manager.gd" id="2_1ns7f"]
+
+[node name="DummyEntity" type="Node3D" node_paths=PackedStringArray("CombatManager")]
+script = ExtResource("1_b42e5")
+CombatManager = NodePath("CombatManager")
+
+[node name="CombatManager" type="Node" parent="."]
+script = ExtResource("2_1ns7f")
+metadata/_custom_type_script = "uid://bkm1b7umvsdba"

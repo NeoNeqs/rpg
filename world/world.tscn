@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://bis4dc1eunhgd"]
+
+[ext_resource type="PackedScene" uid="uid://c7n3fws3wd5yu" path="res://world/test_level.tscn" id="1_4717r"]
+[ext_resource type="Script" uid="uid://bbgyfcod2ucxm" path="res://world/World.cs" id="1_h5o24"]
+[ext_resource type="PackedScene" uid="uid://iivb1yj1wg2a" path="res://world/character/character.tscn" id="2_h5o24"]
+[ext_resource type="PackedScene" uid="uid://blk21fp6k13se" path="res://world/test_enemy.tscn" id="3_mmdvd"]
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_h5o24")
+
+[node name="TestLevel" parent="." instance=ExtResource("1_4717r")]
+
+[node name="Character" parent="." instance=ExtResource("2_h5o24")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.728227, 0)
+
+[node name="TestEnemy" parent="." instance=ExtResource("3_mmdvd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.888081, -3.47548)

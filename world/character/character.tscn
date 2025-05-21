@@ -1,91 +1,118 @@
-[gd_scene load_steps=21 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=33 format=3 uid="uid://iivb1yj1wg2a"]
 
-[ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://world/character/character.gd" id="1_e5tqa"]
+[ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
-[ext_resource type="Resource" uid="uid://q6akjdd51jsk" path="res://resources/player_inventory.tres" id="2_f1wg7"]
+[ext_resource type="Script" uid="uid://do8hg8vd5v8ui" path="res://scripts/inventory/GizmoStack.cs" id="2_c4acw"]
+[ext_resource type="Script" uid="uid://dpuryjvuxj7fx" path="res://world/character/PlayerCharacterBody.cs" id="2_fn1hb"]
+[ext_resource type="Resource" uid="uid://cy52kgcuvj2pc" path="res://character_inventory.tres" id="2_m0gsu"]
+[ext_resource type="Script" uid="uid://b2yjmi2mufyqh" path="res://scripts/inventory/Inventory.cs" id="3_vqai4"]
 [ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"]
+[ext_resource type="Script" uid="uid://b6ma5srt1o11b" path="res://scripts/combat/Stats.cs" id="4_pdabv"]
 [ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"]
-[ext_resource type="Script" uid="uid://bkm1b7umvsdba" path="res://scripts/combat/combat_manager.gd" id="5_to3ne"]
-[ext_resource type="Script" uid="uid://cr1ujq8sj7pxh" path="res://scripts/combat/attribute_system.gd" id="6_msheq"]
-[ext_resource type="Script" uid="uid://xi5aa6qhe7j7" path="res://scripts/combat/stat_system.gd" id="7_ipb0f"]
-[ext_resource type="Script" uid="uid://d7k2b5myyka1" path="res://scripts/combat/attributes.gd" id="8_ipb0f"]
-[ext_resource type="Resource" uid="uid://dijj24ietitik" path="res://resources/player_armory.tres" id="10_pdabv"]
-[ext_resource type="Script" uid="uid://de1w4y6b7arij" path="res://scripts/combat_resources.gd" id="12_qdl7p"]
+[ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="5_qdl7p"]
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="6_ggcj5"]
+[ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="6_lbca7"]
+[ext_resource type="Resource" uid="uid://dfebkmuinemk8" path="res://resources/spells/fire_ball.tres" id="7_qdl7p"]
+[ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="10_f1wg7"]
+[ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="11_m0gsu"]
+
+[sub_resource type="Resource" id="Resource_fn1hb"]
+script = ExtResource("3_vqai4")
+Gizmos = Array[ExtResource("2_c4acw")]([])
+Columns = 0
+AllowedComponents = []
+Flags = 0
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
+
+[sub_resource type="Resource" id="Resource_yux1m"]
+script = ExtResource("5_qdl7p")
+Effects = []
+CooldownSeconds = 0
+metadata/_custom_type_script = "uid://bk27a6avfmj1x"
+
+[sub_resource type="Resource" id="Resource_d882m"]
+script = ExtResource("2_c4acw")
+Gizmo = ExtResource("7_qdl7p")
+Quantity = 1
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_7k511"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_g02qr"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_xy7j0"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_r2p0t"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_m6k5q"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_s02qt"]
+script = ExtResource("3_vqai4")
+Gizmos = Array[ExtResource("2_c4acw")]([SubResource("Resource_d882m"), SubResource("Resource_7k511"), SubResource("Resource_g02qr"), SubResource("Resource_xy7j0"), SubResource("Resource_r2p0t"), SubResource("Resource_m6k5q")])
+Columns = 0
+AllowedComponents = Array[Object]([SubResource("Resource_yux1m")])
+Flags = 1
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
+
+[sub_resource type="Resource" id="Resource_f1wg7"]
+script = ExtResource("4_pdabv")
+_IntegerStats = Dictionary[String, int]({})
+_DecimalStats = Dictionary[String, float]({})
+metadata/_custom_type_script = "uid://b6ma5srt1o11b"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1jngo"]
 radius = 0.3
 height = 1.5
 
-[sub_resource type="Resource" id="Resource_ipb0f"]
-script = ExtResource("6_msheq")
-metadata/_custom_type_script = "uid://cr1ujq8sj7pxh"
+[sub_resource type="Curve" id="Curve_qdl7p"]
 
 [sub_resource type="Curve" id="Curve_pdabv"]
-_limits = [0.25, 1.0, 0.0, 4000.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(2000, 0.25), 0.0, 0.0, 0, 0, Vector2(4000, 1), 0.0, 0.0, 0, 0]
+_limits = [0.4, 1.0, 0.0, 3000.0]
+_data = [Vector2(0, 1), 0.0, -0.000181341, 0, 1, Vector2(2229.32, 0.595732), -0.000181341, -4.71288e-05, 1, 0, Vector2(3000, 0.4), -0.000352398, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="Curve" id="Curve_fn1hb"]
-_limits = [0.0, 0.4, 0.0, 4000.0]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(2000, 0.4), 0.0, 0.0, 0, 0, Vector2(4000, 0), 0.0, 0.0, 0, 0]
-point_count = 3
+[sub_resource type="Curve" id="Curve_ggcj5"]
 
-[sub_resource type="Curve" id="Curve_f1wg7"]
-_limits = [0.0, 10000.0, 0.0, 1000.0]
-_data = [Vector2(0, 0), 0.0, 10.0, 0, 1, Vector2(1000, 10000), 10.0, 0.0, 1, 0]
-point_count = 2
+[sub_resource type="Curve" id="Curve_yux1m"]
 
-[sub_resource type="Curve" id="Curve_m0gsu"]
-_limits = [0.0, 2500.0, 0.0, 1000.0]
-_data = [Vector2(0, 0), 0.0, 2.5, 0, 1, Vector2(1000, 2500), 2.5, 0.0, 1, 0]
-point_count = 2
-
-[sub_resource type="Resource" id="Resource_c4acw"]
-script = ExtResource("7_ipb0f")
-armor_curve = SubResource("Curve_pdabv")
-armor_penetration_curve = SubResource("Curve_fn1hb")
-stamina_curve = SubResource("Curve_f1wg7")
-strength_curve = SubResource("Curve_m0gsu")
-metadata/_custom_type_script = "uid://xi5aa6qhe7j7"
+[sub_resource type="Resource" id="Resource_m0gsu"]
+script = ExtResource("10_f1wg7")
+ArmorReductionCurve = SubResource("Curve_pdabv")
+ArmorPenetrationCurve = SubResource("Curve_qdl7p")
+StrengthCurve = SubResource("Curve_yux1m")
+StaminaCurve = SubResource("Curve_ggcj5")
+metadata/_custom_type_script = "uid://4m7emmkgdioy"
 
 [sub_resource type="Resource" id="Resource_vqai4"]
-script = ExtResource("8_ipb0f")
-strength = 10
-dexterity = 0
-intelligence = 0
-wisdom = 0
-stamina = 0
-spirit = 0
-strength_multiplier = 1.0
-dexterity_multiplier = 1.0
-intelligence_multiplier = 1.0
-wisdom_multiplier = 1.0
-stamina_multiplier = 1.0
-spirit_multiplier = 1.0
-armor = 0
-armor_multiplier = 1.0
-armor_penetration = 0
-armor_penetration_multiplier = 1.0
-shadow_resistance = 0
-shadow_resistance_multiplier = 1.0
-shadow_penetration = 0
-shadow_penetration_multiplier = 1.0
-nature_resistance = 0
-nature_resistance_multiplier = 1.0
-nature_penetration = 0
-nature_penetration_multiplier = 1.0
-metadata/_custom_type_script = "uid://d7k2b5myyka1"
+script = ExtResource("11_m0gsu")
+StatCurves = SubResource("Resource_m0gsu")
+metadata/_custom_type_script = "uid://bp1c67o5mclqa"
 
-[sub_resource type="Resource" id="Resource_d882m"]
-script = ExtResource("12_qdl7p")
-metadata/_custom_type_script = "uid://de1w4y6b7arij"
-
-[node name="Character" type="Node3D" node_paths=PackedStringArray("combat_manager")]
-script = ExtResource("1_e5tqa")
-inventory = ExtResource("2_f1wg7")
-combat_manager = NodePath("CombatManager")
+[node name="Character" type="Node3D" node_paths=PackedStringArray("CombatManager")]
+script = ExtResource("1_pdabv")
+Inventory = ExtResource("2_m0gsu")
+CombatManager = NodePath("CombatManager")
+Armory = SubResource("Resource_fn1hb")
+SpellBook = SubResource("Resource_s02qt")
+BaseStats = SubResource("Resource_f1wg7")
 
 [node name="Body" type="CharacterBody3D" parent="."]
+script = ExtResource("2_fn1hb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
@@ -116,10 +143,6 @@ pivot = NodePath("../Body/Pivot")
 model = NodePath("../Body/Model")
 
 [node name="CombatManager" type="Node" parent="."]
-script = ExtResource("5_to3ne")
-attribute_system = SubResource("Resource_ipb0f")
-stat_system = SubResource("Resource_c4acw")
-base_attributes = SubResource("Resource_vqai4")
-armory = ExtResource("10_pdabv")
-combat_resources = SubResource("Resource_d882m")
-metadata/_custom_type_script = "uid://bkm1b7umvsdba"
+script = ExtResource("6_lbca7")
+CombatSystem = SubResource("Resource_vqai4")
+metadata/_custom_type_script = "uid://dbsutjhc4nqxg"

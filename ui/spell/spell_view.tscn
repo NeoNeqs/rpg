@@ -1,17 +1,17 @@
 [gd_scene load_steps=3 format=3 uid="uid://d4bn283eravlm"]
 
-[ext_resource type="Script" uid="uid://dtc4u38bmrugh" path="res://ui/spell/spell_view.gd" id="1_lv7r0"]
+[ext_resource type="Script" uid="uid://dntit8qq2m6rb" path="res://ui/spell/SpellView.cs" id="1_lv7r0"]
 [ext_resource type="PackedScene" uid="uid://ng8yjyxxl7rl" path="res://ui/spell/spell_slot.tscn" id="2_ybdat"]
 
-[node name="SpellBook" type="PanelContainer" node_paths=PackedStringArray("container")]
+[node name="SpellView" type="PanelContainer" node_paths=PackedStringArray("Container")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lv7r0")
-container = NodePath("MarginContainer/List")
-slot_scene = ExtResource("2_ybdat")
+Container = NodePath("MarginContainer/List")
+SlotScene = ExtResource("2_ybdat")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2

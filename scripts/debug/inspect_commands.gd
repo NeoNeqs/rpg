@@ -6,10 +6,6 @@ func _init() -> void:
 	pass
 
 
-func _ready() -> void:
-	name = "Inspect"
-	set_meta("check_me", "123")
-
 
 func command_call(p_what: String, p_method: String, p_args: String = "") -> Variant:
 	var obj: Object = instance_from_id(int(p_what))

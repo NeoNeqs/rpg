@@ -1,10 +1,11 @@
 using System;
 using Godot;
 using Godot.Collections;
-using RPG.scripts.components;
+using GizmoComponent = RPG.scripts.inventory.components.GizmoComponent;
 
 namespace RPG.scripts.inventory;
 
+[Tool, GlobalClass]
 public partial class GizmoStack : Resource {
     [Export]
     public Gizmo? Gizmo {

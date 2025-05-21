@@ -4,17 +4,20 @@ using Godot;
 
 namespace RPG.scripts.effects;
 
-public abstract partial class Effect : Resource {
+[Tool, GlobalClass]
+public sealed partial class Effect : ComponentSystem<EffectComponent> {
+    [Signal]
+    public delegate void OnTickEventHandler();
+
     [Flags]
     public enum EffectFlags {
         Immediate = 1 << 0,
     }
 
-    [Export] public long Value;
     [Export] public int TickTimeout = 3;
 
     [Export(PropertyHint.Range, "0,1,0.01")]
-    public double ApplicationChance;
+    public double ApplicationChance = 1.0;
 
     [Export]
     public int Ticks {
@@ -25,23 +28,25 @@ public abstract partial class Effect : Resource {
         get => _ticks;
     }
 
+    [Export] public long Range;
     [Export] public EffectFlags Flags;
+    
 
     private int _ticks;
     private int _currentTick;
 
-    public Timer? Setup() {
+    public Timer? Start() {
         if (!RNG.IsSuccessfulRoll(ApplicationChance)) {
             return null;
         }
 
         if (_ticks == 0) {
-            SetupImpl();
+            EmitSignalOnTick();
             return null;
         }
 
         if (IsImmediate()) {
-            SetupImpl();
+            EmitSignalOnTick();
         }
 
         var timer = new Timer();
@@ -60,22 +65,15 @@ public abstract partial class Effect : Resource {
         _currentTick--;
 
         if (_currentTick > 0) {
-            SetupImpl();
+            EmitSignalOnTick();
             return;
         }
 
         if (!IsImmediate()) {
-            SetupImpl();
+            EmitSignalOnTick();
         }
 
-        Kill(pTimer);
-    }
-
-
-    private void Kill(Timer pTimer) {
         pTimer.Stop();
         pTimer.QueueFree();
     }
-
-    protected abstract void SetupImpl();
 }
