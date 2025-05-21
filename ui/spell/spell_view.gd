@@ -1,5 +1,6 @@
-class_name SpellView
-extends InventoryView
-
-func _setup_container() -> void:
-	pass
+extends Node
+#class_name SpellView
+#extends InventoryView
+#
+#func _setup_container() -> void:
+	#pass

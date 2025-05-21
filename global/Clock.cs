@@ -3,7 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 using RPG.global;
 
-namespace RPG.Global;
+namespace RPG.global;
 
 public sealed class Clock(
     object pObject,

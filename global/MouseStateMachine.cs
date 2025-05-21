@@ -1,39 +1,32 @@
 using Godot;
-using RPG.Global;
+using RPG.global;
 
 namespace RPG.global;
 
-public partial class MouseStateMachine : Node {
-
+public static class MouseStateMachine {
     public enum State {
-        Free,
         UIControl,
+        InventoryControl,
         CameraControl,
-        WorldControl,
+        WorldInteract,
     }
     
-    private State _currentState;
+    public static State CurrentState { get; private set; }
 
-    public void SetState(State pState) {
-        if (_currentState != State.Free) {
-            return;
-        }
-        
-        _currentState = pState;
-        _HandleState(_currentState);
-    }
-
-    private static void _HandleState(State pState) {
+    public static void SetState(State pState) {
         switch (pState) {
-            case State.Free:
+            case State.UIControl:
+                CurrentState = pState;
                 DisplayServer.MouseSetMode(DisplayServer.MouseMode.Visible);
                 break;
-            case State.UIControl:
+            case State.InventoryControl:
+                DisplayServer.MouseSetMode(DisplayServer.MouseMode.Hidden);
                 break;
             case State.CameraControl:
+                CurrentState = pState;
                 DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
                 break;
-            case State.WorldControl:
+            case State.WorldInteract:
                 break;
             default:
                 Logger.Core.Error($"Unhandled state: {pState.ToString()}", true);

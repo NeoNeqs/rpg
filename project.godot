@@ -18,8 +18,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-EventBus="*res://global/singleton/event_bus.gd"
-AssetDB="*res://global/singleton/asset_db.gd"
+EventBus="*res://global/EventBus.cs"
 Debug="*res://ui/debug/debug.tscn"
 
 [debug]

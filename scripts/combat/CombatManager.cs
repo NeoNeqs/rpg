@@ -1,101 +1,184 @@
 using System.Diagnostics;
-using System.Reflection;
 using Godot;
-using Godot.NativeInterop;
-using RPG.scripts.components;
+using RPG.global;
 using RPG.scripts.effects;
+using RPG.scripts.effects.components;
 using RPG.scripts.inventory;
+using RPG.scripts.inventory.components;
 using RPG.world;
 
 namespace RPG.scripts.combat;
 
+[GlobalClass]
 public partial class CombatManager : Node {
-    private Entity? _selectedEntity;
+    public Entity? TargetEntity;
 
-    [Export] public StatSystem StatSystem;
-    [Export] public AttributeSystem AttributeSystem;
+    [Export] public CombatSystem CombatSystem = null!;
+    [Export] public StatSystem StatSystem = null!;
+    [Export] public CombatResources CombatResources = null!;
 
     public override void _Ready() {
-        Entity attacker = GetAttacker();
-        
-        Debug.Assert(GetAttacker() is not null);
+        Entity entity = GetEntity();
 
-        attacker.Armory.GizmoChanged += LinkGizmoAttributes;
-        attacker.Armory.GizmoAboutToChange += UnlinkGizmoAttributes;
-        
-        AttributeSystem.Link(attacker.BaseAttributes);
-        LinkAttackerArmory();
-        
-        StatSystem.Initialize(AttributeSystem.Total);
+        Debug.Assert(entity is not null);
+
+        entity.Armory.GizmoChanged += LinkGizmoAttributes;
+        entity.Armory.GizmoAboutToChange += UnlinkGizmoAttributes;
+
+        StatSystem.Link(entity.BaseStats);
+        LinkEntityArmory();
+
+        CombatSystem.Initialize(StatSystem.Total);
+        CombatResources.Initialize(CombatSystem);
     }
 
-    public void ApplyEffectToSelectedEntity(Effect pEffect) {
-        _selectedEntity?.CombatManager.ApplyEffect(pEffect, this);
-    }
+    public void Cast(Gizmo pGizmo) {
+        ChainSpellComponent? chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
 
-    public void ApplyEffect(Effect pEffect, CombatManager pAttacker) {
-        Timer? timer = pEffect.Setup();
+        if (chainSpellComponent is not null) {
+            Effect[] effects = CastChainSpell(pGizmo, chainSpellComponent);
+            ApplyEffectsToTarget(effects);
+        }
+
+        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent>();
+
+        if (spellComponent is not null) {
+            Effect[] effects = CastSpell(pGizmo, spellComponent);
+            ApplyEffectsToTarget(effects);
+        }
+    }
     
+    private void ApplyEffectsToTarget(Effect[] pEffects) {
+        foreach (Effect effect in pEffects) {
+            ApplyEffectToTargetEntity(effect);
+        }
+    }
+
+    private void ApplyEffectToTargetEntity(Effect pEffect) {
+        if (!HasTarget()) {
+            return;
+        }
+
+        AreaOfEffectComponent? areaEffectComponent = pEffect.GetComponent<AreaOfEffectComponent>();
+        if (areaEffectComponent is not null) {
+            foreach (Entity entityInRadius in TargetEntity!.GetEntitiesInRadius(areaEffectComponent.Radius)) {
+                entityInRadius.CombatManager.ApplyEffect(pEffect, this);
+            }
+        }
+
+        TargetEntity!.CombatManager.ApplyEffect(pEffect, this);
+    }
+
+    private void ApplyEffect(Effect pEffect, CombatManager pAttacker) {
+        Timer? timer = pEffect.Start();
+
         if (timer is not null) {
             AddChild(timer);
         }
-    
-        switch (pEffect) {
-            case DamageEffect damageEffect:
-                damageEffect.Tick += (DamageEffect pDamageEffect) => {
-                    OnDamageEffectTick(pDamageEffect, pAttacker);
-                };
-                
-                break;
-            case AttributeEffect attributeEffect:
-                attributeEffect.Tick += OnAttributeEffectTick;
-                break;
+
+        DamageEffectComponent? damageEffectComponent = pEffect.GetComponent<DamageEffectComponent>();
+        if (damageEffectComponent is not null) {
+            pEffect.OnTick += () => OnDamageEffectTick(damageEffectComponent, pAttacker);
+        }
+
+        StatEffectComponent? attributeEffectComponent = pEffect.GetComponent<StatEffectComponent>();
+        if (attributeEffectComponent is not null) {
+            pEffect.OnTick += () => OnAttributeEffectTick(attributeEffectComponent, pAttacker);
         }
     }
 
-    private void OnAttributeEffectTick(AttributeEffect pEffect) {
-        
+    private bool HasTarget() {
+        return TargetEntity != null && IsInstanceValid(TargetEntity);
     }
 
-    private void OnDamageEffectTick(DamageEffect pEffect, CombatManager pAttacker) {
-        StatSystem.CalculateDamage(pEffect, pAttacker.StatSystem);
+    private static Effect[] CastSpell(Gizmo pSource, SpellComponent pSpellComponent) {
+        if (pSpellComponent.IsOnCooldown()) {
+            Logger.Combat.Debug($"Spell {pSource.DisplayName} is still on cooldown");
+            return [];
+        }
+
+        ulong cooldownInMicroSeconds = pSpellComponent.CooldownSeconds * 1_000_000;
+        pSource.EmitCasted(cooldownInMicroSeconds);
+
+        pSpellComponent.Cast();
+        return pSpellComponent.Effects;
     }
 
-    private void LinkAttackerArmory() {
-        foreach (GizmoStack gizmoStack in GetAttacker().Armory.Gizmos) {
-            LinkGizmoAttributes(gizmoStack);
+    private static Effect[] CastChainSpell(Gizmo pSource, ChainSpellComponent pChainSpellComponent) {
+        Gizmo currentSpell = pChainSpellComponent.GetCurrentSpell() ?? pSource;
+
+        if (pChainSpellComponent.IsOnCooldown()) {
+            Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is still on cooldown");
+            return [];
+        }
+
+        bool castResult = pChainSpellComponent.Cast();
+        if (castResult) {
+            CompleteChainCast(pSource, pChainSpellComponent);
+        } else {
+            SpellComponent? spellComponent = currentSpell.GetComponent<SpellComponent>();
+            if (spellComponent is null) {
+                Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is missing spell component");
+                return [];
+            }
+
+            if (spellComponent.IsOnCooldown()) {
+                Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is still on cooldown");
+                return [];
+            }
+
+            spellComponent.Cast();
+            CompleteChainCast(pSource, pChainSpellComponent);
+            return spellComponent.Effects;
+        }
+
+        return pChainSpellComponent.Effects;
+    }
+
+    private static void CompleteChainCast(Gizmo pSource, ChainSpellComponent pChainSpellComponent) {
+        Gizmo nextSpell = pChainSpellComponent.GetNextSpell() ?? pSource;
+        pChainSpellComponent.Chain();
+        ulong cooldownInMicroSeconds = nextSpell.GetCooldown() * 1_000_000;
+        pSource.EmitCasted(cooldownInMicroSeconds);
+    }
+
+    private void OnDamageEffectTick(DamageEffectComponent pDamageEffect, CombatManager pAttacker) {
+        // TODO: Cache the damage value, since it won't probably change.
+        double damage = CombatSystem.CalculateDamage(pDamageEffect, pAttacker.CombatSystem);
+
+        CombatResources.ApplyDamage(damage);
+    }
+
+    private void OnAttributeEffectTick(StatEffectComponent pEffect, CombatManager pAttacker) { }
+
+
+    private void LinkEntityArmory() {
+        foreach (GizmoStack gizmoStack in GetEntity().Armory.Gizmos) {
+            LinkGizmoAttributes(gizmoStack, -1);
         }
     }
 
-    private void LinkGizmoAttributes(GizmoStack pGizmoStack) {
-        if (pGizmoStack.Gizmo is null) {
-            return;
-        }
-
-        var component = pGizmoStack.Gizmo.GetComponent<AttributeComponent>();
+    private void LinkGizmoAttributes(GizmoStack pGizmoStack, int pIndex) {
+        StatComponent? component = pGizmoStack.Gizmo?.GetComponent<StatComponent>();
 
         if (component is null) {
             return;
         }
-        
-        AttributeSystem.Link(component.Attributes);
+
+        StatSystem.Link(component.Attributes);
     }
 
-    private void UnlinkGizmoAttributes(GizmoStack pGizmoStack) {
-        if (pGizmoStack.Gizmo is null) {
-            return;
-        }
-
-        var component = pGizmoStack.Gizmo.GetComponent<AttributeComponent>();
+    private void UnlinkGizmoAttributes(GizmoStack pGizmoStack, int pIndex) {
+        StatComponent? component = pGizmoStack.Gizmo?.GetComponent<StatComponent>();
 
         if (component is null) {
             return;
         }
-        
-        AttributeSystem.Unlink(component.Attributes);
+
+        StatSystem.Unlink(component.Attributes);
     }
 
-    private Entity GetAttacker() {
+    private Entity GetEntity() {
         return GetParent<Entity>();
     }
 }

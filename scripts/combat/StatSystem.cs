@@ -1,36 +1,60 @@
-using System;
 using Godot;
-using RPG.Global;
-using RPG.scripts.effects;
 
 namespace RPG.scripts.combat;
 
+[GlobalClass]
 public partial class StatSystem : Resource {
+    public Stats Total = new();
 
-    [Export] public Attributes Attributes;
-    [Export] public Stats Stats;
-    
-    public void Initialize(Attributes pAttributes) {
-        Attributes = pAttributes;
-    }
-
-    public double CalculateDamage(DamageEffect pEffect, StatSystem pAttacker) {
-        double damage = pEffect.Type switch {
-            DamageEffect.DamageType.Physical => CalculatePhysicalDamage(pEffect, pAttacker),
-            DamageEffect.DamageType.Shadow => 0.0d,
-            DamageEffect.DamageType.Nature => 0.0d,
-            DamageEffect.DamageType.Fire => 0.0d,
-            _ => double.PositiveInfinity
-        };
-
-        if (double.IsPositiveInfinity(damage)) {
-            Logger.Core.Critical($"Unhandled {nameof(DamageEffect.DamageType)} case.");
+    public void Link(Stats pStats) {
+        if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
+            return;
         }
-        
-        return damage;
+
+        foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
+            long currentTotal = Total.GetIntegerStat(stat);
+            Total.SetIntegerStat(stat, currentTotal + pStats.GetIntegerStat(stat));
+        }
+
+        pStats.IntegerStatChanged += OnIntegerStatChanged;
+
+        if (pStats.IsConnectedToDecimalStatChanged(OnDecimalStatChanged)) {
+            return;
+        }
+
+        foreach (Stats.DecimalStat stat in Stats.GetDecimalStats()) {
+            float currentTotal = Total.GetDecimalStat(stat);
+            Total.SetDecimalStat(stat, currentTotal + pStats.GetDecimalStat(stat));
+        }
+
+        pStats.DecimalStatChanged += OnDecimalStatChanged;
     }
 
-    private double CalculatePhysicalDamage(DamageEffect pEffect, StatSystem pAttacker) {
-        return 0.0d;
+    public void Unlink(Stats pStats) {
+        if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
+            foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
+                long currentTotal = Total.GetIntegerStat(stat);
+                Total.SetIntegerStat(stat, currentTotal - pStats.GetIntegerStat(stat));
+            }
+
+            pStats.IntegerStatChanged -= OnIntegerStatChanged;
+        }
+
+        if (pStats.IsConnectedToDecimalStatChanged(OnDecimalStatChanged)) {
+            foreach (Stats.DecimalStat stat in Stats.GetDecimalStats()) {
+                float currentTotal = Total.GetDecimalStat(stat);
+                Total.SetDecimalStat(stat, currentTotal - pStats.GetDecimalStat(stat));
+            }
+
+            pStats.DecimalStatChanged -= OnDecimalStatChanged;
+        }
+    }
+
+    private void OnIntegerStatChanged(Stats.IntegerStat pStat, long pDelta) {
+        Total.SetIntegerStat(pStat, pDelta);
+    }
+
+    private void OnDecimalStatChanged(Stats.DecimalStat pStat, float pDelta) {
+        Total.SetDecimalStat(pStat, pDelta);
     }
 }

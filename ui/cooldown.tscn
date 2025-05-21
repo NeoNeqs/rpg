@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bfcwwknne4ffo"]
+
+[ext_resource type="Script" uid="uid://chpedqm3syrq5" path="res://ui/cooldown.gd" id="1_qhtrn"]
+
+[sub_resource type="Gradient" id="Gradient_nqyqr"]
+colors = PackedColorArray(0, 0, 0, 0.470588, 0, 0, 0, 0.470588)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_feaih"]
+gradient = SubResource("Gradient_nqyqr")
+
+[node name="Cooldown" type="TextureProgressBar"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+step = 0.1
+fill_mode = 5
+nine_patch_stretch = true
+texture_progress = SubResource("GradientTexture2D_feaih")
+script = ExtResource("1_qhtrn")

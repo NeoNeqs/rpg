@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://b0h7oudoccqxk"]
 
 [ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="1_g8v31"]
-[ext_resource type="Script" uid="uid://br4besf5f5crq" path="res://ui/item/item_view.gd" id="2_g8v31"]
+[ext_resource type="Script" uid="uid://d05yrx8n7bgij" path="res://ui/item/ItemView.cs" id="2_g8v31"]
 [ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://ui/item/item_slot.tscn" id="3_qpt2n"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vl0br"]
@@ -12,13 +12,13 @@ texture_margin_right = 36.0
 texture_margin_bottom = 36.0
 modulate_color = Color(0.054902, 0.054902, 0.054902, 0.823529)
 
-[node name="ItemView" type="PanelContainer" node_paths=PackedStringArray("container")]
+[node name="ItemView" type="PanelContainer" node_paths=PackedStringArray("Container")]
 offset_right = 164.0
 offset_bottom = 104.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_vl0br")
 script = ExtResource("2_g8v31")
-container = NodePath("Grid")
-slot_scene = ExtResource("3_qpt2n")
+Container = NodePath("Grid")
+SlotScene = ExtResource("3_qpt2n")
 
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 2

@@ -1,5 +1,5 @@
 @tool
-class_name AttributeEffect
+#class_name AttributeEffect
 extends Effect
 
 #exported through _get_property_list2

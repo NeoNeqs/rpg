@@ -4,8 +4,8 @@ extends VBoxContainer
 static var tag_regex := RegEx.create_from_string(r"([^#]+|#[^#]*#)")
 
 
-func _ready() -> void:
-	update("Chest#color=red##right#Head")
+#func _ready() -> void:
+	#update("Chest#color=red##right#Head")
 
 
 func update(p_text: String) -> void:
@@ -104,7 +104,7 @@ func get_hbox(p_relative: Label) -> HBoxContainer:
 	
 	if not hbox is HBoxContainer:
 		hbox = HBoxContainer.new()
-		hbox.add_theme_constant_override("seperation", 0)
+		hbox.add_theme_constant_override("separation", 0)
 		add_child(hbox)
 		p_relative.custom_minimum_size = Vector2(200.0, 0)
 		p_relative.reparent(hbox)
