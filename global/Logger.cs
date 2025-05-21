@@ -20,6 +20,7 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
     public static readonly Logger Core = new Logger("Core", Level.Debug);
     public static readonly Logger Inventory = new Logger("Inventory", Level.Debug);
     public static readonly Logger Combat = new Logger("Combat", Level.Debug);
+    public static readonly Logger UI = new Logger("UI", Level.Debug);
 
 
     static Logger() {

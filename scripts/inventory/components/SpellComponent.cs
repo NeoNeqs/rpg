@@ -1,7 +1,7 @@
 using Godot;
 using RPG.scripts.effects;
 
-namespace RPG.scripts.components;
+namespace RPG.scripts.inventory.components;
 
 public partial class SpellComponent : GizmoComponent {
     [Export] public required Effect[] Effects;
@@ -9,8 +9,9 @@ public partial class SpellComponent : GizmoComponent {
 
     private ulong _lastCastTime = Time.GetTicksUsec();
 
-    public void Cast() {
+    public virtual bool Cast() {
         _lastCastTime = Time.GetTicksUsec();
+        return true;
     }
 
     public bool IsOnCooldown() {
@@ -18,5 +19,10 @@ public partial class SpellComponent : GizmoComponent {
 
         ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
         return (_lastCastTime + cooldownMicroseconds > currentTime);
+    }
+
+    public ulong GetRemainingCooldown() {
+        ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
+        return (_lastCastTime + cooldownMicroseconds - Time.GetTicksUsec());
     }
 }

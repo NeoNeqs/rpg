@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="Inventory" load_steps=9 format=3 uid="uid://dijj24ietitik"]
 
 [ext_resource type="Script" uid="uid://cboreafj7qpdw" path="res://scripts/inventory/item_stack.gd" id="1_jw304"]
-[ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/components/item_component.gd" id="2_ifik4"]
-[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/components/armor_component.gd" id="3_ifik4"]
+[ext_resource type="Script" uid="uid://xnatas68sjm5" path="res://scripts/inventory/components/item_component.gd" id="2_ifik4"]
 [ext_resource type="Script" uid="uid://q48d62ldtwma" path="res://scripts/inventory/inventory.gd" id="3_pvjm6"]
+[ext_resource type="Script" uid="uid://cg5gyd5hs4gj" path="res://scripts/inventory/components/armor_component.gd" id="3_stcmr"]
 
 [sub_resource type="Resource" id="Resource_pvjm6"]
-script = ExtResource("3_ifik4")
+script = ExtResource("3_stcmr")
 slot = 0
 armor_type = 0
 current_durability = 0
@@ -19,7 +19,7 @@ quantity = 0
 allowed_components = Array[ExtResource("2_ifik4")]([SubResource("Resource_pvjm6")])
 
 [sub_resource type="Resource" id="Resource_kobsi"]
-script = ExtResource("3_ifik4")
+script = ExtResource("3_stcmr")
 slot = 2
 armor_type = 0
 current_durability = 0

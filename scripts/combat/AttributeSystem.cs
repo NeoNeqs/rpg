@@ -35,5 +35,4 @@ public partial class AttributeSystem : Resource {
     private void OnAttributeChanged(string pPropertyName, long pDelta) {
         Total.Set(pPropertyName, pDelta);
     }
-
 }

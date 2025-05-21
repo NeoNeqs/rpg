@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://dmc6ivj6ocq8p"]
 
-[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/components/detailed_item_component.gd" id="1_5eq2r"]
+[ext_resource type="Script" uid="uid://dj2nv6dq3np88" path="res://scripts/inventory/components/detailed_item_component.gd" id="1_5eq2r"]
 [ext_resource type="Script" uid="uid://ni37hjpima3q" path="res://scripts/inventory/item.gd" id="1_h0edt"]
 [ext_resource type="Texture2D" uid="uid://do2wmv7d8ttsd" path="res://assets/textures/item/stick.svg" id="2_5eq2r"]
 

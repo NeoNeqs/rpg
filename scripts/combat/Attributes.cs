@@ -12,26 +12,33 @@ public partial class Attributes : Resource {
     public delegate void ValueChangedEventHandler(string pPropertyName, long pDelta);
 
     [Export]
-    private long Stamina {
+    public long Stamina {
         get => _stamina;
         set => SetField(ref _stamina, value);
     }
 
     [Export]
-    private long Strength {
+    public long Strength {
         get => _strength;
         set => SetField(ref _strength, value);
     }
 
     [Export]
-    private long Armor {
+    public long Armor {
         get => _armor;
         set => SetField(ref _armor, value);
+    }
+
+    [Export]
+    public long ArmorPenetration {
+        get => _armorPenetration;
+        set => SetField(ref _armorPenetration, value);
     }
 
     private long _stamina;
     private long _strength;
     private long _armor;
+    private long _armorPenetration;
 
     public void Set(string pPropertyName, long pValue) {
         var propertyNameSN = new StringName(pPropertyName);

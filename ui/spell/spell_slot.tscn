@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://ng8yjyxxl7rl"]
 
 [ext_resource type="Script" uid="uid://qaf6jg2p8qwr" path="res://ui/spell/spell_slot.gd" id="1_x6abj"]
-[ext_resource type="PackedScene" uid="uid://bfcwwknne4ffo" path="res://cooldown.tscn" id="2_6sgnv"]
+[ext_resource type="PackedScene" uid="uid://bfcwwknne4ffo" path="res://ui/cooldown.tscn" id="2_6sgnv"]
 [ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="2_v6gts"]
 [ext_resource type="FontFile" uid="uid://odtxjjamhyfs" path="res://assets/fonts/noto_sans_display/noto_sans_display.ttf" id="3_egelf"]
 

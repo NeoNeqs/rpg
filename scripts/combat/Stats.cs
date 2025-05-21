@@ -3,9 +3,24 @@ using Godot;
 namespace RPG.scripts.combat;
 
 public partial class Stats : Resource {
-    [Export] public Curve ArmorEffectivenessCurve { get; set; }
-    [Export] public required Curve ArmorPenetrationCurve;
+    // TODO: bake curves before use.
     
-    [Export] public required Curve StrengthCurve;
-    [Export] public required Curve StaminaCurve;
+    [Export] public Curve ArmorEffectivenessCurve = null!;
+    [Export] public Curve ArmorPenetrationCurve = null!;
+    
+    [Export] public Curve StrengthCurve = null!;
+    [Export] public Curve StaminaCurve = null!;
+
+
+    public long GetHealthFromStamina(long pStamina) {
+        return (long)StaminaCurve.Sample(pStamina);
+    }
+
+    public float GetPhysicalDamageReduction(long pArmor) {
+        return ArmorEffectivenessCurve.Sample(pArmor);
+    }
+
+    public float GetPhysicalDamagePenetration(long pArmorPenetration) {
+        return ArmorPenetrationCurve.Sample(pArmorPenetration);
+    }
 }

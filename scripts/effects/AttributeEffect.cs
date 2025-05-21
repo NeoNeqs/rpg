@@ -3,7 +3,7 @@ using RPG.scripts.combat;
 
 namespace RPG.scripts.effects;
 
-public partial class AttributeEffect : Effect {
+public partial class AttributeEffect {
     
     [Signal]
     public delegate void TickEventHandler(AttributeEffect pEffect);
@@ -11,7 +11,7 @@ public partial class AttributeEffect : Effect {
     [Export] public required Attributes Attributes;
     
     
-    protected override void SetupImpl() {
-        EmitSignalTick(this);
-    }
+    // protected override void SetupImpl() {
+    //     EmitSignalTick(this);
+    // }
 }

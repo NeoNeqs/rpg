@@ -1,6 +1,7 @@
 using Godot;
+using RPG.world;
 
-namespace RPG.scripts.components;
+namespace RPG.scripts.inventory.components;
 
 public abstract partial class GizmoComponent : Resource {
 
@@ -8,4 +9,7 @@ public abstract partial class GizmoComponent : Resource {
         return true;
     }
 
+    public virtual string GetTooltip(Entity pOwner) {
+        return "";
+    }
 }

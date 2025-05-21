@@ -1,7 +1,7 @@
 class_name CommandContainer
 extends Node
 
-static var logger := Logger.new("Command", Logger.LogLevel.Debug)
+static var logger := Logger.new("Console", Logger.LogLevel.Debug)
 
 
 func _init() -> void:

@@ -3,7 +3,7 @@ using System;
 
 namespace RPG.scripts.effects;
 
-public partial class DamageEffect : Effect {
+public partial class DamageEffect {
     [Signal]
     public delegate void TickEventHandler(DamageEffect pEffect);
 
@@ -17,7 +17,7 @@ public partial class DamageEffect : Effect {
     
     public DamageType Type;
 
-    protected override void SetupImpl() {
-        EmitSignalTick(this);
-    }
+    // protected override void SetupImpl() {
+    //     EmitSignalTick(this);
+    // }
 }

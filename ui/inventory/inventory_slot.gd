@@ -38,7 +38,7 @@ func reset_cooldown() -> void:
 func _get_cooldown_display() -> Cooldown:
 	var cooldown: Cooldown = icon_holder.get_node_or_null("Cooldown")
 	if cooldown == null:
-		Logger.ui.critical(
+		Logger.ui.error(
 			"Slot id='{}', index='{}' does not have a cooldown node attached.",
 			[get_instance_id(), get_index()]
 		)

@@ -20,8 +20,8 @@ func _init() -> void:
 	EventBus.total_attributes_loaded.connect(
 		create_attribute_view.bind("Character Sheet")
 	)
-	
-	
+
+
 func _ready() -> void:
 	set_process(false)
 	create_item_inventory(load("res://resources/test_inventory.tres"))

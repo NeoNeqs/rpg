@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bfcwwknne4ffo"]
 
-[ext_resource type="Script" uid="uid://chpedqm3syrq5" path="res://cooldown.gd" id="1_qhtrn"]
+[ext_resource type="Script" uid="uid://chpedqm3syrq5" path="res://ui/cooldown.gd" id="1_qhtrn"]
 
 [sub_resource type="Gradient" id="Gradient_nqyqr"]
 colors = PackedColorArray(0, 0, 0, 0.470588, 0, 0, 0, 0.470588)

@@ -1,9 +1,7 @@
 using Godot;
-using System;
+
+namespace RPG.global;
 
 public static class AssetDB {
-    
-    static AssetDB() {
-        
-    }
+    public static readonly PackedScene DummyEntity = GD.Load<PackedScene>("res://world/dummy_entity.tscn");
 }

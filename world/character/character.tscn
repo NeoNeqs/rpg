@@ -1,8 +1,8 @@
 [gd_scene load_steps=21 format=3 uid="uid://iivb1yj1wg2a"]
 
-[ext_resource type="Script" uid="uid://dl5r0a3tgfdiu" path="res://world/character/character.gd" id="1_e5tqa"]
+[ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
-[ext_resource type="Resource" uid="uid://q6akjdd51jsk" path="res://resources/player_inventory.tres" id="2_f1wg7"]
+[ext_resource type="Script" uid="uid://dpuryjvuxj7fx" path="res://world/character/PlayerCharacterBody.cs" id="2_fn1hb"]
 [ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"]
 [ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"]
 [ext_resource type="Script" uid="uid://bkm1b7umvsdba" path="res://scripts/combat/combat_manager.gd" id="5_to3ne"]
@@ -80,12 +80,11 @@ metadata/_custom_type_script = "uid://d7k2b5myyka1"
 script = ExtResource("12_qdl7p")
 metadata/_custom_type_script = "uid://de1w4y6b7arij"
 
-[node name="Character" type="Node3D" node_paths=PackedStringArray("combat_manager")]
-script = ExtResource("1_e5tqa")
-inventory = ExtResource("2_f1wg7")
-combat_manager = NodePath("CombatManager")
+[node name="Character" type="Node3D"]
+script = ExtResource("1_pdabv")
 
 [node name="Body" type="CharacterBody3D" parent="."]
+script = ExtResource("2_fn1hb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
@@ -123,3 +122,5 @@ base_attributes = SubResource("Resource_vqai4")
 armory = ExtResource("10_pdabv")
 combat_resources = SubResource("Resource_d882m")
 metadata/_custom_type_script = "uid://bkm1b7umvsdba"
+
+[connection signal="MouseClicked" from="Body" to="." method="OnMouseClicked"]
