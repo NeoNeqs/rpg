@@ -6,7 +6,7 @@ namespace RPG.scripts.combat;
 public partial class StatCurves : Resource {
     // TODO: bake curves before use.
     
-    [Export] public Curve ArmorEffectivenessCurve = null!;
+    [Export] public Curve ArmorReductionCurve = null!;
     [Export] public Curve ArmorPenetrationCurve = null!;
     
     [Export] public Curve StrengthCurve = null!;
@@ -18,7 +18,7 @@ public partial class StatCurves : Resource {
     }
 
     public float GetPhysicalDamageReduction(long pArmor) {
-        return ArmorEffectivenessCurve.Sample(pArmor);
+        return ArmorReductionCurve.Sample(pArmor);
     }
 
     public float GetPhysicalDamagePenetration(long pArmorPenetration) {

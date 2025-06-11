@@ -17,6 +17,9 @@ public partial class EventBus : Node {
     public delegate void CharacterStatsLoadedEventHandler(Stats pStats);
     
     [Signal]
+    public delegate void CharacterSpellBookLoadedEventHandler(Inventory pInventory);
+    
+    [Signal]
     public delegate void TotalStatsLoadedEventHandler(Stats pStats);
     
     [Signal]
@@ -43,6 +46,9 @@ public partial class EventBus : Node {
         EmitSignalCharacterStatsLoaded(pStats);
     }
 
+    public void EmitCharacterSpellBookLoaded(Inventory pInventory) {
+        EmitSignalCharacterSpellBookLoaded(pInventory);
+    }
     public void EmitTotalStatsLoaded(Stats pStats) {
         EmitSignalTotalStatsLoaded(pStats);
     }

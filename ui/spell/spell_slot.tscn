@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://ng8yjyxxl7rl"]
 
-[ext_resource type="Script" uid="uid://qaf6jg2p8qwr" path="res://ui/spell/spell_slot.gd" id="1_x6abj"]
+[ext_resource type="Script" uid="uid://7876ksnhxibi" path="res://ui/spell/SpellSlot.cs" id="1_v6gts"]
 [ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="2_v6gts"]
 [ext_resource type="FontFile" uid="uid://odtxjjamhyfs" path="res://assets/fonts/noto_sans_display/noto_sans_display.ttf" id="3_egelf"]
 [ext_resource type="Script" uid="uid://b5hosqg80wnwb" path="res://ui/CooldownDisplay.cs" id="3_v6gts"]
@@ -41,7 +41,7 @@ gradient = SubResource("Gradient_nqyqr")
 [sub_resource type="LabelSettings" id="LabelSettings_jipi4"]
 font = ExtResource("3_egelf")
 
-[node name="SpellSlot" type="Button" node_paths=PackedStringArray("text_holder", "icon_holder")]
+[node name="SpellSlot" type="Button" node_paths=PackedStringArray("TextHolder", "IconHolder")]
 custom_minimum_size = Vector2(50, 50)
 offset_right = 50.0
 offset_bottom = 50.0
@@ -50,9 +50,9 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_feaih")
 theme_override_styles/hover = SubResource("StyleBoxTexture_feaih")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_t5uhr")
 theme_override_styles/normal = SubResource("StyleBoxTexture_t5uhr")
-script = ExtResource("1_x6abj")
-text_holder = NodePath("Label")
-icon_holder = NodePath("TextureRect")
+script = ExtResource("1_v6gts")
+TextHolder = NodePath("Label")
+IconHolder = NodePath("TextureRect")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(50, 50)
@@ -68,7 +68,7 @@ mouse_filter = 2
 texture = ExtResource("2_v6gts")
 expand_mode = 1
 
-[node name="Cooldown" type="TextureProgressBar" parent="TextureRect"]
+[node name="CooldownDisplay" type="TextureProgressBar" parent="TextureRect"]
 z_index = 2
 layout_mode = 1
 anchors_preset = 15

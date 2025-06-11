@@ -12,9 +12,8 @@ public partial class DragSlot : ItemSlot {
     }
 
     public override void Update(GizmoStack? pGizmoStack) {
-        if (pGizmoStack?.Gizmo is null) {
+        if (pGizmoStack is null) {
             Visible = false;
-            GD.Print("Drag slot invisible");
         } else {
             Visible = true;
             base.Update(pGizmoStack);

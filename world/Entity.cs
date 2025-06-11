@@ -7,11 +7,14 @@ using RPG.scripts.inventory;
 
 namespace RPG.world;
 
+[GlobalClass]
 public partial class Entity : Node3D {
+    
     [Export] public CombatManager CombatManager = null!;
     [Export] public Inventory Armory = null!;
+    [Export] public Inventory SpellBook = null!;
     [Export] public Stats BaseStats = null!;
-
+    
 
     private PhysicsShapeQueryParameters3D _query = new();
 

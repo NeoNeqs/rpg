@@ -10,12 +10,13 @@ using RPG.scripts.inventory.components;
 namespace RPG.world.character;
 
 // Oh-Oh Spaghetti-O
+[GlobalClass]
 public partial class PlayerCharacter : Entity {
     [Signal]
     public delegate void UserInputEventHandler();
     
     [Export]
-    private Inventory _inventory = null!;
+    public required Inventory Inventory;
 
     private bool _shouldCast = true;
 
@@ -26,17 +27,9 @@ public partial class PlayerCharacter : Entity {
         SetProcessUnhandledInput(false);
         
         await ToSignal(GetTree().CurrentScene, Node.SignalName.Ready);
-        EventBus.Instance.EmitCharacterInventoryLoaded(_inventory);
+        EventBus.Instance.EmitCharacterInventoryLoaded(Inventory);
+        EventBus.Instance.EmitCharacterSpellBookLoaded(SpellBook);
     }
-
-    // public override void _PhysicsProcess(double delta) {
-    //     GD.Print("-----------------------------------------");
-    //     GD.Print(_inventory.At(0).Gizmo);
-    //     GD.Print(_inventory.At(1).Gizmo);
-    //     GD.Print(_inventory.At(2).Gizmo);
-    //     GD.Print(_inventory.At(3).Gizmo);
-    //     GD.Print("-----------------------------------------");
-    // }
 
     public override void _UnhandledInput(InputEvent pEvent) {
         _shouldCast = pEvent switch {

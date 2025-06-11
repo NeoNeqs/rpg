@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="Gizmo" load_steps=11 format=3 uid="uid://dfebkmuinemk8"]
+
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_aep25"]
+[ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="2_47hi4"]
+[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="2_kggnb"]
+[ext_resource type="Script" uid="uid://cqg61letqf1rs" path="res://scripts/effects/components/EffectComponent.cs" id="2_ptoff"]
+[ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_xqiny"]
+[ext_resource type="Script" uid="uid://bq24fq7dtf1ec" path="res://scripts/effects/components/DamageEffectComponent.cs" id="3_v1jnt"]
+[ext_resource type="Script" uid="uid://d20dme40xr43" path="res://scripts/effects/Effect.cs" id="4_jx766"]
+
+[sub_resource type="Resource" id="Resource_soocq"]
+script = ExtResource("3_v1jnt")
+Type = 3
+Value = 200
+metadata/_custom_type_script = "uid://bq24fq7dtf1ec"
+
+[sub_resource type="Resource" id="Resource_n38n2"]
+script = ExtResource("4_jx766")
+TickTimeout = 3
+ApplicationChance = 1.0
+Ticks = 0
+Range = 0
+Flags = 0
+Components = Dictionary[String, ExtResource("2_ptoff")]({
+"DamageEffectComponent": SubResource("Resource_soocq")
+})
+metadata/_custom_type_script = "uid://d20dme40xr43"
+
+[sub_resource type="Resource" id="Resource_7o5gr"]
+script = ExtResource("2_47hi4")
+Effects = [SubResource("Resource_n38n2")]
+CooldownSeconds = 0
+metadata/_custom_type_script = "uid://bk27a6avfmj1x"
+
+[resource]
+script = ExtResource("2_xqiny")
+DisplayName = "Fire ball"
+Icon = ExtResource("2_kggnb")
+StackSize = 1
+Components = Dictionary[String, ExtResource("1_aep25")]({
+"SpellComponent": SubResource("Resource_7o5gr")
+})
+metadata/_custom_type_script = "uid://be1ycgpodowgh"

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Godot;
 using RPG.global;
 using RPG.scripts.effects;
@@ -13,23 +12,21 @@ namespace RPG.scripts.combat;
 public partial class CombatManager : Node {
     public Entity? TargetEntity;
 
-    [Export] public CombatSystem CombatSystem = null!;
-    [Export] public StatSystem StatSystem = null!;
-    [Export] public CombatResources CombatResources = null!;
+    [Export] public required CombatSystem CombatSystem;
+    private readonly StatSystem _statSystem = new();
+    private readonly CombatResources _combatResources = new();
 
     public override void _Ready() {
         Entity entity = GetEntity();
 
-        Debug.Assert(entity is not null);
-
         entity.Armory.GizmoChanged += LinkGizmoAttributes;
         entity.Armory.GizmoAboutToChange += UnlinkGizmoAttributes;
 
-        StatSystem.Link(entity.BaseStats);
+        _statSystem.Link(entity.BaseStats);
         LinkEntityArmory();
 
-        CombatSystem.Initialize(StatSystem.Total);
-        CombatResources.Initialize(CombatSystem);
+        CombatSystem.Initialize(_statSystem.Total);
+        _combatResources.Initialize(CombatSystem);
     }
 
     public void Cast(Gizmo pGizmo) {
@@ -47,7 +44,7 @@ public partial class CombatManager : Node {
             ApplyEffectsToTarget(effects);
         }
     }
-    
+
     private void ApplyEffectsToTarget(Effect[] pEffects) {
         foreach (Effect effect in pEffects) {
             ApplyEffectToTargetEntity(effect);
@@ -115,7 +112,8 @@ public partial class CombatManager : Node {
         bool castResult = pChainSpellComponent.Cast();
         if (castResult) {
             CompleteChainCast(pSource, pChainSpellComponent);
-        } else {
+        }
+        else {
             SpellComponent? spellComponent = currentSpell.GetComponent<SpellComponent>();
             if (spellComponent is null) {
                 Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is missing spell component");
@@ -146,12 +144,12 @@ public partial class CombatManager : Node {
         // TODO: Cache the damage value, since it won't probably change.
         double damage = CombatSystem.CalculateDamage(pDamageEffect, pAttacker.CombatSystem);
 
-        CombatResources.ApplyDamage(damage);
+        _combatResources.ApplyDamage(damage);
     }
 
-    private void OnAttributeEffectTick(StatEffectComponent pEffect, CombatManager pAttacker) { }
-
-
+    private void OnAttributeEffectTick(StatEffectComponent pEffect, CombatManager pAttacker) {
+    }
+    
     private void LinkEntityArmory() {
         foreach (GizmoStack gizmoStack in GetEntity().Armory.Gizmos) {
             LinkGizmoAttributes(gizmoStack, -1);
@@ -165,7 +163,7 @@ public partial class CombatManager : Node {
             return;
         }
 
-        StatSystem.Link(component.Attributes);
+        _statSystem.Link(component.Attributes);
     }
 
     private void UnlinkGizmoAttributes(GizmoStack pGizmoStack, int pIndex) {
@@ -175,7 +173,7 @@ public partial class CombatManager : Node {
             return;
         }
 
-        StatSystem.Unlink(component.Attributes);
+        _statSystem.Unlink(component.Attributes);
     }
 
     private Entity GetEntity() {
