@@ -21,7 +21,7 @@ public partial class InventoryManager : Control {
 
     public override void _EnterTree() {
         EventBus.Instance.CharacterInventoryLoaded += CreateItemView;
-        
+        EventBus.Instance.CharacterSpellBookLoaded += CreateSpellView;
         // EventBus.Instance.CharacterStatsLoaded += 
         EventBus.Instance.EmptyRegionPressed += DeleteSelectedGizmo;
     }

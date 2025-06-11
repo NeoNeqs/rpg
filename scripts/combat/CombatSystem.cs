@@ -7,8 +7,8 @@ namespace RPG.scripts.combat;
 [GlobalClass]
 public partial class CombatSystem : Resource {
 
-    [Export] public Stats Stats = null!;
     [Export] public StatCurves StatCurves = null!;
+    public required Stats Stats;
     
     public void Initialize(Stats pStats) {
         Stats = pStats;

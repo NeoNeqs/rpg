@@ -15,13 +15,13 @@ func _physics_process(delta: float) -> void:
 		body.velocity += body.get_gravity() * delta
 	
 	
-	if Input.is_action_just_pressed("ui_accept") and body.is_on_floor() and not Debug.visible:
+	if Input.is_action_just_pressed("ui_accept") and body.is_on_floor():# and not Debug.visible:
 		body.velocity.y = JUMP_VELOCITY
 	
 	var input_dir := Input.get_vector("strafe_left", "strafe_right", "forward", "backwards")
 	var direction := (model.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	if direction and not Debug.visible:
+	if direction:# and not Debug.visible:
 		body.velocity.x = direction.x * SPEED
 		body.velocity.z = direction.z * SPEED
 	else:

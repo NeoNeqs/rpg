@@ -4,6 +4,7 @@ using Godot;
 
 namespace RPG.scripts.effects;
 
+[Tool, GlobalClass]
 public sealed partial class Effect : ComponentSystem<EffectComponent> {
     [Signal]
     public delegate void OnTickEventHandler();
@@ -16,7 +17,7 @@ public sealed partial class Effect : ComponentSystem<EffectComponent> {
     [Export] public int TickTimeout = 3;
 
     [Export(PropertyHint.Range, "0,1,0.01")]
-    public double ApplicationChance;
+    public double ApplicationChance = 1.0;
 
     [Export]
     public int Ticks {

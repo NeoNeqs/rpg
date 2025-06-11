@@ -181,7 +181,7 @@ public partial class Inventory : Resource {
             Swap(pFrom, pToInventory, pTo);
         }
 
-        if (toGizmoStack.IsEmpty()) {
+        if (fromGizmoStack.IsEmpty()) {
             return ActionResult.None;
         }
 

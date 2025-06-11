@@ -19,7 +19,7 @@ public abstract partial class InventoryView : View {
 
     [Export] public Container Container = null!;
     [Export] public PackedScene SlotScene = null!;
-    [Export] public Inventory Inventory = null!;
+    public Inventory Inventory = null!;
 
     public virtual void SetData(Inventory pInventory) {
         Inventory = pInventory;

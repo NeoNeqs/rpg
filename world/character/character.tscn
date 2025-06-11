@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=33 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
@@ -9,11 +9,12 @@
 [ext_resource type="Script" uid="uid://giaiylxhkkje" path="res://world/character/movement_controller.gd" id="4_377km"]
 [ext_resource type="Script" uid="uid://b6ma5srt1o11b" path="res://scripts/combat/Stats.cs" id="4_pdabv"]
 [ext_resource type="Script" uid="uid://4rgralfgw20f" path="res://world/character/camera_controller.gd" id="5_36lfn"]
+[ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="5_qdl7p"]
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="6_ggcj5"]
 [ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="6_lbca7"]
+[ext_resource type="Resource" uid="uid://dfebkmuinemk8" path="res://resources/spells/fire_ball.tres" id="7_qdl7p"]
 [ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="10_f1wg7"]
 [ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="11_m0gsu"]
-[ext_resource type="Script" uid="uid://mt8fhvm3klmu" path="res://scripts/combat/StatSystem.cs" id="12_qdl7p"]
-[ext_resource type="Script" uid="uid://t4jerndat0bk" path="res://scripts/combat/CombatResources.cs" id="13_ggcj5"]
 
 [sub_resource type="Resource" id="Resource_fn1hb"]
 script = ExtResource("3_vqai4")
@@ -23,6 +24,51 @@ AllowedComponents = []
 Flags = 0
 metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
 
+[sub_resource type="Resource" id="Resource_yux1m"]
+script = ExtResource("5_qdl7p")
+Effects = []
+CooldownSeconds = 0
+metadata/_custom_type_script = "uid://bk27a6avfmj1x"
+
+[sub_resource type="Resource" id="Resource_d882m"]
+script = ExtResource("2_c4acw")
+Gizmo = ExtResource("7_qdl7p")
+Quantity = 1
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_7k511"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_g02qr"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_xy7j0"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_r2p0t"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_m6k5q"]
+script = ExtResource("2_c4acw")
+Quantity = 0
+AllowedComponents = Array[ExtResource("6_ggcj5")]([])
+
+[sub_resource type="Resource" id="Resource_s02qt"]
+script = ExtResource("3_vqai4")
+Gizmos = Array[ExtResource("2_c4acw")]([SubResource("Resource_d882m"), SubResource("Resource_7k511"), SubResource("Resource_g02qr"), SubResource("Resource_xy7j0"), SubResource("Resource_r2p0t"), SubResource("Resource_m6k5q")])
+Columns = 0
+AllowedComponents = Array[Object]([SubResource("Resource_yux1m")])
+Flags = 1
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
+
 [sub_resource type="Resource" id="Resource_f1wg7"]
 script = ExtResource("4_pdabv")
 _IntegerStats = Dictionary[String, int]({})
@@ -30,57 +76,46 @@ _DecimalStats = Dictionary[String, float]({})
 metadata/_custom_type_script = "uid://b6ma5srt1o11b"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1jngo"]
-radius = 0.3
-height = 1.5
-
-[sub_resource type="Curve" id="Curve_f1wg7"]
-
-[sub_resource type="Curve" id="Curve_m0gsu"]
+radius = 0.164166
+height = 0.8
 
 [sub_resource type="Curve" id="Curve_qdl7p"]
 
+[sub_resource type="Curve" id="Curve_pdabv"]
+_limits = [0.4, 1.0, 0.0, 3000.0]
+_data = [Vector2(0, 1), 0.0, -0.000181341, 0, 1, Vector2(2229.32, 0.595732), -0.000181341, -4.71288e-05, 1, 0, Vector2(3000, 0.4), -0.000352398, 0.0, 0, 0]
+point_count = 3
+
 [sub_resource type="Curve" id="Curve_ggcj5"]
 
-[sub_resource type="Resource" id="Resource_yux1m"]
+[sub_resource type="Curve" id="Curve_yux1m"]
+
+[sub_resource type="Resource" id="Resource_m0gsu"]
 script = ExtResource("10_f1wg7")
-ArmorEffectivenessCurve = SubResource("Curve_f1wg7")
-ArmorPenetrationCurve = SubResource("Curve_m0gsu")
-StrengthCurve = SubResource("Curve_ggcj5")
-StaminaCurve = SubResource("Curve_qdl7p")
+ArmorReductionCurve = SubResource("Curve_pdabv")
+ArmorPenetrationCurve = SubResource("Curve_qdl7p")
+StrengthCurve = SubResource("Curve_yux1m")
+StaminaCurve = SubResource("Curve_ggcj5")
 metadata/_custom_type_script = "uid://4m7emmkgdioy"
 
-[sub_resource type="Resource" id="Resource_d882m"]
-script = ExtResource("4_pdabv")
-_IntegerStats = Dictionary[String, int]({})
-_DecimalStats = Dictionary[String, float]({})
-metadata/_custom_type_script = "uid://b6ma5srt1o11b"
-
-[sub_resource type="Resource" id="Resource_7k511"]
+[sub_resource type="Resource" id="Resource_vqai4"]
 script = ExtResource("11_m0gsu")
-Stats = SubResource("Resource_d882m")
-StatCurves = SubResource("Resource_yux1m")
+StatCurves = SubResource("Resource_m0gsu")
 metadata/_custom_type_script = "uid://bp1c67o5mclqa"
-
-[sub_resource type="Resource" id="Resource_g02qr"]
-script = ExtResource("12_qdl7p")
-metadata/_custom_type_script = "uid://mt8fhvm3klmu"
-
-[sub_resource type="Resource" id="Resource_xy7j0"]
-script = ExtResource("13_ggcj5")
-metadata/_custom_type_script = "uid://t4jerndat0bk"
 
 [node name="Character" type="Node3D" node_paths=PackedStringArray("CombatManager")]
 script = ExtResource("1_pdabv")
-_inventory = ExtResource("2_m0gsu")
+Inventory = ExtResource("2_m0gsu")
 CombatManager = NodePath("CombatManager")
 Armory = SubResource("Resource_fn1hb")
+SpellBook = SubResource("Resource_s02qt")
 BaseStats = SubResource("Resource_f1wg7")
 
 [node name="Body" type="CharacterBody3D" parent="."]
 script = ExtResource("2_fn1hb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.380275, -0.04477)
 shape = SubResource("CapsuleShape3D_1jngo")
 
 [node name="Model" type="Node3D" parent="Body"]
@@ -109,7 +144,5 @@ model = NodePath("../Body/Model")
 
 [node name="CombatManager" type="Node" parent="."]
 script = ExtResource("6_lbca7")
-CombatSystem = SubResource("Resource_7k511")
-StatSystem = SubResource("Resource_g02qr")
-CombatResources = SubResource("Resource_xy7j0")
+CombatSystem = SubResource("Resource_vqai4")
 metadata/_custom_type_script = "uid://dbsutjhc4nqxg"
