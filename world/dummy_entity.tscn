@@ -1,12 +1,68 @@
-[gd_scene load_steps=3 format=3 uid="uid://cwqk02m3lsujx"]
+[gd_scene load_steps=17 format=3 uid="uid://cwqk02m3lsujx"]
 
 [ext_resource type="Script" uid="uid://copluoykji72n" path="res://world/Entity.cs" id="1_b42e5"]
-[ext_resource type="Script" uid="uid://bkm1b7umvsdba" path="res://scripts/combat/combat_manager.gd" id="2_1ns7f"]
+[ext_resource type="Script" uid="uid://do8hg8vd5v8ui" path="res://scripts/inventory/GizmoStack.cs" id="2_0xnjn"]
+[ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="2_1ns7f"]
+[ext_resource type="Script" uid="uid://b2yjmi2mufyqh" path="res://scripts/inventory/Inventory.cs" id="3_5gf7w"]
+[ext_resource type="Script" uid="uid://b6ma5srt1o11b" path="res://scripts/combat/Stats.cs" id="4_u6gj0"]
+[ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="6_5gf7w"]
+[ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="6_u6gj0"]
+
+[sub_resource type="Resource" id="Resource_nj1i4"]
+script = ExtResource("3_5gf7w")
+Gizmos = Array[ExtResource("2_0xnjn")]([])
+Columns = 0
+AllowedComponents = []
+Flags = 0
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
+
+[sub_resource type="Resource" id="Resource_1yc0x"]
+script = ExtResource("3_5gf7w")
+Gizmos = Array[ExtResource("2_0xnjn")]([])
+Columns = 0
+AllowedComponents = []
+Flags = 0
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
+
+[sub_resource type="Resource" id="Resource_8ft1f"]
+script = ExtResource("4_u6gj0")
+_IntegerStats = Dictionary[String, int]({})
+_DecimalStats = Dictionary[String, float]({})
+metadata/_custom_type_script = "uid://b6ma5srt1o11b"
+
+[sub_resource type="Curve" id="Curve_nj1i4"]
+
+[sub_resource type="Curve" id="Curve_1yc0x"]
+
+[sub_resource type="Curve" id="Curve_8ft1f"]
+
+[sub_resource type="Curve" id="Curve_mbxsp"]
+
+[sub_resource type="Resource" id="Resource_s4i2a"]
+script = ExtResource("6_u6gj0")
+ArmorReductionCurve = SubResource("Curve_1yc0x")
+ArmorPenetrationCurve = SubResource("Curve_nj1i4")
+StrengthCurve = SubResource("Curve_mbxsp")
+StaminaCurve = SubResource("Curve_8ft1f")
+metadata/_custom_type_script = "uid://4m7emmkgdioy"
+
+[sub_resource type="Resource" id="Resource_u6gj0"]
+script = ExtResource("6_5gf7w")
+StatCurves = SubResource("Resource_s4i2a")
+metadata/_custom_type_script = "uid://bp1c67o5mclqa"
 
 [node name="DummyEntity" type="Node3D" node_paths=PackedStringArray("CombatManager")]
 script = ExtResource("1_b42e5")
 CombatManager = NodePath("CombatManager")
+Armory = SubResource("Resource_nj1i4")
+SpellBook = SubResource("Resource_1yc0x")
+BaseStats = SubResource("Resource_8ft1f")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+collision_layer = 0
+collision_mask = 0
 
 [node name="CombatManager" type="Node" parent="."]
 script = ExtResource("2_1ns7f")
-metadata/_custom_type_script = "uid://bkm1b7umvsdba"
+CombatSystem = SubResource("Resource_u6gj0")
+metadata/_custom_type_script = "uid://dbsutjhc4nqxg"

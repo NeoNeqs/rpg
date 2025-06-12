@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="Gizmo" load_steps=13 format=3 uid="uid://8u7wfnel2xpp"]
+
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_3ifp4"]
+[ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="2_4hwfl"]
+[ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_7k1si"]
+[ext_resource type="Script" uid="uid://cqg61letqf1rs" path="res://scripts/effects/components/EffectComponent.cs" id="2_o6tib"]
+[ext_resource type="Texture2D" uid="uid://oauwek8drqx4" path="res://assets/textures/spell/heavy-rain.svg" id="3_ts5sy"]
+[ext_resource type="Script" uid="uid://bno5j2lv157ty" path="res://scripts/effects/components/AreaOfEffectComponent.cs" id="3_v0868"]
+[ext_resource type="Script" uid="uid://bq24fq7dtf1ec" path="res://scripts/effects/components/DamageEffectComponent.cs" id="4_b7tll"]
+[ext_resource type="Script" uid="uid://d20dme40xr43" path="res://scripts/effects/Effect.cs" id="5_lhx41"]
+
+[sub_resource type="Resource" id="Resource_lrkur"]
+script = ExtResource("3_v0868")
+Radius = 20.0
+metadata/_custom_type_script = "uid://bno5j2lv157ty"
+
+[sub_resource type="Resource" id="Resource_yx6ci"]
+script = ExtResource("4_b7tll")
+DamageType = 3
+FlatValue = 20
+StatScale = 2
+Coefficient = 0.0
+MaxStacks = 1
+metadata/_custom_type_script = "uid://bq24fq7dtf1ec"
+
+[sub_resource type="Resource" id="Resource_57mxh"]
+script = ExtResource("5_lhx41")
+TickTimeout = 3
+ApplicationChance = 1.0
+Ticks = 0
+MaxRange = 10
+Flags = 0
+Components = Dictionary[String, ExtResource("2_o6tib")]({
+"AreaOfEffectComponent": SubResource("Resource_lrkur"),
+"DamageEffectComponent": SubResource("Resource_yx6ci")
+})
+metadata/_custom_type_script = "uid://d20dme40xr43"
+
+[sub_resource type="Resource" id="Resource_se32c"]
+script = ExtResource("2_4hwfl")
+Effects = [SubResource("Resource_57mxh")]
+CooldownSeconds = 1
+metadata/_custom_type_script = "uid://bk27a6avfmj1x"
+
+[resource]
+script = ExtResource("2_7k1si")
+DisplayName = "Fire Rain"
+Icon = ExtResource("3_ts5sy")
+StackSize = 1
+Components = Dictionary[String, ExtResource("1_3ifp4")]({
+"SpellComponent": SubResource("Resource_se32c")
+})
+metadata/_custom_type_script = "uid://be1ycgpodowgh"

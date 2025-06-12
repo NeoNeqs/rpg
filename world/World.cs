@@ -6,20 +6,33 @@ namespace RPG.world;
 
 [GlobalClass]
 public partial class World : Node3D {
-    private readonly PhysicsShapeQueryParameters3D _shapeQuery = new();
     private readonly PhysicsRayQueryParameters3D _rayQuery = new();
+    private PhysicsShapeQueryParameters3D _shapeQuery = new();
+
+    [Export] private Decal _decal;
 
     public override void _EnterTree() {
-        _shapeQuery.CollideWithBodies = true;
-        _shapeQuery.CollisionMask = int.MaxValue;
-        _shapeQuery.ShapeRid = PhysicsServer3D.SphereShapeCreate();
-
         _rayQuery.CollideWithBodies = true;
-        _rayQuery.CollisionMask = int.MaxValue;
+        _rayQuery.CollisionMask = 1;
+
+        _shapeQuery.ShapeRid = PhysicsServer3D.SphereShapeCreate();
     }
 
     public override void _ExitTree() {
         PhysicsServer3D.FreeRid(_shapeQuery.ShapeRid);
+    }
+
+    public Array<Dictionary> IntersectShape(Vector3 pPosition, float pRadius, bool pBodyCollision, uint pCollisionMask,
+        Rid pExclude) {
+        _shapeQuery.CollideWithBodies = pBodyCollision;
+        _shapeQuery.CollisionMask = pCollisionMask;
+        _shapeQuery.Transform = new Transform3D(Basis.Identity, pPosition);
+        // Exclude itself
+        _shapeQuery.Exclude = [pExclude];
+
+        PhysicsServer3D.ShapeSetData(_shapeQuery.ShapeRid, pRadius);
+
+        return GetWorld3D().DirectSpaceState.IntersectShape(_shapeQuery);
     }
 
     public Vector3 GetMouseWorldPosition(float pMaxLength) {
@@ -27,7 +40,7 @@ public partial class World : Node3D {
             Logger.Core.Critical($"{nameof(pMaxLength)} must be positive (greater than 0).", true);
             return Vector3.Inf;
         }
-        
+
         Camera3D? camera = GetViewport().GetCamera3D();
 
         if (camera is null) {
@@ -35,7 +48,15 @@ public partial class World : Node3D {
             return Vector3.Inf;
         }
 
-        Vector2 mousePosition = GetViewport().GetMousePosition();
+        Vector2 mousePosition;
+
+        // Use last known (good) position of the mouse, since the mouse jumps to the center of the screen during CameraControl state.
+        if (MouseStateMachine.Instance.CurrentState == MouseStateMachine.State.CameraControl) {
+            mousePosition = MouseStateMachine.Instance.LastMousePosition;
+        } else {
+            mousePosition = GetViewport().GetMousePosition();
+        }
+
         _rayQuery.From = camera.ProjectRayOrigin(mousePosition);
         _rayQuery.To = _rayQuery.From + camera.ProjectRayNormal(mousePosition) * pMaxLength;
 
@@ -48,11 +69,11 @@ public partial class World : Node3D {
         return _rayQuery.To;
     }
 
-    public Entity CreateDummyEntity(Vector3 pPosition) {
+    public Entity CreateTempDummyEntity(Vector3 pPosition) {
         Entity? entity = AssetDB.DummyEntity.Instantiate<Entity>();
-        entity.GlobalPosition = pPosition;
         AddChild(entity);
-        
+        entity.GlobalPosition = pPosition;
+
         // HACK: this should make the entity live for 2 frames.
         entity.CallDeferred(Node.MethodName.QueueFree);
         return entity;

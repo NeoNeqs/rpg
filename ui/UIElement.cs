@@ -2,6 +2,7 @@ using Godot;
 
 namespace RPG.ui;
 
+[GlobalClass]
 public partial class UIElement : PanelContainer {
     private bool _dragEnabled = false;
 

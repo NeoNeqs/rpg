@@ -11,7 +11,7 @@ script = ExtResource("1_h5o24")
 [node name="TestLevel" parent="." instance=ExtResource("1_4717r")]
 
 [node name="Character" parent="." instance=ExtResource("2_h5o24")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.728227, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.654522, 0)
 
 [node name="TestEnemy" parent="." instance=ExtResource("3_mmdvd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.888081, -3.47548)

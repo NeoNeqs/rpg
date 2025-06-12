@@ -45,7 +45,7 @@ public partial class Inventory : Resource {
     // TODO: Not every view makes use of Columns property. Might be a good idea to make into a component, 
     //       when more of those properties come up.
     [Export] public int Columns;
-    [Export] public required Array<GizmoComponent> AllowedComponents;
+    [Export] public Array<GizmoComponent> AllowedComponents = null!;
     [Export] public InventoryFlags Flags;
 
     public ActionResult HandleGizmoAction(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {

@@ -24,11 +24,21 @@ public abstract partial class InventoryView : View {
     public virtual void SetData(Inventory pInventory) {
         Inventory = pInventory;
         Inventory.SizeChanged += OnInventorySizeChanged;
-        Inventory.GizmoAboutToChange += OnInventoryGizmoUpdate;
+        Inventory.GizmoAboutToChange += OnInventoryGizmoAboutToChange;
         Inventory.GizmoChanged += OnInventoryGizmoUpdate;
    
         SetupContainer();
         ResizeContainer();
+    }
+
+    private void OnInventoryGizmoAboutToChange(GizmoStack pGizmoStack, int pIndex) {
+        InventorySlot? slot = GetSlot(pIndex);
+        if (pGizmoStack.Gizmo is null || slot is null) {
+            return;
+        }
+
+        pGizmoStack.Gizmo.Casted -= slot.SetOnCooldown;
+        slot.ResetCooldown();
     }
 
     public InventorySlot? GetSlot(int pIndex) {
@@ -49,7 +59,11 @@ public abstract partial class InventoryView : View {
             return;
         }
 
-        UpdateSlot(pGizmoStack, slot, pGizmoStack.Gizmo?.GetCooldown() ?? 0);
+        UpdateSlot(pGizmoStack, slot, pGizmoStack.Gizmo?.GetRemainingCooldown() ?? 0);
+        if (pGizmoStack.Gizmo is not null) {
+            pGizmoStack.Gizmo.Casted += slot.SetOnCooldown;
+            slot.SetOnCooldown(pGizmoStack.Gizmo.GetRemainingCooldown());
+        }
     }
 
     protected virtual void ResizeContainer() {
@@ -64,7 +78,7 @@ public abstract partial class InventoryView : View {
         }
 
         for (int i = 0; i < slotsToRemove; i++) {
-            Node? slot = Container.GetChildOrNull<Node?>(oldSize - 1 - i);
+            var slot = Container.GetChildOrNull<Node?>(oldSize - 1 - i);
             slot?.QueueFree();
         }
 
@@ -73,7 +87,7 @@ public abstract partial class InventoryView : View {
     }
 
     private void AddSlot(GizmoStack pGizmoStack) {
-        InventorySlot? slot = SlotScene.Instantiate<InventorySlot>();
+        var slot = SlotScene.Instantiate<InventorySlot>();
         slot.Update(pGizmoStack);
         slot.LeftMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, false);
         slot.RightMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, true);
@@ -85,17 +99,9 @@ public abstract partial class InventoryView : View {
     }
 
     private void RewireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
-        pSlot.ResetCooldown();
-
-        if (pGizmoStack.Gizmo is null) {
-            UpdateSlot(pGizmoStack, pSlot, 0);
-            return;
-        }
-
         Callable onGizmoCastedCallable = Callable.From((ulong pCooldownInMicroSeconds) => {
             UpdateSlot(pGizmoStack, pSlot, pCooldownInMicroSeconds);
         });
-
 
         // Disconnect old signal...
         GizmoStack currentGizmoStack = Inventory.At(pSlot.GetIndex());
@@ -109,10 +115,16 @@ public abstract partial class InventoryView : View {
             }
         }
         
+        if (pGizmoStack.Gizmo is null) {
+            UpdateSlot(pGizmoStack, pSlot, 0);
+            return;
+        }
+        
         // ...and connect new
         pGizmoStack.Gizmo.Connect(Gizmo.SignalName.Casted, onGizmoCastedCallable);
 
         UpdateSlot(pGizmoStack, pSlot, pGizmoStack.Gizmo.GetRemainingCooldown());
+      
     }
 
     private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, ulong pCooldownInMicroSeconds) {

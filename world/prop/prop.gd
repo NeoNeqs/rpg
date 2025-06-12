@@ -22,7 +22,7 @@ extends MeshInstance3D
 @export_range(1, 10) var texture: int = 1:
 	set(value):
 		if prop_shape == "stairs" and not value == 8:
-			Logger.physics.warn("Can't change texture for Stairs Shape")
+			#Logger.physics.warn("Can't change texture for Stairs Shape")
 			texture = 8
 		else:
 			texture = value
@@ -80,7 +80,7 @@ func _update_collision() -> void:
 func _update_texture() -> void:
 	var mat: BaseMaterial3D = get_metarial()
 	if not mat:
-		Logger.physics.warn("Prop '{}' does not have any materials set", [get_instance_id()])
+		#Logger.physics.warn("Prop '{}' does not have any materials set", [get_instance_id()])
 		return
 
 	mat.albedo_texture = load(

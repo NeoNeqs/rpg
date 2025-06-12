@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using Godot;
 using RPG.global;
-using RPG.scripts.inventory;
 using RPG.ui.inventory;
 
 namespace RPG.ui.item;

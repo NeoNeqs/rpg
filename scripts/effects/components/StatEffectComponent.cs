@@ -5,5 +5,10 @@ namespace RPG.scripts.effects.components;
 
 [Tool, GlobalClass]
 public partial class StatEffectComponent : EffectComponent {
-    [Export] public Stats Stats = new();
+    [Export] public long FlatValue;
+    
+    [Export] public Stats.IntegerStat StatScale;
+    [Export] public float Coefficient;
+    [Export] public short MaxStacks = 1;
+    [Export] public Texture2D Icon;
 }

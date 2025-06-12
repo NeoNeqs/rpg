@@ -4,6 +4,9 @@ namespace RPG.scripts.combat;
 
 [GlobalClass]
 public partial class CombatResources : Resource {
+    [Signal]
+    public delegate void DiedEventHandler();
+    
     private CombatSystem _combatSystem = null!;
 
     private long _currentHealth;
@@ -15,7 +18,15 @@ public partial class CombatResources : Resource {
         _currentHealth = _maxHealth;
     }
 
-    public void ApplyDamage(double pDamage) {
-        _currentHealth -= (long)pDamage;
+    public void ModifyHealth(double pDamage) {
+        long testHealth = _currentHealth + (long)pDamage;
+        if (testHealth > _maxHealth) {
+            _currentHealth = _maxHealth;
+        } else if (testHealth < 0) {
+            _currentHealth = 0;
+            EmitSignalDied();
+        } else {
+            _currentHealth = testHealth;
+        }
     }
 }

@@ -4,15 +4,13 @@
 [ext_resource type="Script" uid="uid://2pqoll4sjbdc" path="res://ui/debug/log_display.gd" id="2_tkld6"]
 [ext_resource type="Script" uid="uid://bxwi0j6ibycvd" path="res://ui/debug/prompt.gd" id="3_ugdhf"]
 
-[node name="DebugConsole" type="PanelContainer" node_paths=PackedStringArray("_line_edit", "_display")]
+[node name="DebugConsole" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nrbya")
-_line_edit = NodePath("MarginContainer/VBoxContainer/LineEdit")
-_display = NodePath("MarginContainer/VBoxContainer/RichTextLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -44,6 +42,4 @@ keep_editing_on_text_submit = true
 script = ExtResource("3_ugdhf")
 
 [connection signal="timeout" from="MarginContainer/VBoxContainer/RichTextLabel/Timer" to="MarginContainer/VBoxContainer/RichTextLabel" method="_on_timer_timeout"]
-[connection signal="down_arrow_pressed" from="MarginContainer/VBoxContainer/LineEdit" to="." method="_on_line_edit_down_arrow_pressed"]
 [connection signal="text_submitted" from="MarginContainer/VBoxContainer/LineEdit" to="." method="_on_command_entered"]
-[connection signal="up_arrow_pressed" from="MarginContainer/VBoxContainer/LineEdit" to="." method="_on_line_edit_up_arrow_pressed"]

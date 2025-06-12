@@ -35,11 +35,11 @@ environment = SubResource("Environment_idvik")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 8, 0)
-light_color = Color(0.350977, 0.350977, 0.350977, 1)
+light_color = Color(0.625008, 0.625008, 0.625008, 1)
 shadow_enabled = true
 
 [node name="Floor" type="MeshInstance3D" parent="."]
-transform = Transform3D(40.5933, 0, 0, 0, 0.599659, 0, 0, 0, 29.3918, 0, 0, 0)
+transform = Transform3D(127.01, 0, 0, 0, 0.718, 0, 0, 0, 100, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_s3kq4")
 mesh = SubResource("BoxMesh_ukyni")
 script = ExtResource("1_xtdv1")

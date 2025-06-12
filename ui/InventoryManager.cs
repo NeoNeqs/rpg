@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Godot;
 using RPG.global;
 using RPG.scripts.combat;
@@ -19,11 +18,31 @@ public partial class InventoryManager : Control {
     private int _selectedSlotIndex = -1;
     private InventoryView? _selectedInventoryView = null;
 
-    public override void _EnterTree() {
+    public async override void _Ready() {
         EventBus.Instance.CharacterInventoryLoaded += CreateItemView;
         EventBus.Instance.CharacterSpellBookLoaded += CreateSpellView;
         // EventBus.Instance.CharacterStatsLoaded += 
         EventBus.Instance.EmptyRegionPressed += DeleteSelectedGizmo;
+        CreateHotbarView(GD.Load<Inventory>("uid://b1v0bkq8bhhic"));
+        
+#if  DEBUG
+        await ToSignal(EventBus.Instance, EventBus.SignalName.CharacterSpellBookLoaded);
+        SpellView sv = null;
+        HotbarView hv = null;
+        foreach (Node child in GetChildren()) {
+            switch (child) {
+                case SpellView view:
+                    sv = view;
+                    break;
+                case HotbarView hotbarView:
+                    hv = hotbarView;
+                    break;
+            }
+        }
+        
+        sv.Inventory.HandleGizmoAction(0, hv.Inventory, 0, true);
+        sv.Inventory.HandleGizmoAction(1, hv.Inventory, 1, true);
+#endif
     }
 
     private void CreateItemView(Inventory pInventory) {
@@ -35,7 +54,8 @@ public partial class InventoryManager : Control {
     }
 
     private void CreateHotbarView(Inventory pInventory) {
-        CreateInventoryView<HotbarView>(pInventory, AssetDB.HotbarView);
+        var view = CreateInventoryView<HotbarView>(pInventory, AssetDB.HotbarView);
+        view.Position = new Vector2(400, 200);
     }
 
     private void CreateStatView(Stats pStats, string pTitle) {
@@ -46,7 +66,7 @@ public partial class InventoryManager : Control {
         AddChild(statView);
     }
 
-    private void CreateInventoryView<T>(Inventory pInventory, PackedScene pViewScene) where T : InventoryView {
+    private T CreateInventoryView<T>(Inventory pInventory, PackedScene pViewScene) where T : InventoryView {
         T? itemView = pViewScene.Instantiate<T>();
 
         itemView.SetData(pInventory);
@@ -55,6 +75,8 @@ public partial class InventoryManager : Control {
         itemView.SlotHovered += OnSlotHovered;
         itemView.SlotUnhovered += OnSlotUnhovered;
         AddChild(itemView);
+        
+        return itemView;
     }
 
     private void OnSlotPressed(InventoryView pSourceView, InventorySlot pSlot, bool pIsRightClick) {
@@ -109,28 +131,30 @@ public partial class InventoryManager : Control {
             return;
         }
 
-        MouseStateMachine.SetState(MouseStateMachine.State.InventoryControl);
-        _dragSlot.Update(gizmoStack);
-        _tooltip.Update(null);
-        pSlot.Select();
+        if (MouseStateMachine.Instance.RequestState(MouseStateMachine.State.InventoryControl)) {
+            _dragSlot.Update(gizmoStack);
+            _tooltip.Update(null);
+            pSlot.Select();
 
-        _selectedSlotIndex = slotIndex;
-        _selectedInventoryView = pSourceView;
+            _selectedSlotIndex = slotIndex;
+            _selectedInventoryView = pSourceView;
+        }
     }
 
     private void Unselect(InventoryView pSourceView, InventorySlot pSlot) {
-        MouseStateMachine.SetState(MouseStateMachine.State.UIControl);
-        InventorySlot? selectedSlot = _selectedInventoryView?.GetSlot(_selectedSlotIndex);
+        if (MouseStateMachine.Instance.RequestState(MouseStateMachine.State.Free)) {
+            InventorySlot? selectedSlot = _selectedInventoryView?.GetSlot(_selectedSlotIndex);
 
-        selectedSlot?.Unselect();
+            selectedSlot?.Unselect();
             // selectedSlot.Update(_selectedInventoryView?.Inventory.At(_selectedSlotIndex));
 
-        GizmoStack gizmoStack = pSourceView.Inventory.At(pSlot.GetIndex());
-        _tooltip.Update(gizmoStack);
-        _dragSlot.Update(null);
+            GizmoStack gizmoStack = pSourceView.Inventory.At(pSlot.GetIndex());
+            _tooltip.Update(gizmoStack);
+            _dragSlot.Update(null);
 
-        _selectedSlotIndex = -1;
-        _selectedInventoryView = null;
+            _selectedSlotIndex = -1;
+            _selectedInventoryView = null;
+        }
     }
 
     private void OnSlotHovered(InventoryView pSourceView, InventorySlot pSlot) {

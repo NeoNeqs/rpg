@@ -17,14 +17,19 @@ public partial class Stats : Resource {
     public enum IntegerStat {
         Strength,
         Stamina,
+        Intelligence,
         Spirit,
         Armor,
+        ShadowResistance,
+        NatureResistance,
         ArmorPenetration,
+        ShadowPenetration,
+        NaturePenetration,
     }
 
     public enum DecimalStat {
         StrengthMultiplayer,
-        StaminaMultiplayer
+        StaminaMultiplayer,
     }
 
     // ReSharper disable once InconsistentNaming

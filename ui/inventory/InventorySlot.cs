@@ -69,7 +69,7 @@ public partial class InventorySlot : Control {
         }
 
         CooldownDisplay? cooldownDisplay = GetCooldownDisplay();
-        cooldownDisplay?.Start(pCooldownInMicroseconds);
+        cooldownDisplay?.Start(pCooldownInMicroseconds / 1_000_000.0);
     }
 
     public void ResetCooldown() {
@@ -99,12 +99,4 @@ public partial class InventorySlot : Control {
     public void Unselect() {
         Modulate = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     }
-
-    // private void OnMouseEntered() {
-    //     EmitSignalMouseEntered();
-    // }
-    //
-    // private void OnMouseExited() {
-    //     EmitSignalMouseExited();
-    // }
 }

@@ -1,8 +1,10 @@
 using Godot;
 using Godot.Collections;
 using RPG.scripts.combat;
+using RPG.scripts.effects;
 using RPG.scripts.effects.components;
 using RPG.scripts.inventory;
+using RPG.world;
 
 namespace RPG.global;
 
@@ -26,7 +28,11 @@ public partial class EventBus : Node {
     public delegate void HotbarKeyPressedEventHandler(Gizmo pGizmo);
 
     [Signal]
-    public delegate void AoESelectedEventHandler(Array<AreaOfEffectComponent> pAoEs);
+    public delegate void AoESelectedEventHandler(Array<Effect> pAoEs);
+    
+    [Signal]
+    public delegate void EntitySelectedEventHandler(Entity pEntity);
+    
 
     public static EventBus Instance = null!;
 
@@ -57,7 +63,11 @@ public partial class EventBus : Node {
         EmitSignalHotbarKeyPressed(pGizmo);
     }
 
-    public void EmitAoESelected(Array<AreaOfEffectComponent> pAoEs) {
+    public void EmitAoESelected(Array<Effect> pAoEs) {
         EmitSignalAoESelected(pAoEs);
+    }
+
+    public void EmitEntitySelectedEventHandler(Entity pEntity) {
+        EmitSignalEntitySelected(pEntity);
     }
 }

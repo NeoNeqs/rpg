@@ -1,10 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using Godot;
 using RPG.global;
-using RPG.scripts.effects.components;
 using RPG.scripts.inventory;
-using RPG.scripts.inventory.components;
 using RPG.ui.item;
 
 namespace RPG.ui.hotbar;
@@ -33,6 +29,15 @@ public partial class HotbarView : ItemView {
         if (pEvent is not InputEventKey eventKey) {
             return;
         }
+
+        if (pEvent.IsEcho()) {
+            return;
+        }
+
+        if (pEvent.IsPressed()) {
+            return;
+        }
+        
         int size = Mathf.Min(Inventory.GetSize(), PrimaryKeys.Length);
 
         for (int i = 0; i < size; i++) {
@@ -47,6 +52,7 @@ public partial class HotbarView : ItemView {
             }
             
             EventBus.Instance.EmitHotbarKeyPressed(gizmoStack.Gizmo);
+            
             break;
         }
     }

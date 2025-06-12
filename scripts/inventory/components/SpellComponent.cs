@@ -19,11 +19,16 @@ public partial class SpellComponent : GizmoComponent {
         ulong currentTime = Time.GetTicksUsec();
 
         ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
+        // This condition is 10000% correct! DO NOT CHANGE!
         return (_lastCastTime + cooldownMicroseconds > currentTime);
     }
 
     public ulong GetRemainingCooldown() {
+        ulong currentTime = Time.GetTicksUsec();
         ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
-        return (_lastCastTime + cooldownMicroseconds - Time.GetTicksUsec());
+        if (_lastCastTime + cooldownMicroseconds < currentTime) {
+            return 0;
+        }
+        return (_lastCastTime + cooldownMicroseconds - currentTime);
     }
 }

@@ -1,8 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using RPG.global;
 using Godot;
 using Godot.Collections;
 
@@ -51,12 +49,17 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
     }
 
     private void _LogStackTrace() {
-        var stackTrace = new StackTrace();
-        // Slice off the first 2 entries (call to `_LogStacktrace()` and `_Log()`)
-        foreach (StackFrame frame in stackTrace.GetFrames().Skip(2)) {
-            var trace = $"\tat: {frame.GetFileName()} -> {frame.GetMethod()?.Name}:{frame.GetFileLineNumber()}";
+        var stackTrace = new StackTrace(true);
+        StackFrame[] frames = stackTrace.GetFrames();
+        
+        // Slice off the first 3 entries (call to `_LogStacktrace()` and `_Log()` and the public caller e.g. `Debug()`)
+        // Also get rid off last few entries added by Godot's glue code.
+        for (int i = 3; i < frames.Length - 5; i++) {
+            StackFrame frame = frames[i];
+            string trace = $"\tat: {frame.GetFileName()} -> {frame.GetMethod()?.Name}:{frame.GetFileLineNumber()}";
             GD.PrintRich(_FormatColor(trace, pCurrentLevel));
         }
+        
     }
 
     private static string _GetThreadString() {
@@ -65,7 +68,7 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
 
     private static string _GetDatetimeNow() {
         double unixTime = Time.GetUnixTimeFromSystem();
-        var unixTimeSec = (int)unixTime;
+        int unixTimeSec = (int)unixTime;
         double milliseconds = unixTime - unixTimeSec;
 
         string formatted = Time.GetDatetimeStringFromUnixTime(unixTimeSec, true);
@@ -92,10 +95,10 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
         }
 
         string datetime = _GetDatetimeNow();
-        var levelStr = pLevel.ToString();
+        string levelStr = pLevel.ToString();
         string threadStr = _GetThreadString();
 
-        var formattedMessage = $"[{datetime}] [{levelStr}] [{pTag}] [{threadStr}]: {pMessage}";
+        string formattedMessage = $"[{datetime}] [{levelStr}] [{pTag}] [{threadStr}]: {pMessage}";
 
         if (OS.HasFeature("editor")) {
             GD.PrintRich(_FormatColor(formattedMessage, pLevel));
@@ -119,9 +122,9 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
         string apiVersion = RenderingServer.GetVideoAdapterApiVersion();
 
         Dictionary memInfo = OS.GetMemoryInfo();
-        var available = (int)memInfo["available"];
-        var physical = (int)memInfo["physical"];
-        var stack = (int)memInfo["stack"];
+        int available = (int)memInfo["available"];
+        int physical = (int)memInfo["physical"];
+        int stack = (int)memInfo["stack"];
         int swap = available - physical;
 
         Core.Info("--------------------System Information--------------------");

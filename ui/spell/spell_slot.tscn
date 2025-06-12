@@ -40,21 +40,27 @@ gradient = SubResource("Gradient_nqyqr")
 
 [sub_resource type="LabelSettings" id="LabelSettings_jipi4"]
 font = ExtResource("3_egelf")
+font_size = 20
 
-[node name="SpellSlot" type="Button" node_paths=PackedStringArray("TextHolder", "IconHolder")]
-custom_minimum_size = Vector2(50, 50)
-offset_right = 50.0
+[node name="SpellSlot" type="HBoxContainer" node_paths=PackedStringArray("TextHolder", "IconHolder")]
+offset_right = 206.0
 offset_bottom = 50.0
+mouse_filter = 0
+script = ExtResource("1_v6gts")
+TextHolder = NodePath("Label")
+IconHolder = NodePath("Button/TextureRect")
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+mouse_filter = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_feaih")
 theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_feaih")
 theme_override_styles/hover = SubResource("StyleBoxTexture_feaih")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_t5uhr")
 theme_override_styles/normal = SubResource("StyleBoxTexture_t5uhr")
-script = ExtResource("1_v6gts")
-TextHolder = NodePath("Label")
-IconHolder = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="Button"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 1
 anchors_preset = 15
@@ -68,7 +74,7 @@ mouse_filter = 2
 texture = ExtResource("2_v6gts")
 expand_mode = 1
 
-[node name="CooldownDisplay" type="TextureProgressBar" parent="TextureRect"]
+[node name="CooldownDisplay" type="TextureProgressBar" parent="Button/TextureRect"]
 z_index = 2
 layout_mode = 1
 anchors_preset = 15
@@ -84,13 +90,7 @@ texture_progress = SubResource("GradientTexture2D_feaih")
 script = ExtResource("3_v6gts")
 
 [node name="Label" type="Label" parent="."]
-visible = false
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-offset_left = 70.0
-offset_top = 14.0
-offset_right = 71.0
-offset_bottom = 36.0
+size_flags_horizontal = 0
 label_settings = SubResource("LabelSettings_jipi4")
-
-[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
