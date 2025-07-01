@@ -1,5 +1,5 @@
 using Godot;
-using Godot.Collections;
+using System.Collections.Generic;
 using RPG.global;
 using RPG.scripts.effects;
 using RPG.scripts.effects.components;
@@ -9,76 +9,105 @@ using RPG.world;
 
 namespace RPG.scripts.combat;
 
+// Note to self (delete me later): I did not finish with this file! Finish it now!
+
+
+
+// I said now!
+
 [GlobalClass]
 public partial class CombatManager : Node {
-    public Entity? TargetEntity;
+    [Export] public CombatSystem CombatSystem { private set; get; } = new();
 
-    [Export] public required CombatSystem CombatSystem;
+    // Tracks currently targeted entity by player.
+    public Entity? TargetEntity { set; get; }
+
     private readonly StatSystem _statSystem = new();
-    private readonly CombatResources _combatResources = new();
-    private readonly Dictionary<EffectComponent, ushort> _appliedStacks = [];
+    private CombatResources CombatResources => new(CombatSystem);
 
+    // Keeps track of applied stacks for each `EffectComponent`, not `Effect`!
+    // This has advantage of being able to define both StatEffectComponent and DamageEffectComponent on the same effect
+    // and have the stacks be tracked separately.
+    private readonly Dictionary<EffectComponent, EffectData> _appliedStacks = [];
 
-    public enum CastResult {
-        Casted,
-        OnCooldown,
-        IsAoe,
+    private class EffectData(ushort pStacks, Gizmo pGizmo, Timer? pTimer) {
+        public ushort Stacks = pStacks;
+
+        // ReSharper disable once UnusedMember.Local
+        // It will be used for displaying Effects on UI later
+        public readonly Gizmo Gizmo = pGizmo;
+        public readonly Timer? Timer = pTimer;
     }
+
     public override void _Ready() {
         Entity entity = GetEntity();
 
-        entity.Armory.GizmoChanged += LinkGizmoAttributes;
-        entity.Armory.GizmoAboutToChange += UnlinkGizmoAttributes;
-
+        _statSystem.LinkFromInventory(entity.Armory);
         _statSystem.Link(entity.BaseStats);
-        LinkEntityArmory();
 
         CombatSystem.Initialize(_statSystem.Total);
-        _combatResources.Initialize(CombatSystem);
     }
 
-
-    public void Cast(Gizmo pGizmo) {
-        var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
-
-        if (chainSpellComponent is not null) {
-            Effect[] effects = CastChainSpell(pGizmo, chainSpellComponent);
-            ApplyEffectsToTarget(effects);
+    public void Cast(Gizmo pGizmo, Entity? pTarget) {
+        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+        // Targets `pTarget` if it's not null otherwise takes current target selected by the player
+        pTarget ??= TargetEntity;
+            
+        if (spellComponent is not null && (IsInstanceValid(pTarget) || spellComponent.IsAoe)) {
+            SpellComponent.CastResult result = spellComponent.Cast(pGizmo);
+            if (result == SpellComponent.CastResult.Ok) {
+                ApplyEffectsToTarget(pGizmo, spellComponent.Effects, pTarget);
+            }
+        } else {
+            Logger.Combat.Debug("No valid target to cast the spell.");
         }
 
-        var spellComponent = pGizmo.GetComponent<SpellComponent>();
-
-        if (spellComponent is not null) {
-            Effect[] effects = CastSpell(pGizmo, spellComponent);
-            ApplyEffectsToTarget(effects);
+#if DEBUG
+        // Sanity check: since ChainSpellComponent and SpellComponent is weird, I need to warn myself to avoid making mistakes.
+        // ChainSpellComponent will take priority over SpellComponent!
+        if (spellComponent is ChainSpellComponent && pGizmo.GetComponent<SpellComponent>() is not null) {
+            Logger.Combat.Warn(
+                $"{nameof(Gizmo)} '{pGizmo.DisplayName}' has both {nameof(ChainSpellComponent)} and {nameof(SpellComponent)}. Spell will be cast through {nameof(ChainSpellComponent)} only and {nameof(SpellComponent)} will be ignored.");
         }
+#endif
     }
 
-    private void ApplyEffectsToTarget(Effect[] pEffects) {
+    private void ApplyEffectsToTarget(Gizmo pEffectsOwner, Effect[] pEffects, Entity? pTarget) {
         foreach (Effect effect in pEffects) {
-            ApplyEffectToTargetEntity(effect);
+            ApplyEffectToTargetEntity(pEffectsOwner, effect, pTarget);
         }
     }
 
-    private void ApplyEffectToTargetEntity(Effect pEffect) {
-        Entity? target = pEffect.IsTargetSelf() ? GetEntity() : TargetEntity;
+    private void ApplyEffectToTargetEntity(Gizmo pEffectOwner, Effect pEffect, Entity? pTarget) {
+        // Entity? target = pEffect.IsTargetSelf() ? GetEntity() : pTarget;
 
-        if (target is null || !IsInstanceValid(target)) {
+        if (!IsInstanceValid(pTarget)) {
+            Logger.Combat.Debug($"No valid target to apply effects.");
             return;
         }
 
         var areaEffectComponent = pEffect.GetComponent<AreaOfEffectComponent>();
+        
         if (areaEffectComponent is not null) {
-            foreach (Entity entityInRadius in target.GetEntitiesInRadius(areaEffectComponent.Radius)) {
-                entityInRadius.CombatManager.ApplyEffect(pEffect, this);
-                Logger.Core.Debug($"{entityInRadius.GetType().Name} ({entityInRadius.Name})");
+            foreach (Entity entityInRadius in pTarget.GetEntitiesInRadius(areaEffectComponent.Radius)) {
+                Logger.Combat.Debug(
+                    $"Applying effect to entity in Radius={areaEffectComponent.Radius} Entity={entityInRadius.Name} ({entityInRadius.GetType().Name})"
+                );
+
+                entityInRadius.CombatManager.ApplyEffect(pEffectOwner, pEffect, this);
             }
         }
 
-        target.CombatManager.ApplyEffect(pEffect, this);
+        pTarget.CombatManager.ApplyEffect(pEffectOwner, pEffect, this);
     }
 
-    private void ApplyEffect(Effect pEffect, CombatManager pAttacker) {
+    private void ApplyEffect(Gizmo pEffectOwner, Effect pEffect, CombatManager pSource) {
+        // NOTE:
+        // Effect is a reference counted Resource. It means that if 2 different Entities receive the same effect it will not function properly.
+        // For every application of Effect._currentTick must be separate.
+        // As of writing this EffectComponents don't need to be duplicated so the flag is set to false.
+        pEffect = (Effect)pEffect.Duplicate(false);
+
         Timer? timer = pEffect.Start();
 
         if (timer is not null) {
@@ -92,32 +121,40 @@ public partial class CombatManager : Node {
         //      1) DamageEffectComponent heals!!!
         //      2) StatEffectComponent "buffs" (adds to) the stat
         int effectCoefficient = pEffect.IsBuff() ? -1 : 1;
-        
+
         var damageEffectComponent = pEffect.GetComponent<DamageEffectComponent>();
+
         if (damageEffectComponent is not null) {
-            pEffect.Tick += () => OnDamageEffectTick(damageEffectComponent, pAttacker, effectCoefficient);
+            pEffect.Tick += () => OnDamageEffectTick(damageEffectComponent, pSource, effectCoefficient);
             pEffect.Finished += () => OnDamageEffectFinished(damageEffectComponent);
 
-            if (_appliedStacks.TryGetValue(damageEffectComponent, out ushort value)) {
-                if (value < damageEffectComponent.MaxStacks) {
-                    _appliedStacks[damageEffectComponent] = ++value;
+            if (_appliedStacks.TryGetValue(damageEffectComponent, out EffectData? oEffectData)) {
+                if (oEffectData.Stacks < damageEffectComponent.MaxStacks) {
+                    _appliedStacks[damageEffectComponent].Stacks++;
                 }
+
+                // Restart the timer
+                oEffectData.Timer?.Start();
             } else {
-                _appliedStacks.Add(damageEffectComponent, 1);
+                _appliedStacks.Add(damageEffectComponent, new EffectData(1, pEffectOwner, timer));
             }
         }
 
         var statEffectComponent = pEffect.GetComponent<StatEffectComponent>();
+
         if (statEffectComponent is not null) {
-            pEffect.Tick += () => OnStatEffectTick(statEffectComponent, pAttacker, effectCoefficient);
+            pEffect.Tick += () => OnStatEffectTick(statEffectComponent, pSource, effectCoefficient);
             pEffect.Finished += () => OnDamageEffectFinished(statEffectComponent);
 
-            if (_appliedStacks.TryGetValue(statEffectComponent, out ushort value)) {
-                if (value < statEffectComponent.MaxStacks) {
-                    _appliedStacks[statEffectComponent] = ++value;
+            if (_appliedStacks.TryGetValue(statEffectComponent, out EffectData? oEffectData)) {
+                if (oEffectData.Stacks < statEffectComponent.MaxStacks) {
+                    _appliedStacks[statEffectComponent].Stacks++;
                 }
+                
+                // Restart the timer
+                oEffectData.Timer?.Start();
             } else {
-                _appliedStacks.Add(statEffectComponent, 1);
+                _appliedStacks.Add(statEffectComponent, new EffectData(1, pEffectOwner, timer));
             }
         }
     }
@@ -130,97 +167,17 @@ public partial class CombatManager : Node {
         _appliedStacks.Remove(pEffect);
     }
 
-
-    public bool HasTarget() {
-        return TargetEntity is not null && IsInstanceValid(TargetEntity);
-    }
-
-    private static Effect[] CastSpell(Gizmo pSource, SpellComponent pSpellComponent) {
-        if (pSpellComponent.IsOnCooldown()) {
-            Logger.Combat.Debug($"Spell {pSource.DisplayName} is still on cooldown");
-            return [];
-        }
-
-        ulong cooldownInMicroSeconds = pSpellComponent.CooldownSeconds * 1_000_000;
-        pSource.EmitCasted(cooldownInMicroSeconds);
-
-        pSpellComponent.Cast();
-        return pSpellComponent.Effects;
-    }
-
-    private static Effect[] CastChainSpell(Gizmo pSource, ChainSpellComponent pChainSpellComponent) {
-        Gizmo currentSpell = pChainSpellComponent.GetCurrentSpell() ?? pSource;
-
-        if (pChainSpellComponent.IsOnCooldown()) {
-            Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is still on cooldown");
-            return [];
-        }
-
-        bool castResult = pChainSpellComponent.Cast();
-        if (castResult) {
-            CompleteChainCast(pSource, pChainSpellComponent);
-        } else {
-            var spellComponent = currentSpell.GetComponent<SpellComponent>();
-            if (spellComponent is null) {
-                Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is missing spell component");
-                return [];
-            }
-
-            if (spellComponent.IsOnCooldown()) {
-                Logger.Combat.Debug($"Spell '{pSource.DisplayName}' is still on cooldown");
-                return [];
-            }
-
-            spellComponent.Cast();
-            CompleteChainCast(pSource, pChainSpellComponent);
-            return spellComponent.Effects;
-        }
-
-        return pChainSpellComponent.Effects;
-    }
-
-    private static void CompleteChainCast(Gizmo pSource, ChainSpellComponent pChainSpellComponent) {
-        Gizmo nextSpell = pChainSpellComponent.GetNextSpell() ?? pSource;
-        pChainSpellComponent.Chain();
-        ulong cooldownInMicroSeconds = nextSpell.GetCooldown() * 1_000_000;
-        pSource.EmitCasted(cooldownInMicroSeconds);
-    }
-
     private void OnDamageEffectTick(DamageEffectComponent pDamageEffect, CombatManager pSource, int pCoefficient) {
         double damage = CombatSystem.CalculateDamage(pDamageEffect, pSource.CombatSystem);
-        
-        damage *= _appliedStacks[pDamageEffect] * pCoefficient;
-        
-        _combatResources.ModifyHealth(damage);
+
+        damage *= _appliedStacks[pDamageEffect].Stacks * pCoefficient;
+
+        CombatResources.ModifyHealth(damage);
     }
 
+    // ReSharper disable UnusedParameter.Local
     private void OnStatEffectTick(StatEffectComponent pEffect, CombatManager pSource, int pCoefficient) { }
 
-    private void LinkEntityArmory() {
-        foreach (GizmoStack gizmoStack in GetEntity().Armory.Gizmos) {
-            LinkGizmoAttributes(gizmoStack, -1);
-        }
-    }
-
-    private void LinkGizmoAttributes(GizmoStack pGizmoStack, int pIndex) {
-        var component = pGizmoStack.Gizmo?.GetComponent<StatComponent>();
-
-        if (component is null) {
-            return;
-        }
-
-        _statSystem.Link(component.Attributes);
-    }
-
-    private void UnlinkGizmoAttributes(GizmoStack pGizmoStack, int pIndex) {
-        var component = pGizmoStack.Gizmo?.GetComponent<StatComponent>();
-
-        if (component is null) {
-            return;
-        }
-
-        _statSystem.Unlink(component.Attributes);
-    }
 
     private Entity GetEntity() {
         return GetParent<Entity>();

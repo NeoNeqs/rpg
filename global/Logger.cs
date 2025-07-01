@@ -2,28 +2,42 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using Godot;
-using Godot.Collections;
 
 namespace RPG.global;
 
-public class Logger(string pTag, Logger.Level pCurrentLevel) {
+/// <summary>
+/// Abstraction on top of Godot's print functions with additional logging features:
+/// <para> 1. Logging current date and time </para>
+/// <para> 2. Logging severity levels </para>
+/// <para> 3. Named loggers </para>
+/// <para> 4. Logging from different threats </para>
+/// <para> 5. Colorful output </para>
+/// <para> 6. Predictable output, format should easily be parsable with a regex </para>
+/// <para> 7. Easy to sort / filter </para>
+/// </summary>
+/// <param name="pTag">The general tag (a name) that defines what this logger is related to.</param>
+/// <param name="pCurrentLevel">Controls the minimum allowed level for logging. Any logging below <paramref name="pCurrentLevel"/> will be ignored.</param>
+public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
     public enum Level {
+        /// Used only for debugging purposes, should not be present in release builds 
         Debug,
+        /// Useful information that require no action.
         Info,
+        /// A warning usually doesn't require action, indicates a misconfiguration or a soft error that can be ignored.
         Warn,
+        /// An error requires an action.
         Error,
+        /// A more serious error, usually triggered in unrecoverable state and so it may follow a crash.
         Critical,
     }
 
+    // TODO: Decide on levels for release builds:
+#if TOOLS
     public static readonly Logger Core = new("Core", Level.Debug);
     public static readonly Logger Inventory = new("Inventory", Level.Debug);
     public static readonly Logger Combat = new("Combat", Level.Debug);
     public static readonly Logger UI = new("UI", Level.Debug);
-
-
-    static Logger() {
-        _PrintInfo();
-    }
+#endif
 
     [Conditional("DEBUG")]
     public void Debug(string pMessage, bool pVerbose = false) {
@@ -44,22 +58,18 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
 
     public void Critical(string pMessage, bool pVerbose = false) {
         _Log(Level.Critical, pMessage, pVerbose);
-        
-        System.Diagnostics.Debug.Assert(false, pMessage);
     }
 
     private void _LogStackTrace() {
-        var stackTrace = new StackTrace(true);
-        StackFrame[] frames = stackTrace.GetFrames();
-        
+        StackFrame[] frames = new StackTrace(true).GetFrames();
+
         // Slice off the first 3 entries (call to `_LogStacktrace()` and `_Log()` and the public caller e.g. `Debug()`)
         // Also get rid off last few entries added by Godot's glue code.
-        for (int i = 3; i < frames.Length - 5; i++) {
+        for (int i = 3; i < frames.Length - 5; ++i) {
             StackFrame frame = frames[i];
             string trace = $"\tat: {frame.GetFileName()} -> {frame.GetMethod()?.Name}:{frame.GetFileLineNumber()}";
             GD.PrintRich(_FormatColor(trace, pCurrentLevel));
         }
-        
     }
 
     private static string _GetThreadString() {
@@ -86,7 +96,7 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
             _ => throw new ArgumentOutOfRangeException(nameof(pLevel), pLevel, "Unhandled Logger.Level found.")
         };
 
-        return $"[color={color}] {pMessage}[/color]";
+        return $"[color={color}]{pMessage}[/color]";
     }
 
     private void _Log(Level pLevel, string pMessage, bool pVerbose) {
@@ -100,22 +110,23 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
 
         string formattedMessage = $"[{datetime}] [{levelStr}] [{pTag}] [{threadStr}]: {pMessage}";
 
-        if (OS.HasFeature("editor")) {
-            GD.PrintRich(_FormatColor(formattedMessage, pLevel));
-        } else {
-            GD.Print(formattedMessage);
-        }
+#if TOOLS
+        GD.PrintRich(_FormatColor(formattedMessage, pLevel));
+#else
+        GD.Print(formattedMessage);
+#endif
 
         if (pVerbose) {
             _LogStackTrace();
         }
     }
 
-    static void _PrintInfo() {
-        if (!OS.HasFeature("template")) {
-            return;
-        }
+#if !TOOLS
+    static Logger() {
+        _PrintInfo();
+    }
 
+    private static void _PrintInfo() {
         string deviceName = RenderingServer.GetRenderingDevice().GetDeviceName();
         string renderingMethod = RenderingServer.GetCurrentRenderingMethod();
         string driverName = RenderingServer.GetCurrentRenderingDriverName();
@@ -149,4 +160,5 @@ public class Logger(string pTag, Logger.Level pCurrentLevel) {
         Core.Info("--------------------Misc Information--------------------");
         Core.Info($"Is sandboxed: {OS.IsSandboxed()}");
     }
+#endif
 }

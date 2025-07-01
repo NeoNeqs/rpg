@@ -7,6 +7,8 @@ using RPG.ui.hotbar;
 using RPG.ui.inventory;
 using RPG.ui.item;
 using RPG.ui.spell;
+using EventBus = RPG.global.singletons.EventBus;
+using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
 
 namespace RPG.ui;
 
@@ -18,14 +20,17 @@ public partial class InventoryManager : Control {
     private int _selectedSlotIndex = -1;
     private InventoryView? _selectedInventoryView = null;
 
-    public async override void _Ready() {
+
+    // ReSharper disable once AsyncVoidMethod
+    // Can't make _Ready return `Task` since it's a virtual function :/
+    public override async void _Ready() {
         EventBus.Instance.CharacterInventoryLoaded += CreateItemView;
         EventBus.Instance.CharacterSpellBookLoaded += CreateSpellView;
         // EventBus.Instance.CharacterStatsLoaded += 
         EventBus.Instance.EmptyRegionPressed += DeleteSelectedGizmo;
         CreateHotbarView(GD.Load<Inventory>("uid://b1v0bkq8bhhic"));
-        
-#if  DEBUG
+
+#if TOOLS
         await ToSignal(EventBus.Instance, EventBus.SignalName.CharacterSpellBookLoaded);
         SpellView sv = null;
         HotbarView hv = null;
@@ -39,7 +44,7 @@ public partial class InventoryManager : Control {
                     break;
             }
         }
-        
+
         sv.Inventory.HandleGizmoAction(0, hv.Inventory, 0, true);
         sv.Inventory.HandleGizmoAction(1, hv.Inventory, 1, true);
 #endif
@@ -75,7 +80,7 @@ public partial class InventoryManager : Control {
         itemView.SlotHovered += OnSlotHovered;
         itemView.SlotUnhovered += OnSlotUnhovered;
         AddChild(itemView);
-        
+
         return itemView;
     }
 
@@ -88,7 +93,7 @@ public partial class InventoryManager : Control {
             Select(pSourceView, pSlot);
             return;
         }
-        
+
         Inventory.ActionResult result = _selectedInventoryView!.Inventory.HandleGizmoAction(
             _selectedSlotIndex,
             pSourceView.Inventory,
@@ -101,10 +106,10 @@ public partial class InventoryManager : Control {
                 Unselect(pSourceView, pSlot);
                 break;
             case Inventory.ActionResult.Leftover:
-                GizmoStack selectedGizmoStack = _selectedInventoryView.Inventory.At(_selectedSlotIndex);
+                GizmoStack selectedGizmoStack = _selectedInventoryView.Inventory.GetAt(_selectedSlotIndex);
                 _dragSlot.Update(selectedGizmoStack);
 
-                GizmoStack pressedGizmoStack = pSourceView.Inventory.At(pSlot.GetIndex());
+                GizmoStack pressedGizmoStack = pSourceView.Inventory.GetAt(pSlot.GetIndex());
                 pSlot.Update(pressedGizmoStack);
                 break;
             default:
@@ -125,7 +130,7 @@ public partial class InventoryManager : Control {
     private void Select(InventoryView pSourceView, InventorySlot pSlot) {
         int slotIndex = pSlot.GetIndex();
 
-        GizmoStack gizmoStack = pSourceView.Inventory.At(slotIndex);
+        GizmoStack gizmoStack = pSourceView.Inventory.GetAt(slotIndex);
 
         if (gizmoStack.Quantity == 0) {
             return;
@@ -148,7 +153,7 @@ public partial class InventoryManager : Control {
             selectedSlot?.Unselect();
             // selectedSlot.Update(_selectedInventoryView?.Inventory.At(_selectedSlotIndex));
 
-            GizmoStack gizmoStack = pSourceView.Inventory.At(pSlot.GetIndex());
+            GizmoStack gizmoStack = pSourceView.Inventory.GetAt(pSlot.GetIndex());
             _tooltip.Update(gizmoStack);
             _dragSlot.Update(null);
 
@@ -162,7 +167,7 @@ public partial class InventoryManager : Control {
             return;
         }
 
-        _tooltip.Update(pSourceView.Inventory.At(pSlot.GetIndex()));
+        _tooltip.Update(pSourceView.Inventory.GetAt(pSlot.GetIndex()));
     }
 
     private void OnSlotUnhovered() {

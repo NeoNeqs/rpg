@@ -1,13 +1,14 @@
 using RPG.global;
 using Godot;
 using Godot.Collections;
+using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
 
 namespace RPG.world;
 
 [GlobalClass]
 public partial class World : Node3D {
     private readonly PhysicsRayQueryParameters3D _rayQuery = new();
-    private PhysicsShapeQueryParameters3D _shapeQuery = new();
+    private readonly PhysicsShapeQueryParameters3D _shapeQuery = new();
 
     [Export] private Decal _decal;
 
@@ -27,7 +28,6 @@ public partial class World : Node3D {
         _shapeQuery.CollideWithBodies = pBodyCollision;
         _shapeQuery.CollisionMask = pCollisionMask;
         _shapeQuery.Transform = new Transform3D(Basis.Identity, pPosition);
-        // Exclude itself
         _shapeQuery.Exclude = [pExclude];
 
         PhysicsServer3D.ShapeSetData(_shapeQuery.ShapeRid, pRadius);
@@ -67,6 +67,7 @@ public partial class World : Node3D {
         }
 
         return _rayQuery.To;
+        // return Vector3.Inf;
     }
 
     public Entity CreateTempDummyEntity(Vector3 pPosition) {

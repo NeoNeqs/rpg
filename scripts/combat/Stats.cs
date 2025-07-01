@@ -6,6 +6,8 @@ using Godot.Collections;
 
 namespace RPG.scripts.combat;
 
+// IMPORTANT: Careful with adding numeric properties (Integer / Decimal) here. See `_Set()` definition down below.
+
 [Tool, GlobalClass]
 public partial class Stats : Resource {
     [Signal]
@@ -53,7 +55,7 @@ public partial class Stats : Resource {
     }
 
     private Godot.Collections.Dictionary<string, float> _decimalData = new();
-
+    
 #if TOOLS
     // A neat trick to do compile time asserts, although the thrown error message is not very useful.
     // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
@@ -67,21 +69,24 @@ public partial class Stats : Resource {
 #pragma warning restore CS0414 // Field is assigned but its value is never used
     }
 
+    // AddInteger and AddDecimal are helper properties in the Inspector that just add stats to the resource.
     private IntegerStat AddInteger {
         set {
-            _integerData.TryAdd(value.ToString(), 1);
-            NotifyPropertyListChanged();
+            if (_integerData.TryAdd(value.ToString(), 1)) {
+                NotifyPropertyListChanged();
+            }
         }
     }
 
     private DecimalStat AddDecimal {
         set {
-            _decimalData.TryAdd(value.ToString(), 1.0f);
-            NotifyPropertyListChanged();
+            if (_decimalData.TryAdd(value.ToString(), 1.0f)) {
+                NotifyPropertyListChanged();
+            }
         }
     }
 #endif
-
+    
     public long GetIntegerStat(IntegerStat pStat, long pDefault = 0) {
         string key = pStat.ToString();
         _integerData.TryAdd(key, pDefault);
@@ -100,7 +105,7 @@ public partial class Stats : Resource {
         string key = pStat.ToString();
         _integerData.TryGetValue(key, out long oldValue);
         _integerData.TryAdd(key, pValue);
-        
+
         EmitSignalIntegerStatChanged(pStat, pValue - oldValue);
     }
 
@@ -112,7 +117,6 @@ public partial class Stats : Resource {
         EmitSignalDecimalStatChanged(pStat, pValue - oldValue);
     }
 
-
     public bool IsConnectedToIntegerStatChanged(Action<IntegerStat, long> pAction) {
         return IsConnected(SignalName.IntegerStatChanged, Callable.From(pAction));
     }
@@ -123,16 +127,14 @@ public partial class Stats : Resource {
 
     public static IntegerStat[] GetIntegerStats() {
         return Enum.GetValues<IntegerStat>();
-        // return Enum.GetNames<IntegerStat>();
     }
 
     public static DecimalStat[] GetDecimalStats() {
         return Enum.GetValues<DecimalStat>();
-        // return Enum.GetNames<DecimalStat>();
     }
 
     public override Array<Dictionary> _GetPropertyList() {
-        Array<Dictionary> result = [
+        Array<Dictionary> propertyList = [
 #if TOOLS
             new() {
                 ["name"] = nameof(AddInteger),
@@ -164,7 +166,7 @@ public partial class Stats : Resource {
         ];
 #if TOOLS
         foreach (KeyValuePair<string, long> attribute in _integerData) {
-            result.Add(
+            propertyList.Add(
                 new Dictionary {
                     ["name"] = attribute.Key,
                     ["type"] = Variant.From(Variant.Type.Int),
@@ -174,7 +176,7 @@ public partial class Stats : Resource {
         }
 
         foreach (KeyValuePair<string, float> attribute in _decimalData) {
-            result.Add(
+            propertyList.Add(
                 new Dictionary {
                     ["name"] = attribute.Key,
                     ["type"] = Variant.From(Variant.Type.Float),
@@ -183,14 +185,18 @@ public partial class Stats : Resource {
             );
         }
 #endif
-        return result;
+        return propertyList;
     }
-
+    
+    /// Redirects storage Integer / Decimal properties to Dictionaries `_integerData` / `_decimalData`
     public override bool _Set(StringName pProperty, Variant pValue) {
         string propertyName = pProperty.ToString();
+        
+        // Currently all Integer / Decimal types are handled here!
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+        // Only care about ints and floats.
         switch (pValue.VariantType) {
             case Variant.Type.Int: {
                 long valueAsLong = pValue.As<long>();
@@ -233,7 +239,6 @@ public partial class Stats : Resource {
         return default;
     }
 
-
 #if TOOLS
     public override bool _PropertyCanRevert(StringName pProperty) {
         return _integerData.TryGetValue(pProperty.ToString(), out long _) ||
@@ -242,11 +247,11 @@ public partial class Stats : Resource {
 
     public override Variant _PropertyGetRevert(StringName pProperty) {
         if (_integerData.TryGetValue(pProperty.ToString(), out long _)) {
-            return long.MaxValue;
+            return long.MaxValue; // Default revert (impossible) value of Integer Stats
         }
 
         if (_decimalData.TryGetValue(pProperty.ToString(), out float _)) {
-            return Mathf.Inf;
+            return Mathf.Inf; // Default revert (impossible) value of Decimal Stats
         }
 
         return default;

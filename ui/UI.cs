@@ -1,5 +1,6 @@
 using RPG.global;
 using Godot;
+using EventBus = RPG.global.singletons.EventBus;
 
 namespace RPG.ui;
 

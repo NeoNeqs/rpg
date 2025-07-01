@@ -2,6 +2,7 @@ using Godot;
 using RPG.global;
 using RPG.scripts.inventory;
 using RPG.ui.item;
+using EventBus = RPG.global.singletons.EventBus;
 
 namespace RPG.ui.hotbar;
 
@@ -46,7 +47,7 @@ public partial class HotbarView : ItemView {
                 continue;
             }
             
-            GizmoStack gizmoStack = Inventory.At(i);
+            GizmoStack gizmoStack = Inventory.GetAt(i);
             if (gizmoStack.Gizmo is null) {
                 break;
             }

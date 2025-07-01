@@ -1,5 +1,6 @@
 using global::RPG.global;
 using Godot;
+using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
 
 namespace RPG;
 

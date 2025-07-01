@@ -20,6 +20,7 @@ metadata/_custom_type_script = "uid://cyd1y5aqm7k2y"
 
 [resource]
 script = ExtResource("1_enuvo")
+Id = &"training_sword"
 DisplayName = "Training Sword"
 Icon = ExtResource("1_nvwiv")
 StackSize = 1

@@ -1,14 +1,13 @@
 using Godot;
-using Godot.Collections;
 using RPG.scripts.combat;
-using RPG.scripts.effects;
-using RPG.scripts.effects.components;
 using RPG.scripts.inventory;
 using RPG.world;
 
-namespace RPG.global;
+namespace RPG.global.singletons;
 
-public partial class EventBus : Node {
+public sealed partial class EventBus : Node {
+    
+    /// Emitted when the player clicks on an empty <see cref="RPG.ui.UI"/> region (where there are no <see cref="RPG.ui.UIElement"/>).
     [Signal]
     public delegate void EmptyRegionPressedEventHandler();
     
@@ -20,20 +19,18 @@ public partial class EventBus : Node {
     
     [Signal]
     public delegate void CharacterSpellBookLoadedEventHandler(Inventory pInventory);
-    
+
+    /// Emitted when the global <see cref="Stats"/> are loaded.
     [Signal]
     public delegate void TotalStatsLoadedEventHandler(Stats pStats);
     
     [Signal]
     public delegate void HotbarKeyPressedEventHandler(Gizmo pGizmo);
-
-    [Signal]
-    public delegate void AoESelectedEventHandler(Array<Effect> pAoEs);
     
+    /// Emitted when the player selects an <see cref="Entity"/> with a mouse button.
     [Signal]
     public delegate void EntitySelectedEventHandler(Entity pEntity);
     
-
     public static EventBus Instance = null!;
 
     public EventBus() {
@@ -61,10 +58,6 @@ public partial class EventBus : Node {
 
     public void EmitHotbarKeyPressed(Gizmo pGizmo) {
         EmitSignalHotbarKeyPressed(pGizmo);
-    }
-
-    public void EmitAoESelected(Array<Effect> pAoEs) {
-        EmitSignalAoESelected(pAoEs);
     }
 
     public void EmitEntitySelectedEventHandler(Entity pEntity) {

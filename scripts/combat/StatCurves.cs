@@ -46,6 +46,4 @@ public partial class StatCurves : Resource {
     public float GetNatureDamagePenetration(long pNatureRes) {
         return NaturePenetrationCurve.Sample(pNatureRes);
     }
-    
-
 }

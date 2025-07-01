@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=38 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
@@ -10,13 +10,15 @@
 [ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="5_qdl7p"]
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="6_ggcj5"]
 [ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="6_lbca7"]
-[ext_resource type="Resource" uid="uid://dfebkmuinemk8" path="res://resources/spells/fire_ball.tres" id="7_qdl7p"]
-[ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="8_ggcj5"]
+[ext_resource type="Resource" uid="uid://dfebkmuinemk8" path="res://resources/spells/fire_ball.tres" id="7_g02qr"]
+[ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="8_xy7j0"]
 [ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="10_f1wg7"]
 [ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="11_m0gsu"]
 [ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="12_d882m"]
+[ext_resource type="Script" uid="uid://blcc2ydrwger3" path="res://world/character/AoeDecal.cs" id="15_d882m"]
 [ext_resource type="Script" uid="uid://b2coni50v0uls" path="res://world/character/CameraController.cs" id="15_ggcj5"]
 [ext_resource type="Script" uid="uid://bk7iy0hrav8gb" path="res://world/character/MovementController.cs" id="15_qdl7p"]
+[ext_resource type="Script" uid="uid://bl5tc275grlvk" path="res://world/character/HotbarManager.cs" id="19_7k511"]
 
 [sub_resource type="Resource" id="Resource_fn1hb"]
 script = ExtResource("3_vqai4")
@@ -34,19 +36,20 @@ metadata/_custom_type_script = "uid://bk27a6avfmj1x"
 
 [sub_resource type="Resource" id="Resource_d882m"]
 script = ExtResource("2_c4acw")
-Gizmo = ExtResource("7_qdl7p")
+Gizmo = ExtResource("7_g02qr")
 Quantity = 1
 AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_7k511"]
 script = ExtResource("2_c4acw")
-Gizmo = ExtResource("8_ggcj5")
+Gizmo = ExtResource("8_xy7j0")
 Quantity = 1
 AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_g02qr"]
 script = ExtResource("2_c4acw")
-Quantity = 0
+Gizmo = ExtResource("8_xy7j0")
+Quantity = 1
 AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_xy7j0"]
@@ -152,17 +155,24 @@ metadata/_custom_type_script = "uid://bk7iy0hrav8gb"
 script = ExtResource("15_ggcj5")
 metadata/_custom_type_script = "uid://b2coni50v0uls"
 
-[node name="Decal" type="Decal" parent="."]
+[node name="CombatManager" type="Node" parent="."]
+script = ExtResource("6_lbca7")
+CombatSystem = SubResource("Resource_vqai4")
+metadata/_custom_type_script = "uid://dbsutjhc4nqxg"
+
+[node name="HotbarManager" type="Node" parent="."]
+script = ExtResource("19_7k511")
+metadata/_custom_type_script = "uid://bl5tc275grlvk"
+
+[node name="AoeDecal" type="Decal" parent="HotbarManager" node_paths=PackedStringArray("_character")]
+visible = false
 size = Vector3(1, 1, 1)
 texture_albedo = ExtResource("12_d882m")
 distance_fade_begin = 0.0
 distance_fade_length = 4198.35
 cull_mask = 1
+script = ExtResource("15_d882m")
+_character = NodePath("../..")
 
-[node name="RayCast3D" type="RayCast3D" parent="Decal"]
+[node name="RayCast3D" type="RayCast3D" parent="HotbarManager/AoeDecal"]
 target_position = Vector3(0, -50, 0)
-
-[node name="CombatManager" type="Node" parent="."]
-script = ExtResource("6_lbca7")
-CombatSystem = SubResource("Resource_vqai4")
-metadata/_custom_type_script = "uid://dbsutjhc4nqxg"

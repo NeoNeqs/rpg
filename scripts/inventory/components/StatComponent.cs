@@ -5,5 +5,5 @@ namespace RPG.scripts.inventory.components;
 
 [Tool, GlobalClass]
 public partial class StatComponent : GizmoComponent {
-    [Export] public required Stats Attributes;
+    [Export] public required Stats Stats;
 }

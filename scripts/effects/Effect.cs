@@ -9,32 +9,35 @@ namespace RPG.scripts.effects;
 public sealed partial class Effect : ComponentSystem<EffectComponent> {
     [Signal]
     public delegate void TickEventHandler();
+
     [Signal]
     public delegate void FinishedEventHandler();
 
     [Flags]
     public enum EffectFlags {
         Immediate = 1 << 0,
-        TargetSelf = 1 << 1,
+        // TargetSelf = 1 << 1,
         Buff = 1 << 2,
     }
+    
+    // Note: TickTimeout refers to the time in seconds it takes to 1 application of the effect
+    [Export(PropertyHint.Range, "0, 100, 1")] public int TickTimeout { private set; get; } = 3;
 
-    [Export] public int TickTimeout = 3;
+    [Export(PropertyHint.Range, "0, 1, 0.01")]
+    public double ApplicationChance { private set; get; } = 1.0;
 
-    [Export(PropertyHint.Range, "0,1,0.01")]
-    public double ApplicationChance = 1.0;
-
-    [Export]
+    // Note: Ticks refers to the amount of applications of the effect
+    [Export(PropertyHint.Range, "0, 100, 1")]
     public int Ticks {
-        set {
+        private set {
             _ticks = value;
             _currentTick = value;
         }
         get => _ticks;
     }
 
-    [Export] public long MaxRange;
-    [Export] public EffectFlags Flags;
+    [Export(PropertyHint.Range, "1, 1000, 1")] public long Range { private set; get; } = 1;
+    [Export] public EffectFlags Flags { private set; get; }
 
     private int _ticks;
     private int _currentTick;
@@ -61,16 +64,16 @@ public sealed partial class Effect : ComponentSystem<EffectComponent> {
         return timer;
     }
 
-    private bool IsImmediate() {
-        return (Flags & EffectFlags.Immediate) == 0;
+    public bool IsImmediate() {
+        return (Flags ^ EffectFlags.Immediate) == 0;
     }
 
-    public bool IsTargetSelf() {
-        return (Flags & EffectFlags.TargetSelf) == 0;
-    }
+    // public bool IsTargetSelf() {
+    //     return (Flags ^ EffectFlags.TargetSelf) == 0;
+    // }
 
     public bool IsBuff() {
-        return (Flags & EffectFlags.Buff) == 0;
+        return (Flags ^ EffectFlags.Buff) == 0;
     }
 
     private void SetupPeriodicEffect(Timer pTimer) {

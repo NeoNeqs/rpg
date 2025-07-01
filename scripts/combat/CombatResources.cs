@@ -2,17 +2,16 @@ using Godot;
 
 namespace RPG.scripts.combat;
 
-[GlobalClass]
-public partial class CombatResources : Resource {
+public partial class CombatResources : RefCounted {
     [Signal]
     public delegate void DiedEventHandler();
     
-    private CombatSystem _combatSystem = null!;
+    private readonly CombatSystem _combatSystem;
 
     private long _currentHealth;
     private long _maxHealth;
 
-    public void Initialize(CombatSystem pCombatSystem) {
+    public CombatResources(CombatSystem pCombatSystem) {
         _combatSystem = pCombatSystem;
         _maxHealth = _combatSystem.GetMaxHealth();
         _currentHealth = _maxHealth;

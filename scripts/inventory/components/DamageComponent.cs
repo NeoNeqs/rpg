@@ -1,5 +1,6 @@
 using RPG.global;
 using Godot;
+using RPG.global.enums;
 
 namespace RPG.scripts.inventory.components;
 

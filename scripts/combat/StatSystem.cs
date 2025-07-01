@@ -1,12 +1,17 @@
-using Godot;
+using RPG.global;
+using RPG.scripts.inventory;
+using RPG.scripts.inventory.components;
 
 namespace RPG.scripts.combat;
 
-[GlobalClass]
-public partial class StatSystem : Resource {
-    public Stats Total = new();
+public class StatSystem {
+    public readonly Stats Total = new();
 
-    public void Link(Stats pStats) {
+    public void Link(Stats? pStats) {
+        if (pStats is null) {
+            return;
+        }
+        
         if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
             return;
         }
@@ -48,6 +53,42 @@ public partial class StatSystem : Resource {
 
             pStats.DecimalStatChanged -= OnDecimalStatChanged;
         }
+    }
+    
+    public void LinkFromInventory(Inventory? pArmory) {
+        if (pArmory is not null) {
+            pArmory.GizmoChanged += LinkGizmoStatComponent;
+            pArmory.GizmoAboutToChange += UnlinkGizmoStatComponent;
+        }
+        foreach (GizmoStack gizmoStack in pArmory?.Gizmos ?? []) {
+            LinkGizmoStatComponent(gizmoStack, -1);
+        }
+    }
+
+    private void LinkGizmoStatComponent(GizmoStack pGizmoStack, int pIndex) {
+        var component = pGizmoStack.Gizmo?.GetComponent<StatComponent>();
+
+        if (component is null) {
+            return;
+        }
+
+        Link(component.Stats);
+    }
+    
+    private void UnlinkGizmoStatComponent(GizmoStack pGizmoStack, int pIndex) {
+        if (pGizmoStack.Gizmo is null) {
+            return;
+        }
+
+        var component = pGizmoStack.Gizmo.GetComponent<StatComponent>();
+
+        if (component is null) {
+            Logger.Combat.Error(
+                $"Can't unlink stats from {nameof(Gizmo)} Name={pGizmoStack.Gizmo.DisplayName} as it does not have a {nameof(StatComponent)}.");
+            return;
+        }
+
+        Unlink(component.Stats);
     }
 
     private void OnIntegerStatChanged(Stats.IntegerStat pStat, long pDelta) {

@@ -10,25 +10,9 @@ namespace RPG.world;
 [GlobalClass]
 public partial class Entity : Node3D {
     [Export] public CombatManager CombatManager = null!;
-    [Export] public Inventory Armory = null!;
+    [Export] public Inventory? Armory;
     [Export] public Inventory SpellBook = null!;
-    [Export] public Stats BaseStats = null!;
-
-    // Move this to a Godot Singleton. It's the only way to have a proper cleanup of ShapeRid in ExitTree.
-    // The move will make it so PhysicsShapeQueryParameters3D is reused. 
-    private PhysicsShapeQueryParameters3D _query = new();
-
-    public override void _EnterTree() {
-        _query.CollideWithBodies = true;
-        // TODO: setup collision masks
-        _query.CollisionMask = int.MaxValue;
-        _query.ShapeRid = PhysicsServer3D.SphereShapeCreate();
-    }
-
-    public override void _ExitTree() {
-        PhysicsServer3D.FreeRid(_query.ShapeRid);
-    }
-
+    [Export] public Stats? BaseStats;
 
     public override void _Ready() {
         // Debug.Assert(GetChild(0) is PhysicsBody3D,
@@ -38,14 +22,6 @@ public partial class Entity : Node3D {
 
     public List<Entity> GetEntitiesInRadius(float pRadius) {
         var result = new List<Entity>();
-        //
-        // _query.Transform = new Transform3D(Basis.Identity, GlobalTransform.Origin);
-        // // Exclude itself
-        // _query.Exclude = [GetChild<PhysicsBody3D>(0).GetRid()];
-        //
-        // PhysicsServer3D.ShapeSetData(_query.ShapeRid, pRadius);
-        //
-        // Array<Dictionary> queryResults = GetWorld3D().DirectSpaceState.IntersectShape(_query);
 
         Array<Dictionary> queryResults = GetWorld().IntersectShape(
             GlobalTransform.Origin, 

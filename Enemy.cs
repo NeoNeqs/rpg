@@ -1,5 +1,6 @@
 using RPG.global;
 using RPG.world;
+using EventBus = RPG.global.singletons.EventBus;
 
 namespace RPG;
 

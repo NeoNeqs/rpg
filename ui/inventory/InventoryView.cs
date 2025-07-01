@@ -1,8 +1,8 @@
 using System;
-using System.Threading.Tasks;
 using Godot;
 using RPG.global;
 using RPG.scripts.inventory;
+using RPG.scripts.inventory.components;
 
 namespace RPG.ui.inventory;
 
@@ -26,7 +26,7 @@ public abstract partial class InventoryView : View {
         Inventory.SizeChanged += OnInventorySizeChanged;
         Inventory.GizmoAboutToChange += OnInventoryGizmoAboutToChange;
         Inventory.GizmoChanged += OnInventoryGizmoUpdate;
-   
+
         SetupContainer();
         ResizeContainer();
     }
@@ -37,7 +37,11 @@ public abstract partial class InventoryView : View {
             return;
         }
 
-        pGizmoStack.Gizmo.Casted -= slot.SetOnCooldown;
+        SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+        if (spellComponent is not null) {
+            spellComponent.CastComplete -= slot.SetOnCooldown;
+        }
+
         slot.ResetCooldown();
     }
 
@@ -59,10 +63,12 @@ public abstract partial class InventoryView : View {
             return;
         }
 
-        UpdateSlot(pGizmoStack, slot, pGizmoStack.Gizmo?.GetRemainingCooldown() ?? 0);
-        if (pGizmoStack.Gizmo is not null) {
-            pGizmoStack.Gizmo.Casted += slot.SetOnCooldown;
-            slot.SetOnCooldown(pGizmoStack.Gizmo.GetRemainingCooldown());
+        ulong remainingCooldown = pGizmoStack.Gizmo?.GetRemainingCooldown() ?? 0UL;
+        UpdateSlot(pGizmoStack, slot, remainingCooldown);
+        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+        if (spellComponent != null) {
+            spellComponent.CastComplete += slot.SetOnCooldown;
+            slot.SetOnCooldown(remainingCooldown);
         }
     }
 
@@ -74,7 +80,7 @@ public abstract partial class InventoryView : View {
         int slotsToRemove = Math.Max(0, oldSize - newSize);
 
         for (int i = 0; i < slotsToAdd; i++) {
-            AddSlot(Inventory.At(oldSize + i));
+            AddSlot(Inventory.GetAt(oldSize + i));
         }
 
         for (int i = 0; i < slotsToRemove; i++) {
@@ -99,32 +105,30 @@ public abstract partial class InventoryView : View {
     }
 
     private void RewireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
-        Callable onGizmoCastedCallable = Callable.From((ulong pCooldownInMicroSeconds) => {
+        Action<ulong> castCompleteCallback = (ulong pCooldownInMicroSeconds) => {
             UpdateSlot(pGizmoStack, pSlot, pCooldownInMicroSeconds);
-        });
-
+        };
+        
         // Disconnect old signal...
-        GizmoStack currentGizmoStack = Inventory.At(pSlot.GetIndex());
+        GizmoStack currentGizmoStack = Inventory.GetAt(pSlot.GetIndex());
         if (currentGizmoStack != pGizmoStack && currentGizmoStack.Gizmo is not null) {
-            // I hate working with Godot signals in C#
-            // Waiting for this to be even considered by Godot's Team:
-            // https://github.com/godotengine/godot-proposals/issues/12269
-            // My guess is 2030 
-            if (currentGizmoStack.Gizmo.IsConnected(Gizmo.SignalName.Casted, onGizmoCastedCallable)) {
-                currentGizmoStack.Gizmo.Disconnect(Gizmo.SignalName.Casted, onGizmoCastedCallable);
+            var currentSpellComponent = currentGizmoStack.Gizmo.GetComponent<SpellComponent>();
+            if (currentSpellComponent is not null && currentSpellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+                currentSpellComponent.DisconnectCastComplete(castCompleteCallback);
             }
         }
-        
+
         if (pGizmoStack.Gizmo is null) {
             UpdateSlot(pGizmoStack, pSlot, 0);
             return;
         }
-        
+
         // ...and connect new
-        pGizmoStack.Gizmo.Connect(Gizmo.SignalName.Casted, onGizmoCastedCallable);
+        var spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent>();
+        spellComponent?.ConnectCastComplete(castCompleteCallback);
+
 
         UpdateSlot(pGizmoStack, pSlot, pGizmoStack.Gizmo.GetRemainingCooldown());
-      
     }
 
     private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, ulong pCooldownInMicroSeconds) {

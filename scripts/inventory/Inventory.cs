@@ -8,9 +8,9 @@ using GizmoComponent = RPG.scripts.inventory.components.GizmoComponent;
 namespace RPG.scripts.inventory;
 
 /// <summary>
-///     <para>Holds <see cref="GizmoStack"/>s. This class has 2 guarantees in place:</para>
-///     <para>1. Every <see cref="GizmoStack"/> is initialized and never null</para>
-///     <para>2. <see cref="GizmoStack"/> never changes the position.</para>
+/// <para>Holds <see cref="GizmoStack"/>s. This class has 2 guarantees in place:</para>
+/// <para>1. Every <see cref="GizmoStack"/> is initialized and never null</para>
+/// <para>2. <see cref="GizmoStack"/> never changes the position.</para>
 /// </summary>
 [Tool, GlobalClass]
 public partial class Inventory : Resource {
@@ -49,8 +49,8 @@ public partial class Inventory : Resource {
     [Export] public InventoryFlags Flags;
 
     public ActionResult HandleGizmoAction(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {
-        GizmoStack fromGizmoStack = At(pFrom);
-        GizmoStack toGizmoStack = pToInventory.At(pTo);
+        GizmoStack fromGizmoStack = GetAt(pFrom);
+        GizmoStack toGizmoStack = pToInventory.GetAt(pTo);
 
         if (!IsIndexInRange(pFrom) || !pToInventory.IsIndexInRange(pTo)) {
             return ActionResult.None;
@@ -86,7 +86,6 @@ public partial class Inventory : Resource {
 
         if (toGizmoStack.IsEmpty()) {
             return Move(pFrom, pToInventory, pTo, pSingle);
-            // return Move(fromGizmoStack, pToInventory, toGizmoStack, pSingle);
         }
 
         if (!IsAllowed(toGizmoStack, this, fromGizmoStack)) {
@@ -106,10 +105,17 @@ public partial class Inventory : Resource {
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public GizmoStack At(int pIndex) {
+    public GizmoStack GetAt(int pIndex) {
         return _gizmos[pIndex];
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void SetAt(int pIndex, Gizmo pGizmo) {
+        EmitSignalGizmoAboutToChange(_gizmos[pIndex], pIndex);
+        _gizmos[pIndex].Gizmo = pGizmo.Duplicate();
+        EmitSignalGizmoChanged(_gizmos[pIndex], pIndex);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetSize() {
         return Gizmos.Count;
@@ -119,7 +125,7 @@ public partial class Inventory : Resource {
         if (!IsEditable()) {
             return false;
         }
-        
+
         EmitSignalGizmoAboutToChange(_gizmos[pFrom], pFrom);
         _gizmos[pFrom].Gizmo = null;
         EmitSignalGizmoChanged(_gizmos[pFrom], pFrom);
@@ -160,9 +166,9 @@ public partial class Inventory : Resource {
     }
 
     private ActionResult Move(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {
-        GizmoStack fromGizmoStack = At(pFrom);
-        GizmoStack toGizmoStack = pToInventory.At(pTo);
-        
+        GizmoStack fromGizmoStack = GetAt(pFrom);
+        GizmoStack toGizmoStack = pToInventory.GetAt(pTo);
+
         if (pSingle && IsOwning()) {
             EmitSignalGizmoAboutToChange(fromGizmoStack, pFrom);
             pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
@@ -189,9 +195,9 @@ public partial class Inventory : Resource {
     }
 
     private ActionResult Swap(int pFrom, Inventory pToInventory, int pTo) {
-        GizmoStack fromGizmoStack = At(pFrom);
-        GizmoStack toGizmoStack = pToInventory.At(pTo);
-        
+        GizmoStack fromGizmoStack = GetAt(pFrom);
+        GizmoStack toGizmoStack = pToInventory.GetAt(pTo);
+
         Gizmo? tempGizmo = toGizmoStack.Gizmo;
         long tempQuantity = toGizmoStack.Quantity;
 
@@ -211,9 +217,9 @@ public partial class Inventory : Resource {
     }
 
     private ActionResult Stack(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {
-        GizmoStack fromGizmoStack = At(pFrom);
-        GizmoStack toGizmoStack = pToInventory.At(pTo);
-        
+        GizmoStack fromGizmoStack = GetAt(pFrom);
+        GizmoStack toGizmoStack = pToInventory.GetAt(pTo);
+
         long total = fromGizmoStack.Quantity + toGizmoStack.Quantity;
         long takeFromTotal;
 
@@ -227,7 +233,7 @@ public partial class Inventory : Resource {
 
         EmitSignalGizmoAboutToChange(fromGizmoStack, pFrom);
         pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
-        
+
         toGizmoStack.Quantity = takeFromTotal;
         fromGizmoStack.Quantity = quantityLeft;
 
@@ -242,9 +248,9 @@ public partial class Inventory : Resource {
     }
 
     private ActionResult Reference(int pFrom, Inventory pToInventory, int pTo) {
-        GizmoStack fromGizmoStack = At(pFrom);
-        GizmoStack toGizmoStack = pToInventory.At(pTo);
-        
+        GizmoStack fromGizmoStack = GetAt(pFrom);
+        GizmoStack toGizmoStack = pToInventory.GetAt(pTo);
+
         pToInventory.EmitSignalGizmoAboutToChange(toGizmoStack, pTo);
 
         toGizmoStack.Gizmo = fromGizmoStack.Gizmo;
@@ -282,6 +288,14 @@ public partial class Inventory : Resource {
             if ((GizmoStack?)_gizmos[i] is null) {
                 _gizmos[i] = new GizmoStack();
             }
+#if TOOLS
+            if (!Engine.IsEditorHint()) {
+                if (_gizmos[i].Gizmo is not null) {
+                    // For some reason compiler complains about null dereference here...
+                    _gizmos[i].Gizmo = _gizmos[i].Gizmo?.Duplicate();
+                }
+            }
+#endif
         }
     }
 }

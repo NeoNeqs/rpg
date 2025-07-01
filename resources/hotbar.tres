@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="Inventory" load_steps=17 format=3 uid="uid://b1v0bkq8bhhic"]
+[gd_resource type="Resource" script_class="Inventory" load_steps=20 format=3 uid="uid://b1v0bkq8bhhic"]
 
 [ext_resource type="Script" uid="uid://do8hg8vd5v8ui" path="res://scripts/inventory/GizmoStack.cs" id="1_a50mp"]
 [ext_resource type="Script" uid="uid://cyd1y5aqm7k2y" path="res://scripts/inventory/components/ItemComponent.cs" id="1_o4522"]
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="2_dvn5d"]
 [ext_resource type="Script" uid="uid://b2yjmi2mufyqh" path="res://scripts/inventory/Inventory.cs" id="2_lnay4"]
 [ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="2_wqcwk"]
+[ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="3_yf3bx"]
+[ext_resource type="Script" uid="uid://cpk6hvue643ng" path="res://scripts/inventory/components/ChainSpellComponent.cs" id="4_tagvt"]
 
 [sub_resource type="Resource" id="Resource_myb1p"]
 script = ExtResource("1_o4522")
@@ -14,9 +16,16 @@ metadata/_custom_type_script = "uid://cyd1y5aqm7k2y"
 
 [sub_resource type="Resource" id="Resource_4wiiq"]
 script = ExtResource("2_wqcwk")
-Effects = null
+Effects = []
 CooldownSeconds = 0
 metadata/_custom_type_script = "uid://bk27a6avfmj1x"
+
+[sub_resource type="Resource" id="Resource_3ed7h"]
+script = ExtResource("4_tagvt")
+Spells = Array[ExtResource("3_yf3bx")]([])
+Effects = null
+CooldownSeconds = 0
+metadata/_custom_type_script = "uid://cpk6hvue643ng"
 
 [sub_resource type="Resource" id="Resource_o4522"]
 script = ExtResource("1_a50mp")
@@ -67,6 +76,6 @@ AllowedComponents = Array[ExtResource("2_dvn5d")]([])
 script = ExtResource("2_lnay4")
 Gizmos = Array[ExtResource("1_a50mp")]([SubResource("Resource_o4522"), SubResource("Resource_wqcwk"), SubResource("Resource_yf3bx"), SubResource("Resource_tagvt"), SubResource("Resource_25v8q"), SubResource("Resource_gs0nq"), SubResource("Resource_2s7j6"), SubResource("Resource_7r841"), SubResource("Resource_yertu")])
 Columns = 0
-AllowedComponents = [SubResource("Resource_myb1p"), SubResource("Resource_4wiiq")]
+AllowedComponents = [SubResource("Resource_myb1p"), SubResource("Resource_4wiiq"), SubResource("Resource_3ed7h")]
 Flags = 2
 metadata/_custom_type_script = "uid://b2yjmi2mufyqh"

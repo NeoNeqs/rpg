@@ -23,8 +23,10 @@ public partial class ArmorComponent : GizmoComponent {
     private long _currentDurability;
 
     public override bool IsAllowed(GizmoComponent pOtherComponent) {
-        return (pOtherComponent is ArmorComponent armorComponent &&
-                ArmorSlot == armorComponent.ArmorSlot &&
-                ArmorType <= armorComponent.ArmorType);
+        return (
+            pOtherComponent is ArmorComponent armorComponent &&
+            ArmorSlot == armorComponent.ArmorSlot &&
+            ArmorType <= armorComponent.ArmorType
+        );
     }
 }

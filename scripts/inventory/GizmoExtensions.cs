@@ -5,13 +5,13 @@ namespace RPG.scripts.inventory;
 public static class GizmoExtensions {
     
     public static ulong GetRemainingCooldown(this Gizmo pGizmo) {
-        ChainSpellComponent? chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
+        var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
 
         if (chainSpellComponent is not null) {
             return chainSpellComponent.GetRemainingCooldown();
         } 
         
-        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent>();
+        var spellComponent = pGizmo.GetComponent<SpellComponent>();
 
         if (spellComponent is not null) {
             return spellComponent.GetRemainingCooldown();

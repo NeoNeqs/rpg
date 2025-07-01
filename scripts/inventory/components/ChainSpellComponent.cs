@@ -1,4 +1,4 @@
-using System;
+using RPG.global;
 using Godot;
 using Godot.Collections;
 
@@ -10,16 +10,49 @@ public sealed partial class ChainSpellComponent : SpellComponent {
 
     private int _current = -1;
 
+    // TODO: make private
     public void Chain() {
         _current = Mathf.Wrap(_current + 1, -1, Spells.Count);
     }
 
-    public override bool Cast() {
-        if (_current == -1) {
-            return base.Cast();
+    public override CastResult Cast(Gizmo pSource) {
+        Gizmo currentSpell = GetCurrentSpell() ?? pSource;
+
+        if (IsOnCooldown()) {
+            return CastResult.OnCooldown;
         }
 
-        return false;
+        Gizmo nextSpell;
+        
+        if (_current == -1) {
+            Chain();
+            // Next spell is correct since `Chain()` is called above!
+
+            nextSpell = GetCurrentSpell() ?? pSource;
+            EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
+            LastCastTime = Time.GetTicksUsec();
+            return CastResult.Ok;
+        }
+
+#if TOOLS
+        var chainSpellComponent = currentSpell.GetComponent<ChainSpellComponent>();
+        if (chainSpellComponent is not null) {
+            Logger.Combat.Warn("Chain spells should not chain into another chain spell!", true);
+        }
+#endif
+        
+        var spellComponent = currentSpell.GetComponent<SpellComponent>();
+        if (spellComponent is null) {
+            return CastResult.NoSpellFound;
+        }
+
+        spellComponent.Cast(pSource);
+
+        nextSpell = GetCurrentSpell() ?? pSource;
+        EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
+        LastCastTime = Time.GetTicksUsec();
+        
+        return CastResult.Ok;
     }
 
     public Gizmo? GetNextSpell() {
