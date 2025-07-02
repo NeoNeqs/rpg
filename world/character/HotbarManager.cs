@@ -44,13 +44,13 @@ public partial class HotbarManager : Node {
         }
 
         if (spellComponent.IsAoe && !spellComponent.IsOnCooldown()) {
-            Vector3 mouseWorldPosition = character.GetWorld().GetMouseWorldPosition(spellComponent.MaxRange);
+            Vector3 mouseWorldPosition = character.GetWorld().GetMouseWorldPosition(spellComponent.Range);
             if (mouseWorldPosition == Vector3.Inf) {
                 return;
             }
 
             // Go back to calling AoeDecal.Update() manually here...
-            Decal.Update(mouseWorldPosition, spellComponent.MaxRange);
+            Decal.Update(mouseWorldPosition, spellComponent.Range);
             SetProcessUnhandledInput(true);
 
             _waiting = true;

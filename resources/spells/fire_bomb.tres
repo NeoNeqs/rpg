@@ -8,8 +8,9 @@
 [sub_resource type="Resource" id="Resource_bwndl"]
 script = ExtResource("3_xqcng")
 Spells = Array[ExtResource("2_5k16s")]([])
-Effects = null
+Effects = []
 CooldownSeconds = 0
+Range = 1
 metadata/_custom_type_script = "uid://cpk6hvue643ng"
 
 [resource]

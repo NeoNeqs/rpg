@@ -15,7 +15,7 @@ public partial class ItemSlot : InventorySlot {
             TextHolder.Text = "";
         } else {
             SetBorderColor(pGizmoStack.Gizmo.GetRarityColor());
-            IconHolder.Texture = pGizmoStack.Gizmo.Icon;
+            IconHolder.Texture = pGizmoStack.Gizmo.GetCurrentIcon();
             if (pGizmoStack.Quantity <= 1) {
                 TextHolder.Text = "";
             } else {

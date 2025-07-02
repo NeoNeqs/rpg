@@ -1,25 +1,35 @@
 using Godot;
+using RPG.global.enums;
 
 namespace RPG.scripts.combat;
 
 /// <summary>
 /// Tracks per entity resources like Health, Mana, etc.
 /// </summary>
-public partial class CombatResources : RefCounted {
+public partial class CombatData : RefCounted {
     [Signal]
     public delegate void DiedEventHandler();
 
-    
     private readonly CombatSystem _combatSystem = null!;
+    
+    public CrowdControl CrowdControlImmunity;
+    public CrowdControl AppliedCrowdControl;
 
     private long _currentHealth;
 
-    public CombatResources(CombatSystem pCombatSystem) {
+    public CombatData(CombatSystem pCombatSystem) {
         _combatSystem = pCombatSystem;
         _currentHealth = _combatSystem.GetMaxHealth();
     }
 
-    public CombatResources() { }
+    public CombatData() { }
+
+    public void ApplyCrowdControl(CrowdControl pCrowdControl) {
+        // Prevent CC if Entity is immune
+        pCrowdControl &= ~CrowdControlImmunity;
+        AppliedCrowdControl |= pCrowdControl;
+        // TODO: EmitSignalCrowdControlChanged()
+    }
 
     public void ModifyHealth(double pDamage) {
         long maxHealth = _combatSystem.GetMaxHealth();

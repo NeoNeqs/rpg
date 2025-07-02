@@ -3,7 +3,7 @@ using RPG.global.tools;
 
 namespace RPG.scripts.combat;
 
-[GlobalClass]
+[Tool, GlobalClass]
 public partial class StatCurves : Resource {
     private static readonly Curve DefaultReductionCurve = GD.Load<Curve>("uid://b64ayt2qovyp5");
     private static readonly Curve DefaultPenetrationCurve = GD.Load<Curve>("uid://o2uba1xx1m8y");

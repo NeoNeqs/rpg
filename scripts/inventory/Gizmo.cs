@@ -6,6 +6,7 @@ using RPG.scripts.inventory.components;
 
 namespace RPG.scripts.inventory;
 
+
 [Tool, GlobalClass]
 public partial class Gizmo : ComponentSystem<GizmoComponent> {
     private StringName _id = new("");

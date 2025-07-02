@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using global::RPG.global;
 using Godot;
-using Godot.Collections;
-using RPG.scripts.effects;
-using RPG.scripts.effects.components;
 using RPG.scripts.inventory.components;
-using Array = Godot.Collections.Array;
 
 namespace RPG.scripts.inventory;
 
@@ -17,20 +10,37 @@ public static class GizmoComponentExtensions {
         if (itemComponent is null) {
             return Colors.Black;
         }
-        
+
         return itemComponent.GetRarityColor();
     }
-    
-    public static ulong GetCooldown(this Gizmo pGizmo) {
+
+    public static string GetCurrentDisplayName(this Gizmo pGizmo) {
         var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
 
-        if (chainSpellComponent != null) {
-            return chainSpellComponent.CooldownSeconds;
+        Gizmo? currentSpell = chainSpellComponent?.GetCurrentSpell();
+        if (currentSpell is not null) {
+            return currentSpell.DisplayName;
         }
 
-        var spellComponent = pGizmo.GetComponent<SpellComponent>();
+        return pGizmo.DisplayName;
+    }
 
-        if (spellComponent != null) {
+
+    public static Texture2D GetCurrentIcon(this Gizmo pGizmo) {
+        var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
+
+        Gizmo? currentSpell = chainSpellComponent?.GetCurrentSpell();
+        if (currentSpell is not null) {
+            return currentSpell.Icon;
+        }
+
+        return pGizmo.Icon;
+    }
+
+    public static ulong GetCooldown(this Gizmo pGizmo) {
+        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+
+        if (spellComponent is not null) {
             return spellComponent.CooldownSeconds;
         }
 

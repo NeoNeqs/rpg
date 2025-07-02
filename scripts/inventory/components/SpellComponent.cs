@@ -1,7 +1,6 @@
 using System;
 using Godot;
 using RPG.scripts.effects;
-using RPG.scripts.effects.components;
 
 namespace RPG.scripts.inventory.components;
 
@@ -15,17 +14,9 @@ public partial class SpellComponent : GizmoComponent {
         private set {
             _effects = value;
 
-            foreach (Effect effect in _effects) {
-                var aoeEffectComponent = effect?.GetComponent<AreaOfEffectComponent>();
-                if (aoeEffectComponent is not null) {
-                    IsAoe = true;
-                    if (aoeEffectComponent.Radius > MaxRadius) {
-                        MaxRadius = aoeEffectComponent.Radius;
-                    }
-                }
-
-                if (effect?.Range > MaxRange) {
-                    MaxRange = effect.Range;
+            foreach (Effect? effect in _effects) {
+                if (effect?.Radius > MaxRadius) {
+                    MaxRadius = effect.Radius;
                 }
             }
         }
@@ -34,11 +25,12 @@ public partial class SpellComponent : GizmoComponent {
 
     [Export] public ulong CooldownSeconds { private set; get; } = 1;
 
-    public bool IsAoe { private set; get; }
+    [Export(PropertyHint.Range, "1, 65535, 1")]
+    public ushort Range { private set; get; } = 1;
+
+    public bool IsAoe => MaxRadius > 0;
     public float MaxRadius { private set; get; }
-    public float MaxRange { private set; get; }
-
-
+    
     private Effect[] _effects = null!;
     protected ulong LastCastTime = Time.GetTicksUsec();
 
@@ -75,7 +67,6 @@ public partial class SpellComponent : GizmoComponent {
 
         return (LastCastTime + cooldownMicroseconds - currentTime);
     }
-
 
     // I hate working with Godot signals in C#
     // Why must I redefine those methods to use them outside the class :/

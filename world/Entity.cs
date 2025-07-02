@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using global::RPG.global;
 using Godot;
 using Godot.Collections;
 using RPG.scripts.combat;
@@ -29,18 +28,12 @@ public partial class Entity : Node3D {
 
     private Stats? _baseStats;
 
-    public override void _Ready() {
-        // Debug.Assert(GetChild(0) is PhysicsBody3D,
-        //     $"The first child of {nameof(Entity)} should be a {nameof(PhysicsBody3D)}.");
-        // Debug.Assert(GetParent() is World, "All Entities should be a direct parent of World node.");
-    }
-
     private void EmitBaseStatsAboutToChanged(Stats? pOld, Stats? pNew) {
         EmitSignalBaseStatsAboutToChange(pOld, pNew);
     }
     public List<Entity> GetEntitiesInRadius(float pRadius) {
         var result = new List<Entity>();
-
+        
         Array<Dictionary> queryResults = GetWorld().IntersectShape(
             GlobalTransform.Origin, 
             pRadius, 
@@ -54,6 +47,7 @@ public partial class Entity : Node3D {
 
             // TODO: Add LoS checks. After we have all Entities in radius check if a raycast can hit that Entity. 
             //       Only then add it.
+            
             if (collider is PhysicsBody3D body && body.GetParent() is Entity ent && ent != this) {
                 result.Add(ent);
             }

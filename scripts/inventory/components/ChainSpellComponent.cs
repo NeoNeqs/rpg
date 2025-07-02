@@ -24,15 +24,17 @@ public sealed partial class ChainSpellComponent : SpellComponent {
 
         Gizmo nextSpell;
         
+        
         if (_current == -1) {
             Chain();
-            // Next spell is correct since `Chain()` is called above!
-
+            
             nextSpell = GetCurrentSpell() ?? pSource;
             EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
             LastCastTime = Time.GetTicksUsec();
             return CastResult.Ok;
         }
+        
+        Chain();
 
 #if TOOLS
         var chainSpellComponent = currentSpell.GetComponent<ChainSpellComponent>();

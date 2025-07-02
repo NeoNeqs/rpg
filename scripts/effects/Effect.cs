@@ -1,12 +1,16 @@
 using System;
-using RPG.global;
 using Godot;
-using RPG.scripts.effects.components;
+using RPG.global;
 
 namespace RPG.scripts.effects;
 
+// TODO: Effect and Gizmo DB that will validate that every Effect and Gizmo has non-empty AND unique ID
+// TODO: I need to be able to apply an effect for 1 tick, but remove it after TickTimeout seconds! so the IsImmediate needs to come back.
+// TODO: Create test spells:
+//       - 20 second buff that modifies a stat Immediately and clears it only after 20 seconds have passed
+//       - Deadly Poison - stacking poison up to 5 times that deals 30 damage every 3 seconds
 [Tool, GlobalClass]
-public sealed partial class Effect : ComponentSystem<EffectComponent> {
+public partial class Effect : Resource {
     [Signal]
     public delegate void TickEventHandler();
 
@@ -14,22 +18,35 @@ public sealed partial class Effect : ComponentSystem<EffectComponent> {
     public delegate void FinishedEventHandler();
 
     [Flags]
-    public enum EffectFlags {
-        // Immediate = 1 << 0,
-        // TargetSelf = 1 << 1,
-        Buff = 1 << 2,
+    public enum EffectFlags : ulong {
+        TargetAllies = 1 << 0,
+        TargetSelfOnly = 1 << 1,
     }
 
-    // Note: TickTimeout refers to the time in seconds it takes to 1 application of the effect
-    [Export(PropertyHint.Range, "0, 100, 1")]
-    public int TickTimeout { private set; get; } = 3;
+    [Export]
+    public StringName Id {
+        private set {
+#if TOOLS
+            if (value.IsEmpty) {
+                _id = DisplayName.ToSnakeCase();
+                return;
+            }
+#endif
+            _id = value;
+        }
+        get => _id;
+    }
 
-    [Export(PropertyHint.Range, "0, 1, 0.01")]
-    public double ApplicationChance { private set; get; } = 1.0;
+    [Export] public string DisplayName { private set; get; } = "";
+    [Export] public Texture2D? Icon { private set; get; }
+
+    // Note: TickTimeout refers to the time in seconds it takes to 1 application of the effect
+    [Export(PropertyHint.Range, "0, 65535, 1")]
+    public ushort TickTimeout { private set; get; } = 3;
 
     // Note: Ticks refers to the amount of applications of the effect
-    [Export(PropertyHint.Range, "1, 100, 1")]
-    public int Ticks {
+    [Export(PropertyHint.Range, "1, 32767, 1")]
+    public short Ticks {
         private set {
             _ticks = value;
             _currentTick = value;
@@ -37,53 +54,61 @@ public sealed partial class Effect : ComponentSystem<EffectComponent> {
         get => _ticks;
     }
 
-    [Export(PropertyHint.Range, "1, 1000, 1")]
-    public long Range { private set; get; } = 1;
+    [Export(PropertyHint.Range, "0, 1, 0.01")]
+    public double ApplicationChance { private set; get; } = 1.0;
 
+    // Radius=0 means it's not an Aoe effect, Radius > 0 means IT IS an Aoe effect
+    [Export(PropertyHint.Range, "0, 65535, 1")]
+    public ushort Radius { private set; get; }
+
+    // [ExportCategory("<NAME THIS ALSO>")]
     [Export] public EffectFlags Flags { private set; get; }
 
-    private int _ticks = 1;
-    private int _currentTick = 1;
+    public Timer? Timer { private set; get; }
 
-    public Timer? Start() {
+    private StringName _id = new("");
+    private short _ticks = 1;
+    private short _currentTick = 1;
+
+
+    // TODO: Rename to sth like: Apply? 
+    public Timer? Apply() {
         if (!RNG.Roll(ApplicationChance)) {
             return null;
         }
 
-        var timer = new Timer();
-        timer.Autostart = true;
-        timer.WaitTime = TickTimeout;
-
-        if (_ticks == 1 /*|| IsImmediate()*/) {
-            timer.Ready += () => SetupPeriodicEffect(timer);
-        } else {
-            timer.Timeout += () => SetupPeriodicEffect(timer);
+        if (Timer is not null && !Timer.IsStopped()) {
+            return Timer;
         }
 
-        return timer;
+        Timer = new Timer();
+        Timer.Autostart = true;
+        Timer.WaitTime = TickTimeout;
+
+        if (_ticks == 1 /*|| IsImmediate()*/) {
+            Timer.Ready += SetupPeriodicEffect;
+        } else {
+            Timer.Timeout += SetupPeriodicEffect;
+        }
+
+        return Timer;
     }
 
-    // public bool IsImmediate() {
-    //     return (Flags ^ EffectFlags.Immediate) == 0;
-    // }
-
-    // public bool IsTargetSelf() {
-    //     return (Flags ^ EffectFlags.TargetSelf) == 0;
-    // }
-
-    public bool IsBuff() {
-        return (Flags ^ EffectFlags.Buff) == 0;
-    }
-
-    private void SetupPeriodicEffect(Timer pTimer) {
+    private void SetupPeriodicEffect() {
         if (_currentTick > 0) {
             EmitSignalTick();
             _currentTick--;
         }
 
         if (_currentTick == 0) {
-            pTimer.Stop();
-            pTimer.QueueFree();
+#if TOOLS
+            if (Timer is null) {
+                Logger.Core.Critical("Timer should not be null here, but it is!", true);
+                return;
+            }
+#endif
+            Timer.Stop();
+            Timer.QueueFree();
             EmitSignalFinished();
         }
     }

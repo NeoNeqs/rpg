@@ -2,7 +2,7 @@ using System;
 using Godot;
 using RPG.global;
 using RPG.global.enums;
-using RPG.scripts.effects.components;
+using RPG.scripts.effects;
 
 namespace RPG.scripts.combat;
 
@@ -17,7 +17,7 @@ public partial class CombatSystem : Resource {
         Stats = pStats;
     }
 
-    public double CalculateDamage(DamageEffectComponent pDamageEffect, CombatSystem pAttacker) {
+    public double CalculateDamage(DamageEffect pDamageEffect, CombatSystem pAttacker) {
         double damage = pDamageEffect.DamageType switch {
             DamageType.Physical => CalculatePhysicalDamage(pDamageEffect, pAttacker),
             DamageType.Shadow => CalculateShadowDamage(pDamageEffect, pAttacker),
@@ -39,34 +39,24 @@ public partial class CombatSystem : Resource {
     }
 
     private double CalculateDamage(
-        DamageEffectComponent pEffectComponent,
+        DamageEffect pDamageEffect,
         CombatSystem pAttacker,
         Stats.IntegerStat pResistanceStat,
         Stats.IntegerStat pPenetrationStat,
         Func<long, float> pReductionFunc,
         Func<long, float> pPenetrationFunc
     ) {
-        // pRawDamage = 100
-        // reduction = 0.6
-        // penetration = 0.3
-        // totalDamageReduction = reduction + penetration = 0.6 + 0.3 = 0.9
-
-        // damageReductionNoPen = pRawDamage * damageReduction = 100 * 0.6 = 60 damage taken
-        // damageReductionWithPen = 100 * 0.9 = 90 damage taken
-
-        // TL;DR: An attacker with armor penetration will deal more damage.
-
         float reduction = pReductionFunc(Stats.GetIntegerStat(pResistanceStat));
         float penetration = pPenetrationFunc(pAttacker.Stats.GetIntegerStat(pPenetrationStat));
-        float finalReduction = reduction + penetration;
+        float finalReduction = penetration / reduction;
    
-        float totalDamage = pEffectComponent.GetTotalDamage(pAttacker.Stats) * finalReduction;
-        Logger.Combat.Debug($"Total dmg: {totalDamage}, Flat dmg: {pEffectComponent.FlatValue} {pEffectComponent.DamageType}, Coefficient: {pEffectComponent.Coefficient}, StatScale: {pEffectComponent.StatScale}, Target reduction: {reduction}, Source penetration: {penetration}, Final reduction: {finalReduction}.");
+        float totalDamage = pDamageEffect.GetTotalDamage(pAttacker.Stats) * finalReduction;
+        Logger.Combat.Debug($"Total dmg: {totalDamage}, Flat dmg: {pDamageEffect.FlatValue} {pDamageEffect.DamageType}, Coefficient: {pDamageEffect.StatScaleCoefficient}, StatScale: {pDamageEffect.StatScale}, Target reduction: {reduction}, Source penetration: {penetration}, Final reduction: {finalReduction}.");
 
         return totalDamage;
     }
 
-    private double CalculateShadowDamage(DamageEffectComponent pDamageEffect, CombatSystem pAttacker) {
+    private double CalculateShadowDamage(DamageEffect pDamageEffect, CombatSystem pAttacker) {
         return CalculateDamage(
             pDamageEffect,
             pAttacker,
@@ -77,9 +67,9 @@ public partial class CombatSystem : Resource {
         );
     }
 
-    private double CalculatePhysicalDamage(DamageEffectComponent pEffectComponent, CombatSystem pAttacker) {
+    private double CalculatePhysicalDamage(DamageEffect pDamageEffect, CombatSystem pAttacker) {
         return CalculateDamage(
-            pEffectComponent,
+            pDamageEffect,
             pAttacker,
             Stats.IntegerStat.Armor,
             Stats.IntegerStat.ArmorPenetration,
@@ -88,9 +78,9 @@ public partial class CombatSystem : Resource {
         );
     }
 
-    private double CalculateNatureDamage(DamageEffectComponent pEffectComponent, CombatSystem pAttacker) {
+    private double CalculateNatureDamage(DamageEffect pDamageEffect, CombatSystem pAttacker) {
         return CalculateDamage(
-            pEffectComponent,
+            pDamageEffect,
             pAttacker,
             Stats.IntegerStat.NatureResistance,
             Stats.IntegerStat.NaturePenetration,
