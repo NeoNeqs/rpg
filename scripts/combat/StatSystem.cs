@@ -1,3 +1,4 @@
+using Godot;
 using RPG.global;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
@@ -17,6 +18,9 @@ public class StatSystem {
         }
 
         foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
+            if (stat == Stats.IntegerStat.Intelligence) {
+               GD.Print(""); 
+            }
             long currentTotal = Total.GetIntegerStat(stat);
             Total.SetIntegerStat(stat, currentTotal + pStats.GetIntegerStat(stat));
         }

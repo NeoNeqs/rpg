@@ -17,4 +17,5 @@ public partial class StatEffectComponent : EffectComponent {
     
     [Export] public short MaxStacks { private set; get; } = 1;
     [Export] public Texture2D Icon { private set; get; } = null!;
+    [Export] public string DisplayName { private set; get; } = "";
 }

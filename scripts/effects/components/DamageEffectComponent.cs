@@ -19,6 +19,7 @@ public partial class DamageEffectComponent : EffectComponent {
 
     [Export] public short MaxStacks { private set; get; } = 1;
     [Export] public Texture2D Icon { private set; get; } = null!;
+    [Export] public string DisplayName { private set; get; } = "";
 
     public float GetTotalDamage(Stats pAttackerStats) {
         return FlatValue + (pAttackerStats.GetIntegerStat(StatScale) * Coefficient);

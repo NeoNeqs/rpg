@@ -38,6 +38,8 @@ metadata/_custom_type_script = "uid://b6ma5srt1o11b"
 [sub_resource type="Curve" id="Curve_27s3x"]
 
 [sub_resource type="Curve" id="Curve_330o6"]
+_data = [Vector2(0.351219, 0), 0.0, 0.0, 0, 0]
+point_count = 1
 
 [sub_resource type="Curve" id="Curve_18x0x"]
 

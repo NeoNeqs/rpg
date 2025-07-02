@@ -104,7 +104,8 @@ public partial class Stats : Resource {
     public void SetIntegerStat(IntegerStat pStat, long pValue) {
         string key = pStat.ToString();
         _integerData.TryGetValue(key, out long oldValue);
-        _integerData.TryAdd(key, pValue);
+        _integerData[key] = pValue;
+        // _integerData.TryAdd(key, pValue);
 
         EmitSignalIntegerStatChanged(pStat, pValue - oldValue);
     }
@@ -112,8 +113,8 @@ public partial class Stats : Resource {
     public void SetDecimalStat(DecimalStat pStat, float pValue) {
         string key = pStat.ToString();
         _decimalData.TryGetValue(key, out float oldValue);
-        _decimalData.TryAdd(key, pValue);
-
+        // _decimalData.TryAdd(key, pValue);
+        _decimalData[key] = pValue;
         EmitSignalDecimalStatChanged(pStat, pValue - oldValue);
     }
 

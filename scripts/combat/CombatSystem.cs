@@ -60,6 +60,7 @@ public partial class CombatSystem : Resource {
         float penetration = pPenetrationFunc(pAttacker.Stats.GetIntegerStat(pPenetrationStat));
         float totalReduction = reduction + penetration;
 
+        GD.Print(totalReduction);
         float totalDamage = pEffectComponent.GetTotalDamage(pAttacker.Stats) * totalReduction;
         Logger.Combat.Info(
             $"Calculated damage '{totalDamage}' from flat damage '{pEffectComponent.FlatValue}' of '{pEffectComponent.DamageType}' and coefficient '{pEffectComponent.Coefficient}' scaling from '{pEffectComponent.StatScale}'.");

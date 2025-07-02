@@ -21,6 +21,7 @@ DamageType = 0
 Coefficient = 0.0
 StatScale = 0
 MaxStacks = 1
+DisplayName = ""
 metadata/_custom_type_script = "uid://bq24fq7dtf1ec"
 
 [sub_resource type="Resource" id="Resource_57mxh"]
