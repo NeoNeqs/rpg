@@ -124,56 +124,6 @@ public partial class CombatManager : Node {
         if (!timer.IsInsideTree()) {
             AddChild(timer);
         }
-
-        // if (pEffect is StackingEffect stackingEffect) {
-        //     if (!_appliedStacks.TryGetValue(pEffect.Id, out EffectData? oEffectData)) {
-        //         _appliedStacks.Add(pEffect.Id, new EffectData(pEffectOwner, stackingEffect, timer));
-        //     } else {
-        //         oEffectData.Effect.Stack();
-        //         oEffectData.Timer?.Start();
-        //     }
-        // }
-        // var damageEffectComponent = pEffect.GetComponent<DamageEffectComponent>();
-        //
-        // if (damageEffectComponent is not null) {
-        //     pEffect.Tick += () => OnDamageEffectTick(damageEffectComponent, pSource, pEffect.IsBuff());
-        //     pEffect.Finished += () => OnDamageEffectFinished(pSource, damageEffectComponent);
-        //
-        //     if (_appliedStacks.TryGetValue(damageEffectComponent, out EffectData? oEffectData)) {
-        //         if (oEffectData.Stacks < damageEffectComponent.MaxStacks) {
-        //             _appliedStacks[damageEffectComponent].Stacks++;
-        //         }
-        //
-        //         // Restart the timer
-        //         oEffectData.Timer?.Start();
-        //     } else {
-        //         _appliedStacks.Add(damageEffectComponent, new EffectData(1, pEffectOwner, null));
-        //     }
-        //
-        //     Logger.Combat.Debug(
-        //         $"Entity {pSource.GetEntity().Name} applied damage effect {damageEffectComponent.DisplayName} x{_appliedStacks[damageEffectComponent].Stacks} to entity {GetEntity().Name}.");
-        // }
-        //
-        // var statEffectComponent = pEffect.GetComponent<StatEffectComponent>();
-        //
-        // if (statEffectComponent is not null) {
-        //     pEffect.Tick += () => OnStatEffectTick(statEffectComponent, pSource, pEffect.IsBuff());
-        //     pEffect.Finished += () => OnStatEffectFinished(pSource, statEffectComponent);
-        //
-        //     if (_appliedStacks.TryGetValue(statEffectComponent, out EffectData? oEffectData)) {
-        //         if (oEffectData.Stacks < statEffectComponent.MaxStacks) {
-        //             _appliedStacks[statEffectComponent].Stacks++;
-        //         }
-        //
-        //         // Restart the timer
-        //         oEffectData.Timer?.Start();
-        //     } else {
-        //         _appliedStacks.Add(statEffectComponent, new EffectData(1, pEffectOwner, timer));
-        //     }
-        //
-        //     Logger.Combat.Debug(
-        //         $"Entity {pSource.GetEntity().Name} applied stat effect {statEffectComponent.DisplayName} x{_appliedStacks[statEffectComponent].Stacks} to entity {GetEntity().Name}.");
-        // }
     }
 
     private void OnDamageEffectTick(DamageEffect pDamageEffect, CombatManager pSource) {

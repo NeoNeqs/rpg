@@ -67,13 +67,6 @@ public abstract partial class InventoryView : View {
         }
 
         RewireGizmo(pGizmoStack, slot);
-        // ulong remainingCooldown = pGizmoStack.Gizmo?.GetRemainingCooldown() ?? 0UL;
-        // UpdateSlot(pGizmoStack, slot, remainingCooldown);
-        // SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
-        // if (spellComponent != null) {
-        //     spellComponent.CastComplete += slot.SetOnCooldown;
-        //     slot.SetOnCooldown(remainingCooldown);
-        // }
     }
 
     protected virtual void ResizeContainer() {
@@ -115,11 +108,10 @@ public abstract partial class InventoryView : View {
         
         // Disconnect old signal...
         GizmoStack currentGizmoStack = Inventory.GetAt(pSlot.GetIndex());
-        if (/*currentGizmoStack != pGizmoStack &&*/ currentGizmoStack.Gizmo is not null) {
-            var currentSpellComponent = currentGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-            if (currentSpellComponent is not null && currentSpellComponent.IsCastCompleteConnected(castCompleteCallback)) {
-                currentSpellComponent.DisconnectCastComplete(castCompleteCallback);
-            }
+        
+        SpellComponent? currentSpellComponent = currentGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+        if (currentSpellComponent != null && currentSpellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+            currentSpellComponent.DisconnectCastComplete(castCompleteCallback);
         }
 
         if (pGizmoStack.Gizmo is null) {

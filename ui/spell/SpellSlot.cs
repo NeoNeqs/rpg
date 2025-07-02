@@ -1,4 +1,3 @@
-using Godot;
 using RPG.scripts.inventory;
 using RPG.ui.inventory;
 
@@ -9,11 +8,9 @@ public partial class SpellSlot : InventorySlot {
         if (pGizmoStack?.Gizmo is null) {
             IconHolder.Texture = null;
             TextHolder.Text = "";
-        }
-        else {
+        } else {
             IconHolder.Texture = pGizmoStack.Gizmo.GetCurrentIcon();
             TextHolder.Text = pGizmoStack.Gizmo.GetCurrentDisplayName();
         }
-        
     }
 }

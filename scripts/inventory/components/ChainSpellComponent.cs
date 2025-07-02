@@ -10,10 +10,6 @@ public sealed partial class ChainSpellComponent : SpellComponent {
 
     private int _current = -1;
 
-    // TODO: make private
-    public void Chain() {
-        _current = Mathf.Wrap(_current + 1, -1, Spells.Count);
-    }
 
     public override CastResult Cast(Gizmo pSource) {
         Gizmo currentSpell = GetCurrentSpell() ?? pSource;
@@ -23,17 +19,17 @@ public sealed partial class ChainSpellComponent : SpellComponent {
         }
 
         Gizmo nextSpell;
-        
-        
+
+
         if (_current == -1) {
             Chain();
-            
+
             nextSpell = GetCurrentSpell() ?? pSource;
             EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
             LastCastTime = Time.GetTicksUsec();
             return CastResult.Ok;
         }
-        
+
         Chain();
 
 #if TOOLS
@@ -42,7 +38,7 @@ public sealed partial class ChainSpellComponent : SpellComponent {
             Logger.Combat.Warn("Chain spells should not chain into another chain spell!", true);
         }
 #endif
-        
+
         var spellComponent = currentSpell.GetComponent<SpellComponent>();
         if (spellComponent is null) {
             return CastResult.NoSpellFound;
@@ -53,17 +49,8 @@ public sealed partial class ChainSpellComponent : SpellComponent {
         nextSpell = GetCurrentSpell() ?? pSource;
         EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
         LastCastTime = Time.GetTicksUsec();
-        
+
         return CastResult.Ok;
-    }
-
-    public Gizmo? GetNextSpell() {
-        int next = Mathf.Wrap(_current + 1, -1, Spells.Count);
-        if (next == -1) {
-            return null;
-        }
-
-        return Spells[next];
     }
 
     public Gizmo? GetCurrentSpell() {
@@ -72,5 +59,19 @@ public sealed partial class ChainSpellComponent : SpellComponent {
         }
 
         return Spells[_current];
+    }
+
+    private Gizmo? GetNextSpell() {
+        int next = Mathf.Wrap(_current + 1, -1, Spells.Count);
+        if (next == -1) {
+            return null;
+        }
+
+        return Spells[next];
+    }
+
+
+    private void Chain() {
+        _current = Mathf.Wrap(_current + 1, -1, Spells.Count);
     }
 }
