@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Godot;
 using Godot.Collections;
 
@@ -8,6 +7,9 @@ namespace RPG.scripts.combat;
 
 // IMPORTANT: Careful with adding numeric properties (Integer / Decimal) here. See `_Set()` definition down below.
 
+/// <summary>
+/// 
+/// </summary>
 [Tool, GlobalClass]
 public partial class Stats : Resource {
     [Signal]
@@ -16,6 +18,7 @@ public partial class Stats : Resource {
     [Signal]
     public delegate void DecimalStatChangedEventHandler(DecimalStat pStat, float pDelta);
 
+    // ReSharper disable UnusedMember.Global
     public enum IntegerStat {
         Strength,
         Stamina,
@@ -33,6 +36,7 @@ public partial class Stats : Resource {
         StrengthMultiplayer,
         StaminaMultiplayer,
     }
+    // ReSharper restore UnusedMember.Global
 
     // ReSharper disable once InconsistentNaming
     private Godot.Collections.Dictionary<string, long> _IntegerStats {
@@ -55,17 +59,18 @@ public partial class Stats : Resource {
     }
 
     private Godot.Collections.Dictionary<string, float> _decimalData = new();
-    
+
 #if TOOLS
     // A neat trick to do compile time asserts, although the thrown error message is not very useful.
     // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
-    [SuppressMessage("ReSharper", "HeuristicUnreachableCode")]
-    [SuppressMessage("ReSharper", "UnusedType.Local")]
+    // ReSharper disable once UnusedType.Local
     private sealed class StaticAssert {
         // Changing those names will break existing resources!
 #pragma warning disable CS0414 // Field is assigned but its value is never used
+        // ReSharper disable HeuristicUnreachableCode
         private byte _assert1 = nameof(_DecimalStats) == "_DecimalStats" ? 0 : -1;
         private byte _assert2 = nameof(_IntegerStats) == "_IntegerStats" ? 0 : -1;
+        // ReSharper restore HeuristicUnreachableCode
 #pragma warning restore CS0414 // Field is assigned but its value is never used
     }
 
@@ -86,7 +91,7 @@ public partial class Stats : Resource {
         }
     }
 #endif
-    
+
     public long GetIntegerStat(IntegerStat pStat, long pDefault = 0) {
         string key = pStat.ToString();
         _integerData.TryAdd(key, pDefault);
@@ -105,7 +110,7 @@ public partial class Stats : Resource {
         string key = pStat.ToString();
         _integerData.TryGetValue(key, out long oldValue);
         _integerData[key] = pValue;
-        // _integerData.TryAdd(key, pValue);
+
 
         EmitSignalIntegerStatChanged(pStat, pValue - oldValue);
     }
@@ -113,8 +118,8 @@ public partial class Stats : Resource {
     public void SetDecimalStat(DecimalStat pStat, float pValue) {
         string key = pStat.ToString();
         _decimalData.TryGetValue(key, out float oldValue);
-        // _decimalData.TryAdd(key, pValue);
         _decimalData[key] = pValue;
+
         EmitSignalDecimalStatChanged(pStat, pValue - oldValue);
     }
 
@@ -136,6 +141,7 @@ public partial class Stats : Resource {
 
     public override Array<Dictionary> _GetPropertyList() {
         Array<Dictionary> propertyList = [
+            // Helper properties for the Inspector that allow adding / removing stats.
 #if TOOLS
             new() {
                 ["name"] = nameof(AddInteger),
@@ -165,6 +171,7 @@ public partial class Stats : Resource {
                 ["usage"] = Variant.From(PropertyUsageFlags.NoEditor | PropertyUsageFlags.Storage)
             }
         ];
+        // Helper properties. Those basically display the contents of the dictionaries as normal properties. Only used in editor.
 #if TOOLS
         foreach (KeyValuePair<string, long> attribute in _integerData) {
             propertyList.Add(
@@ -188,12 +195,12 @@ public partial class Stats : Resource {
 #endif
         return propertyList;
     }
-    
-    /// Redirects storage Integer / Decimal properties to Dictionaries `_integerData` / `_decimalData`
+
+    /// Redirects storage of Integer / Decimal properties to Dictionaries `_integerData` / `_decimalData` respectively.
     public override bool _Set(StringName pProperty, Variant pValue) {
         string propertyName = pProperty.ToString();
-        
-        // Currently all Integer / Decimal types are handled here!
+
+        // Currently ALL Integer / Decimal properties of this class are handled through here!
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
@@ -201,6 +208,9 @@ public partial class Stats : Resource {
         switch (pValue.VariantType) {
             case Variant.Type.Int: {
                 long valueAsLong = pValue.As<long>();
+
+                // This is where and how properties are removed (no longer stored).
+                // If editor encounters one of the stats and sees an "impossible" value it removes it from respective dictionary:
 #if TOOLS
                 if (valueAsLong == long.MaxValue) {
                     _integerData.Remove(propertyName);
@@ -248,11 +258,11 @@ public partial class Stats : Resource {
 
     public override Variant _PropertyGetRevert(StringName pProperty) {
         if (_integerData.TryGetValue(pProperty.ToString(), out long _)) {
-            return long.MaxValue; // Default revert (impossible) value of Integer Stats
+            return Variant.From(long.MaxValue); // Default revert (impossible) value of Integer Stats
         }
 
         if (_decimalData.TryGetValue(pProperty.ToString(), out float _)) {
-            return Mathf.Inf; // Default revert (impossible) value of Decimal Stats
+            return Variant.From(Mathf.Inf); // Default revert (impossible) value of Decimal Stats
         }
 
         return default;

@@ -3,6 +3,10 @@ using System.Diagnostics;
 using System.Globalization;
 using Godot;
 
+#if !TOOLS
+using Godot.Collections;
+#endif
+
 namespace RPG.global;
 
 /// <summary>
@@ -21,12 +25,16 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
     public enum Level {
         /// Used only for debugging purposes, should not be present in release builds 
         Debug,
+
         /// Useful information that require no action.
         Info,
+
         /// A warning usually doesn't require action, indicates a misconfiguration or a soft error that can be ignored.
         Warn,
+
         /// An error requires an action.
         Error,
+
         /// A more serious error, usually triggered in unrecoverable state and so it may follow a crash.
         Critical,
     }
@@ -37,6 +45,11 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
     public static readonly Logger Inventory = new("Inventory", Level.Debug);
     public static readonly Logger Combat = new("Combat", Level.Debug);
     public static readonly Logger UI = new("UI", Level.Debug);
+#else
+    public static readonly Logger Core = new("Core", Level.Info);
+    public static readonly Logger Inventory = new("Inventory", Level.Info);
+    public static readonly Logger Combat = new("Combat", Level.Info);
+    public static readonly Logger UI = new("UI", Level.Info);
 #endif
 
     [Conditional("DEBUG")]
@@ -133,10 +146,10 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
         string apiVersion = RenderingServer.GetVideoAdapterApiVersion();
 
         Dictionary memInfo = OS.GetMemoryInfo();
-        int available = (int)memInfo["available"];
-        int physical = (int)memInfo["physical"];
-        int stack = (int)memInfo["stack"];
-        int swap = available - physical;
+        ulong available = memInfo["available"].AsUInt64();
+        ulong physical = memInfo["physical"].AsUInt64();
+        ulong stack = memInfo["stack"].AsUInt64();
+        ulong swap = available - physical;
 
         Core.Info("--------------------System Information--------------------");
         Core.Info($"OS: {OS.GetDistributionName()} {OS.GetVersion()}, Locale: {OS.GetLocale()}");

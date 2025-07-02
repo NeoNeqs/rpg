@@ -96,27 +96,24 @@ public partial class Inventory : Resource {
             return Swap(pFrom, pToInventory, pTo);
         }
 
-        if (fromGizmoStack.Gizmo == toGizmoStack.Gizmo && IsOwning() && !pToInventory.IsOwning()) {
+        // IMPORTANT: Do not compare gizmos as pointers! They're duplicated whenever they're placed in an inventory. 
+        if (fromGizmoStack.Gizmo?.Id == toGizmoStack.Gizmo?.Id && IsOwning() && !pToInventory.IsOwning()) {
             return Stack(pFrom, pToInventory, pTo, pSingle);
         }
 
         return Swap(pFrom, pToInventory, pTo);
     }
 
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public GizmoStack GetAt(int pIndex) {
         return _gizmos[pIndex];
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SetAt(int pIndex, Gizmo pGizmo) {
         EmitSignalGizmoAboutToChange(_gizmos[pIndex], pIndex);
         _gizmos[pIndex].Gizmo = pGizmo.Duplicate();
         EmitSignalGizmoChanged(_gizmos[pIndex], pIndex);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetSize() {
         return Gizmos.Count;
     }

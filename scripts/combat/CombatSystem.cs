@@ -8,7 +8,7 @@ namespace RPG.scripts.combat;
 
 [GlobalClass]
 public partial class CombatSystem : Resource {
-    [Export] public StatCurves StatCurves = null!;
+    [Export] public StatCurves StatCurves = new();
 
     // ReSharper disable once InconsistentNaming
     private Stats Stats = null!;
@@ -58,12 +58,10 @@ public partial class CombatSystem : Resource {
 
         float reduction = pReductionFunc(Stats.GetIntegerStat(pResistanceStat));
         float penetration = pPenetrationFunc(pAttacker.Stats.GetIntegerStat(pPenetrationStat));
-        float totalReduction = reduction + penetration;
-
-        GD.Print(totalReduction);
-        float totalDamage = pEffectComponent.GetTotalDamage(pAttacker.Stats) * totalReduction;
-        Logger.Combat.Info(
-            $"Calculated damage '{totalDamage}' from flat damage '{pEffectComponent.FlatValue}' of '{pEffectComponent.DamageType}' and coefficient '{pEffectComponent.Coefficient}' scaling from '{pEffectComponent.StatScale}'.");
+        float finalReduction = reduction + penetration;
+   
+        float totalDamage = pEffectComponent.GetTotalDamage(pAttacker.Stats) * finalReduction;
+        Logger.Combat.Debug($"Total dmg: {totalDamage}, Flat dmg: {pEffectComponent.FlatValue} {pEffectComponent.DamageType}, Coefficient: {pEffectComponent.Coefficient}, StatScale: {pEffectComponent.StatScale}, Target reduction: {reduction}, Source penetration: {penetration}, Final reduction: {finalReduction}.");
 
         return totalDamage;
     }

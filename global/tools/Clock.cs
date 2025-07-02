@@ -1,8 +1,8 @@
-using Godot;
 using System;
 using System.Runtime.CompilerServices;
+using Godot;
 
-namespace RPG.global;
+namespace RPG.global.tools;
 
 /// <summary>
 /// Measures the time a scope takes to execute.
@@ -27,6 +27,7 @@ namespace RPG.global;
 /// <param name="pTag">The name of the scope that is being measured.</param>
 /// <param name="pMethod">The name of the method from <paramref name="pObject" />, that created the Clock instance. Will be filled automatically by <see cref="System.Runtime.CompilerServices.CallerMemberNameAttribute"/>.</param>
 /// <param name="pLine">The line number from <paramref name="pObject" />, that created the Clock instance. Will be filled automatically by <see cref="System.Runtime.CompilerServices.CallerLineNumberAttribute"/>.</param>
+#if TOOLS
 public sealed class Clock(
     object pObject,
     string pTag,
@@ -46,3 +47,4 @@ public sealed class Clock(
         Stop();
     }
 }
+#endif

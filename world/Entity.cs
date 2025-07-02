@@ -9,10 +9,25 @@ namespace RPG.world;
 
 [GlobalClass]
 public partial class Entity : Node3D {
+    [Signal]
+    public delegate void BaseStatsAboutToChangeEventHandler(Stats? pOld, Stats? pNew);
+    
     [Export] public CombatManager CombatManager = null!;
     [Export] public Inventory? Armory;
     [Export] public Inventory SpellBook = null!;
-    [Export] public Stats? BaseStats;
+
+    [Export]
+    public Stats? BaseStats {
+        private set {
+            // This setter will be called by the editor when the object is created (way before `_Ready` and `_EnterTree`)
+            // So the 1 frame delay is hack to allow child nodes to connect to the signal below.
+            CallDeferred(nameof(EmitBaseStatsAboutToChanged), Variant.From(_baseStats), Variant.From(value));
+            _baseStats = value;
+        }
+        get => _baseStats;
+    }
+
+    private Stats? _baseStats;
 
     public override void _Ready() {
         // Debug.Assert(GetChild(0) is PhysicsBody3D,
@@ -20,6 +35,9 @@ public partial class Entity : Node3D {
         // Debug.Assert(GetParent() is World, "All Entities should be a direct parent of World node.");
     }
 
+    private void EmitBaseStatsAboutToChanged(Stats? pOld, Stats? pNew) {
+        EmitSignalBaseStatsAboutToChange(pOld, pNew);
+    }
     public List<Entity> GetEntitiesInRadius(float pRadius) {
         var result = new List<Entity>();
 

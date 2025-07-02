@@ -38,7 +38,7 @@ public partial class HotbarView : ItemView {
         if (pEvent.IsPressed()) {
             return;
         }
-        
+
         int size = Mathf.Min(Inventory.GetSize(), PrimaryKeys.Length);
 
         for (int i = 0; i < size; i++) {
@@ -46,26 +46,26 @@ public partial class HotbarView : ItemView {
             if (!InputMap.EventIsAction(eventKey, action, true)) {
                 continue;
             }
-            
+
             GizmoStack gizmoStack = Inventory.GetAt(i);
             if (gizmoStack.Gizmo is null) {
                 break;
             }
-            
+
             EventBus.Instance.EmitHotbarKeyPressed(gizmoStack.Gizmo);
-            
+
             break;
         }
     }
 
     private void SetupDefaultKeybinds() {
         int modifierMask = _hotbarId;
-
+#if TOOLS
         if (modifierMask > 0b111) {
             Logger.UI.Error($"Run out of possible modifiers fot hotbars! Max number of hotbars is 8!");
             return;
         }
-
+#endif
         int size = Mathf.Min(Inventory.GetSize(), PrimaryKeys.Length);
 
         for (int i = 0; i < size; i++) {

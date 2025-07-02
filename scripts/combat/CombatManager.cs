@@ -33,14 +33,15 @@ public partial class CombatManager : Node {
         public readonly Timer? Timer = pTimer;
     }
 
-    public override void _Ready() {
+    public override void _EnterTree() {
         Entity entity = GetEntity();
 
-        if (entity.Name == "Character") {
-            GD.Print("");
-        }
         _statSystem.LinkFromInventory(entity.Armory);
-        _statSystem.Link(entity.BaseStats);
+
+        entity.BaseStatsAboutToChange += (Stats? pOld, Stats? pNew) => {
+            _statSystem.Unlink(pOld);
+            _statSystem.Link(pNew);
+        };
         
         CombatSystem.Initialize(_statSystem.Total);
     }
@@ -104,8 +105,6 @@ public partial class CombatManager : Node {
         
         Timer? timer = pEffect.Start();
 
-      
-
         var damageEffectComponent = pEffect.GetComponent<DamageEffectComponent>();
 
         if (damageEffectComponent is not null) {
@@ -148,6 +147,7 @@ public partial class CombatManager : Node {
                 $"Entity {pSource.GetEntity().Name} applied stat effect {statEffectComponent.DisplayName} x{_appliedStacks[statEffectComponent].Stacks} to entity {GetEntity().Name}.");
         }
         
+        // Must be added after connecting to `Tick` and `Finished` signals, otherwise no ticking will happen
         if (timer is not null) {
             AddChild(timer);
         }

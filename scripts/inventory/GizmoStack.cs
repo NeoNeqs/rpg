@@ -1,7 +1,7 @@
 using System;
 using Godot;
 using Godot.Collections;
-using GizmoComponent = RPG.scripts.inventory.components.GizmoComponent;
+using RPG.scripts.inventory.components;
 
 namespace RPG.scripts.inventory;
 

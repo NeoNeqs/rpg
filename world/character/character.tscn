@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=42 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
@@ -78,6 +78,8 @@ metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
 [sub_resource type="Resource" id="Resource_f1wg7"]
 script = ExtResource("4_pdabv")
 _IntegerStats = Dictionary[String, int]({
+"Armor": 300,
+"ArmorPenetration": 5,
 "Intelligence": 10
 })
 _DecimalStats = Dictionary[String, float]({})
@@ -95,14 +97,29 @@ func _physics_process(_delta: float) -> void:
 	get_parent().get_parent().get_child(1).visible = get_hit_length() > 0.6
 "
 
-[sub_resource type="Curve" id="Curve_qdl7p"]
-_data = [Vector2(0.453199, 1), 0.0, 0.0, 0, 0]
-point_count = 1
+[sub_resource type="Curve" id="Curve_1ap8l"]
+_data = [Vector2(0, 0.0981382), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 2
 
-[sub_resource type="Curve" id="Curve_pdabv"]
-_limits = [0.4, 1.0, 0.0, 3000.0]
-_data = [Vector2(0, 1), 0.0, -0.000181341, 0, 1, Vector2(2229.32, 0.595732), -0.000181341, -4.71288e-05, 1, 0, Vector2(3000, 0.4), -0.000352398, 0.0, 0, 0]
-point_count = 3
+[sub_resource type="Curve" id="Curve_da4c3"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.57483, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_7k511"]
+_data = [Vector2(0, 0.115764), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_g02qr"]
+_data = [Vector2(0, 0.0504532), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.57483, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_xy7j0"]
+_data = [Vector2(0, 0.115764), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_r2p0t"]
+_data = [Vector2(0, 0.0504532), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.57483, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="Curve" id="Curve_ggcj5"]
 
@@ -110,8 +127,12 @@ point_count = 3
 
 [sub_resource type="Resource" id="Resource_m0gsu"]
 script = ExtResource("10_f1wg7")
-ArmorReductionCurve = SubResource("Curve_pdabv")
-ArmorPenetrationCurve = SubResource("Curve_qdl7p")
+ArmorReductionCurve = SubResource("Curve_da4c3")
+ArmorPenetrationCurve = SubResource("Curve_1ap8l")
+ShadowReductionCurve = SubResource("Curve_r2p0t")
+ShadowPenetrationCurve = SubResource("Curve_xy7j0")
+NatureReductionCurve = SubResource("Curve_g02qr")
+NaturePenetrationCurve = SubResource("Curve_7k511")
 StrengthCurve = SubResource("Curve_yux1m")
 StaminaCurve = SubResource("Curve_ggcj5")
 metadata/_custom_type_script = "uid://4m7emmkgdioy"

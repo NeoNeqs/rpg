@@ -13,7 +13,6 @@ public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource wher
 
     protected readonly StringName ComponentsExportName = new("components");
 
-
     public T? GetComponent<T>() where T : TComponent {
         if (Components.TryGetValue(typeof(T).Name, out TComponent? value)) {
             return (T)value!;
@@ -26,8 +25,8 @@ public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource wher
         if (Components.TryGetValue(typeof(T2).Name, out TComponent? value2)) {
             return (T2)value2!;
         }
-        
-        
+
+
         if (Components.TryGetValue(typeof(T1).Name, out TComponent? value1)) {
             return (T1)value1!;
         }

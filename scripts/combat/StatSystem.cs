@@ -1,4 +1,3 @@
-using Godot;
 using RPG.global;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
@@ -12,34 +11,31 @@ public class StatSystem {
         if (pStats is null) {
             return;
         }
-        
-        if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
-            return;
-        }
 
-        foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
-            if (stat == Stats.IntegerStat.Intelligence) {
-               GD.Print(""); 
+        if (!pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
+            foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
+                long currentTotal = Total.GetIntegerStat(stat);
+                Total.SetIntegerStat(stat, currentTotal + pStats.GetIntegerStat(stat));
             }
-            long currentTotal = Total.GetIntegerStat(stat);
-            Total.SetIntegerStat(stat, currentTotal + pStats.GetIntegerStat(stat));
+
+            pStats.IntegerStatChanged += OnIntegerStatChanged;
         }
 
-        pStats.IntegerStatChanged += OnIntegerStatChanged;
+        if (!pStats.IsConnectedToDecimalStatChanged(OnDecimalStatChanged)) {
+            foreach (Stats.DecimalStat stat in Stats.GetDecimalStats()) {
+                float currentTotal = Total.GetDecimalStat(stat);
+                Total.SetDecimalStat(stat, currentTotal + pStats.GetDecimalStat(stat));
+            }
 
-        if (pStats.IsConnectedToDecimalStatChanged(OnDecimalStatChanged)) {
-            return;
+            pStats.DecimalStatChanged += OnDecimalStatChanged;
         }
-
-        foreach (Stats.DecimalStat stat in Stats.GetDecimalStats()) {
-            float currentTotal = Total.GetDecimalStat(stat);
-            Total.SetDecimalStat(stat, currentTotal + pStats.GetDecimalStat(stat));
-        }
-
-        pStats.DecimalStatChanged += OnDecimalStatChanged;
     }
 
-    public void Unlink(Stats pStats) {
+    public void Unlink(Stats? pStats) {
+        if (pStats is null) {
+            return;
+        }
+        
         if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
             foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
                 long currentTotal = Total.GetIntegerStat(stat);
@@ -58,12 +54,13 @@ public class StatSystem {
             pStats.DecimalStatChanged -= OnDecimalStatChanged;
         }
     }
-    
+
     public void LinkFromInventory(Inventory? pArmory) {
         if (pArmory is not null) {
             pArmory.GizmoChanged += LinkGizmoStatComponent;
             pArmory.GizmoAboutToChange += UnlinkGizmoStatComponent;
         }
+
         foreach (GizmoStack gizmoStack in pArmory?.Gizmos ?? []) {
             LinkGizmoStatComponent(gizmoStack, -1);
         }
@@ -78,7 +75,7 @@ public class StatSystem {
 
         Link(component.Stats);
     }
-    
+
     private void UnlinkGizmoStatComponent(GizmoStack pGizmoStack, int pIndex) {
         if (pGizmoStack.Gizmo is null) {
             return;
