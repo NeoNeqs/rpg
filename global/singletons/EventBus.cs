@@ -34,7 +34,7 @@ public sealed partial class EventBus : Node {
     public static EventBus Instance = null!;
 
     public EventBus() {
-        Instance = this;
+        Instance ??= this;
     }
 
     public void EmitEmptyRegionPressed() {

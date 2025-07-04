@@ -15,7 +15,7 @@ metadata/_custom_type_script = "uid://cpk6hvue643ng"
 
 [resource]
 script = ExtResource("2_5k16s")
-Id = &"fire_bomb"
+Id = &"spell:fire_bomb"
 DisplayName = "Fire Bomb"
 Icon = ExtResource("2_xqcng")
 StackSize = 1

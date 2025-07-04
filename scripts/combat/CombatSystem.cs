@@ -30,7 +30,6 @@ public partial class CombatSystem : Resource {
             Logger.Core.Critical($"Unhandled {nameof(DamageType)} case.", true);
         }
 
-
         return damage;
     }
 

@@ -10,7 +10,8 @@ namespace RPG.scripts.combat;
 
 [GlobalClass]
 public partial class CombatManager : Node {
-    [Export] public CombatSystem CombatSystem { private set; get; } = new();
+    [Export]
+    public CombatSystem CombatSystem { private set; get; } = new();
 
     // Tracks currently targeted entity by player.
     public Entity? TargetEntity { set; get; }
@@ -69,7 +70,10 @@ public partial class CombatManager : Node {
     }
 
     private void ApplyEffectToTargetEntity(Gizmo pEffectOwner, Effect pEffect, Entity? pTarget, bool pIsAoe) {
-        // Entity? target = pEffect.IsTargetSelf() ? GetEntity() : pTarget;
+        if (pEffect.IsTargetSelfOnly()) {
+            pTarget = GetEntity();
+            pIsAoe = pEffect.IsTargetAllies();
+        }
 
         if (!IsInstanceValid(pTarget)) {
             Logger.Combat.Debug($"No valid target to apply effects.");
@@ -91,7 +95,7 @@ public partial class CombatManager : Node {
         // For every application of the Effect, Effect._currentTick must be separate.
         pEffect = (Effect)pEffect.Duplicate(false);
 
-        Timer? timer = pEffect.Apply();
+        Timer? timer = pEffect.Start();
 
         if (timer is null) {
             return;
@@ -139,8 +143,9 @@ public partial class CombatManager : Node {
     }
 
     // ReSharper disable UnusedParameter.Local
-    private void OnStatEffectTick(StatEffect pEffect, CombatManager pSource) { }
-
+    private void OnStatEffectTick(StatEffect pEffect, CombatManager pSource) {
+        Logger.Combat.Debug("Applying effect");
+    }
 
     private void OnDamageEffectFinished(DamageEffect pDamageEffect, CombatManager pSource) {
         Logger.Combat.Debug(

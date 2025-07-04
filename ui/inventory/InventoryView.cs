@@ -121,8 +121,11 @@ public abstract partial class InventoryView : View {
 
         // ...and connect new
         SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-        spellComponent?.ConnectCastComplete(castCompleteCallback);
-
+        Error? error = spellComponent?.ConnectCastComplete(castCompleteCallback);
+        
+        if (error is not null && error != Error.Ok) {
+            Logger.UI.Error($"Could not connect signal {SpellComponent.SignalName.CastComplete}. Error code: {error}", true);
+        }
 
         UpdateSlot(pGizmoStack, pSlot, pGizmoStack.Gizmo.GetRemainingCooldown());
     }

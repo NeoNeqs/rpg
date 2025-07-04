@@ -6,10 +6,10 @@ namespace RPG.scripts.inventory.components;
 
 [Tool, GlobalClass]
 public sealed partial class ChainSpellComponent : SpellComponent {
-    [Export] public Array<Gizmo> Spells = [];
+    [Export]
+    public Array<Gizmo> Spells = [];
 
     private int _current = -1;
-
 
     public override CastResult Cast(Gizmo pSource) {
         Gizmo currentSpell = GetCurrentSpell() ?? pSource;
@@ -25,7 +25,7 @@ public sealed partial class ChainSpellComponent : SpellComponent {
             Chain();
 
             nextSpell = GetCurrentSpell() ?? pSource;
-            EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
+            EmitSignalCastComplete(nextSpell.GetCooldown() * 1_000_000);
             LastCastTime = Time.GetTicksUsec();
             return CastResult.Ok;
         }
@@ -47,7 +47,7 @@ public sealed partial class ChainSpellComponent : SpellComponent {
         spellComponent.Cast(pSource);
 
         nextSpell = GetCurrentSpell() ?? pSource;
-        EmitCastComplete(nextSpell.GetCooldown() * 1_000_000);
+        EmitSignalCastComplete(nextSpell.GetCooldown() * 1_000_000);
         LastCastTime = Time.GetTicksUsec();
 
         return CastResult.Ok;
@@ -69,7 +69,6 @@ public sealed partial class ChainSpellComponent : SpellComponent {
 
         return Spells[next];
     }
-
 
     private void Chain() {
         _current = Mathf.Wrap(_current + 1, -1, Spells.Count);

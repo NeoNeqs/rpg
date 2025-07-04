@@ -1,39 +1,23 @@
-[gd_resource type="Resource" script_class="Gizmo" load_steps=9 format=3 uid="uid://dfebkmuinemk8"]
+[gd_resource type="Resource" script_class="Gizmo" load_steps=8 format=3 uid="uid://dfebkmuinemk8"]
 
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_aep25"]
-[ext_resource type="Script" uid="uid://btbq7woaywr4i" path="res://scripts/effects/DamageEffect.cs" id="2_47hi4"]
+[ext_resource type="Resource" uid="uid://ogopxk8kkl5y" path="res://resources/effects/fire_ball_effect.tres" id="2_7o5gr"]
 [ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="2_kggnb"]
 [ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_xqiny"]
 [ext_resource type="Script" uid="uid://cpk6hvue643ng" path="res://scripts/inventory/components/ChainSpellComponent.cs" id="3_kggnb"]
 [ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="4_7o5gr"]
 
-[sub_resource type="Resource" id="Resource_7o5gr"]
-script = ExtResource("2_47hi4")
-DamageType = 0
-FlatValue = 10
-StatScale = 2
-StatScaleCoefficient = 2.0
-MaxStacks = 1
-Id = &"fire_spell"
-DisplayName = "Fire Spell"
-TickTimeout = 3
-Ticks = 1
-ApplicationChance = 1.0
-Radius = 0
-Flags = 0
-metadata/_custom_type_script = "uid://btbq7woaywr4i"
-
 [sub_resource type="Resource" id="Resource_47hi4"]
 script = ExtResource("3_kggnb")
 Spells = Array[ExtResource("2_xqiny")]([ExtResource("4_7o5gr")])
-Effects = [SubResource("Resource_7o5gr")]
+Effects = [ExtResource("2_7o5gr")]
 CooldownSeconds = 1
 Range = 1
 metadata/_custom_type_script = "uid://cpk6hvue643ng"
 
 [resource]
 script = ExtResource("2_xqiny")
-Id = &"fire_ball"
+Id = &"spell:fire_ball"
 DisplayName = "Fire ball"
 Icon = ExtResource("2_kggnb")
 StackSize = 1

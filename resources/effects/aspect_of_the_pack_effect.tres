@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StatEffect" load_steps=2 format=3 uid="uid://dr8ljacysnu6n"]
+
+[ext_resource type="Script" uid="uid://dsfwywkbo6ypn" path="res://scripts/effects/StatEffect.cs" id="1_wfvkp"]
+
+[resource]
+script = ExtResource("1_wfvkp")
+Stat = 0
+Id = &"effect:aspect_of_the_pack"
+DisplayName = "Aspect Of The Pack"
+TickTimeout = 20
+Ticks = 1
+ApplicationChance = 1.0
+Radius = 0
+Flags = 32768
+FlatValue = 20
+StatScale = 0
+StatScaleCoefficient = 1.0
+MaxStacks = 1
+metadata/_custom_type_script = "uid://dsfwywkbo6ypn"

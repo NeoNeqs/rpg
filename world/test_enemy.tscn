@@ -39,38 +39,54 @@ metadata/_custom_type_script = "uid://b6ma5srt1o11b"
 
 [sub_resource type="BoxMesh" id="BoxMesh_p2sdy"]
 
-[sub_resource type="Curve" id="Curve_35jrf"]
+[sub_resource type="Curve" id="Curve_ktuwj"]
 _limits = [1.0, 100.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="Curve" id="Curve_0xnjn"]
+[sub_resource type="Curve" id="Curve_3i4c7"]
 _limits = [1.0, 100.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Curve" id="Curve_ktuwj"]
-
-[sub_resource type="Curve" id="Curve_3i4c7"]
-
 [sub_resource type="Curve" id="Curve_ahlyo"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="Curve" id="Curve_gye4m"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
+point_count = 2
 
-[sub_resource type="Curve" id="Curve_18x0x"]
+[sub_resource type="Curve" id="Curve_1ap8l"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 3
 
-[sub_resource type="Curve" id="Curve_o2ggr"]
+[sub_resource type="Curve" id="Curve_da4c3"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_vig3h"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_2n4xm"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
 
 [sub_resource type="Resource" id="Resource_o2ggr"]
 script = ExtResource("6_ktuwj")
-ArmorReductionCurve = SubResource("Curve_0xnjn")
-ArmorPenetrationCurve = SubResource("Curve_35jrf")
-ShadowReductionCurve = SubResource("Curve_gye4m")
-ShadowPenetrationCurve = SubResource("Curve_ahlyo")
-NatureReductionCurve = SubResource("Curve_3i4c7")
-NaturePenetrationCurve = SubResource("Curve_ktuwj")
-StrengthCurve = SubResource("Curve_o2ggr")
-StaminaCurve = SubResource("Curve_18x0x")
+ArmorReductionCurve = SubResource("Curve_3i4c7")
+ArmorPenetrationCurve = SubResource("Curve_ktuwj")
+ShadowReductionCurve = SubResource("Curve_da4c3")
+ShadowPenetrationCurve = SubResource("Curve_1ap8l")
+NatureReductionCurve = SubResource("Curve_gye4m")
+NaturePenetrationCurve = SubResource("Curve_ahlyo")
+StrengthCurve = SubResource("Curve_2n4xm")
+StaminaCurve = SubResource("Curve_vig3h")
 metadata/_custom_type_script = "uid://4m7emmkgdioy"
 
 [sub_resource type="Resource" id="Resource_3i4c7"]

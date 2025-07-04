@@ -65,7 +65,7 @@ public partial class Stats : Resource {
     // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
     // ReSharper disable once UnusedType.Local
     private sealed class StaticAssert {
-        // Changing those names will break existing resources!
+        // IMPORTANT: Changing those names will break existing resources!
 #pragma warning disable CS0414 // Field is assigned but its value is never used
         // ReSharper disable HeuristicUnreachableCode
         private byte _assert1 = nameof(_DecimalStats) == "_DecimalStats" ? 0 : -1;

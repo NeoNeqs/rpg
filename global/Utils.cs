@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using Godot;
 
 namespace RPG.global;
 
@@ -20,5 +22,62 @@ public static class Utils {
             < 1_000_000 => $"{pMicroseconds / 1000.0:0.##} ms",
             _ => $"{pMicroseconds / 1_000_000.0:0.##} s"
         };
+    }
+
+    public static string EnumToHintString<TEnum>() where TEnum : struct, Enum {
+        return string.Join(',', Array.ConvertAll(Enum.GetNames<TEnum>(), pItem => pItem.ToString()));
+    }
+
+    public static void SetProperty<T>(this object pInstance, string pPropertyName, T pNewValue) where T : class {
+        Type? type = pInstance.GetType();
+        PropertyInfo? property = null;
+
+        while (type != null) {
+            property = type.GetProperty(pPropertyName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (property != null && property.CanWrite && property.SetMethod != null) {
+                break;
+            }
+
+            type = type.BaseType;
+        }
+
+        if (property == null) {
+            Logger.Core.Error(
+                $"Property '{pPropertyName}' not found on type '{pInstance.GetType().Name}' or its base types.");
+            return;
+        }
+
+        property.SetValue(pInstance, pNewValue);
+    }
+
+    public static T? GetProperty<T>(this object pInstance, string pPropertyName) where T : class {
+        Type? type = pInstance.GetType();
+        PropertyInfo? property = null;
+
+        while (type != null) {
+            property = type.GetProperty(pPropertyName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (property != null && property.CanWrite && property.SetMethod != null) {
+                break;
+            }
+
+            type = type.BaseType;
+        }
+
+        if (property == null) {
+            Logger.Core.Error(
+                $"Property '{pPropertyName}' not found on type '{pInstance.GetType().Name}' or its base types.");
+            return null;
+        }
+
+        object? value = property.GetValue(pInstance);
+        if (value is null) {
+            Logger.Core.Error($"Property '{pPropertyName}' is null.");
+        }
+
+        return (T?)value;
     }
 }

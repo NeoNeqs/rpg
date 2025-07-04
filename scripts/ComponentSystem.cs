@@ -11,7 +11,7 @@ public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource wher
 
     public Godot.Collections.Dictionary<string, TComponent?> Components { private set; get; } = [];
 
-    protected readonly StringName ComponentsExportName = new("components");
+    public const string ComponentsExportName = "components";
 
     public T? GetComponent<T>() where T : TComponent {
         if (Components.TryGetValue(typeof(T).Name, out TComponent? value)) {

@@ -1,4 +1,5 @@
 using System;
+using RPG.global;
 using Godot;
 using RPG.scripts.effects;
 
@@ -23,15 +24,16 @@ public partial class SpellComponent : GizmoComponent {
         get => _effects;
     }
 
-    [Export] public ulong CooldownSeconds { private set; get; } = 1;
+    [Export]
+    public ulong CooldownSeconds { private set; get; } = 1;
 
     [Export(PropertyHint.Range, "1, 65535, 1")]
     public ushort Range { private set; get; } = 1;
 
     public bool IsAoe => MaxRadius > 0;
-    public float MaxRadius { private set; get; }
-    
-    private Effect[] _effects = null!;
+    private float MaxRadius { set; get; }
+
+    private Effect[] _effects = [];
     protected ulong LastCastTime = Time.GetTicksUsec();
 
     public enum CastResult {
@@ -44,9 +46,10 @@ public partial class SpellComponent : GizmoComponent {
         if (IsOnCooldown()) {
             return CastResult.OnCooldown;
         }
+
         EmitSignalCastComplete(CooldownSeconds * 1_000_000);
         LastCastTime = Time.GetTicksUsec();
-        
+
         return CastResult.Ok;
     }
 
@@ -54,7 +57,7 @@ public partial class SpellComponent : GizmoComponent {
         ulong currentTime = Time.GetTicksUsec();
 
         ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
-        // This condition is 10000% correct! DO NOT CHANGE!
+        // IMPORTANT: This condition is 10000% correct! DO NOT CHANGE!
         return (LastCastTime + cooldownMicroseconds > currentTime);
     }
 
@@ -66,15 +69,6 @@ public partial class SpellComponent : GizmoComponent {
         }
 
         return (LastCastTime + cooldownMicroseconds - currentTime);
-    }
-
-    // I hate working with Godot signals in C#
-    // Why must I redefine those methods to use them outside the class :/
-    // Waiting for Godot...
-    // https://github.com/godotengine/godot-proposals/issues/12269
-    // My guess is 2030
-    public void EmitCastComplete(ulong pCooldownInMicroSeconds) {
-        EmitSignalCastComplete(pCooldownInMicroSeconds);
     }
 
     public bool IsCastCompleteConnected(Action<ulong> pAction) {

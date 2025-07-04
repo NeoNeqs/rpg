@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://yak50v6pegmm"]
+[gd_scene load_steps=4 format=3 uid="uid://yak50v6pegmm"]
 
-[ext_resource type="Script" path="res://addons/rpg_utils/logs/logs.gd" id="1_2h6bo"]
-[ext_resource type="Script" path="res://addons/rpg_utils/query.gd" id="2_tauqj"]
+[ext_resource type="Script" uid="uid://i8qx7wee7xk8" path="res://addons/rpg_utils/logs/logs.gd" id="1_2h6bo"]
+[ext_resource type="Script" uid="uid://curnb26rvygvt" path="res://addons/rpg_utils/query.gd" id="2_tauqj"]
+[ext_resource type="Script" uid="uid://cc6sgc5gk1nfx" path="res://addons/rpg_utils/button.gd" id="3_wgfcl"]
 
 [node name="Panel" type="TabContainer"]
 anchors_preset = 15
@@ -11,9 +12,10 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="Logs" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 2
 script = ExtResource("1_2h6bo")
 metadata/_tab_index = 0
@@ -36,20 +38,19 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
-item_count = 7
+item_count = 6
 popup/item_0/text = "(No log)"
+popup/item_0/id = 0
 popup/item_1/text = "godot.log"
 popup/item_1/id = 1
-popup/item_2/text = "godot2025-01-19T21.14.07.log"
+popup/item_2/text = "godot2025-07-03T17.14.53.log"
 popup/item_2/id = 2
-popup/item_3/text = "godot2025-01-19T21.21.39.log"
+popup/item_3/text = "godot2025-07-03T17.19.11.log"
 popup/item_3/id = 3
-popup/item_4/text = "godot2025-01-19T21.40.03.log"
+popup/item_4/text = "godot2025-07-03T17.20.07.log"
 popup/item_4/id = 4
-popup/item_5/text = "godot2025-01-19T21.41.31.log"
+popup/item_5/text = "godot2025-07-03T17.23.37.log"
 popup/item_5/id = 5
-popup/item_6/text = "test.log"
-popup/item_6/id = 6
 
 [node name="Query" type="LineEdit" parent="Logs/CenterContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -65,32 +66,20 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 bbcode_enabled = true
-text = "  scene/gui/option_button.cpp:386 - Index p_which = 5 is out of bounds (popup->get_item_count() = 1).
-  modules/gdscript/gdscript.cpp:745 - Condition \"!p_keep_state && has_instances\" is true. Returning: ERR_ALREADY_IN_USE
-[2024-12-30 21:08:26.31435] [INFO] [Extra] [Main]: --------------------System Information--------------------
-[2024-12-30 21:08:26.31443] [INFO] [Extra] [Main]: OS: Nobara Linux 40 (KDE Plasma), Locale: en_US
-[2024-12-30 21:08:26.31451] [INFO] [Extra] [Main]: CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz, (12-core)
-[2024-12-30 21:08:26.31456] [INFO] [Extra] [Main]: GPU: Intel(R) UHD Graphics 630 (CFL GT2), API: Vulkan (1.3.296)
-[2024-12-30 21:08:26.31467] [INFO] [Extra] [Main]: Memory: 15.48 GiB + 6.56 GiB Swap
-[2024-12-30 21:08:26.31470] [INFO] [Extra] [Main]: Stack size: 8.00 MiB
-[2024-12-30 21:08:26.31472] [INFO] [Extra] [Main]: --------------------Process Information--------------------
-[2024-12-30 21:08:26.31475] [INFO] [Extra] [Main]: Executable path: /home/michael/Godot/Godot.x86_64
-[2024-12-30 21:08:26.31477] [INFO] [Extra] [Main]: Engine arguments: [\"res://addons/rpg_utils/panel.tscn\", \"--editor\"]
-[2024-12-30 21:08:26.31480] [INFO] [Extra] [Main]: User arguments: []
-[2024-12-30 21:08:26.31482] [INFO] [Extra] [Main]: --------------------Storage Information--------------------
-[2024-12-30 21:08:26.31484] [INFO] [Extra] [Main]: Is 'user://' persistent: true
-[2024-12-30 21:08:26.31487] [INFO] [Extra] [Main]: User data dir: /home/michael/.local/share/godot/app_userdata/RPG
-[2024-12-30 21:08:26.31489] [INFO] [Extra] [Main]: Config dir: /home/michael/.config
-[2024-12-30 21:08:26.31492] [INFO] [Extra] [Main]: Cache dir: /home/michael/.cache
-[2024-12-30 21:08:26.31494] [INFO] [Extra] [Main]: Data dir: /home/michael/.local/share
-[2024-12-30 21:08:26.31496] [INFO] [Extra] [Main]: --------------------Misc Information--------------------
-[2024-12-30 21:08:26.31499] [INFO] [Extra] [Main]: Is sandboxed: false
-
-"
 scroll_following = true
 context_menu_enabled = true
 threaded = true
 selection_enabled = true
+
+[node name="ResourceDB" type="VBoxContainer" parent="."]
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Button" type="Button" parent="ResourceDB"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Reload Database"
+script = ExtResource("3_wgfcl")
 
 [connection signal="item_selected" from="Logs/CenterContainer/VBoxContainer/HBoxContainer/LogsOption" to="Logs" method="_on_log_selected"]
 [connection signal="pressed" from="Logs/CenterContainer/VBoxContainer/HBoxContainer/LogsOption" to="Logs" method="_on_logs_pressed"]

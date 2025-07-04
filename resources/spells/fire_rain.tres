@@ -1,37 +1,21 @@
-[gd_resource type="Resource" script_class="Gizmo" load_steps=8 format=3 uid="uid://8u7wfnel2xpp"]
+[gd_resource type="Resource" script_class="Gizmo" load_steps=7 format=3 uid="uid://8u7wfnel2xpp"]
 
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_3ifp4"]
 [ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="2_4hwfl"]
 [ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_7k1si"]
-[ext_resource type="Script" uid="uid://btbq7woaywr4i" path="res://scripts/effects/DamageEffect.cs" id="2_ts5sy"]
+[ext_resource type="Resource" uid="uid://cersqsvar0pkb" path="res://resources/effects/fire_rain_effect.tres" id="2_ts5sy"]
 [ext_resource type="Texture2D" uid="uid://oauwek8drqx4" path="res://assets/textures/spell/heavy-rain.svg" id="3_ts5sy"]
-
-[sub_resource type="Resource" id="Resource_se32c"]
-script = ExtResource("2_ts5sy")
-DamageType = 0
-FlatValue = 30
-StatScale = 2
-StatScaleCoefficient = 1.3
-MaxStacks = 1
-Id = &"fire_rain_spell"
-DisplayName = "Fire Rain"
-TickTimeout = 3
-Ticks = 1
-ApplicationChance = 1.0
-Radius = 5
-Flags = 0
-metadata/_custom_type_script = "uid://btbq7woaywr4i"
 
 [sub_resource type="Resource" id="Resource_b7tll"]
 script = ExtResource("2_4hwfl")
-Effects = [SubResource("Resource_se32c")]
+Effects = [ExtResource("2_ts5sy")]
 CooldownSeconds = 1
 Range = 10
 metadata/_custom_type_script = "uid://bk27a6avfmj1x"
 
 [resource]
 script = ExtResource("2_7k1si")
-Id = &"fire_rain"
+Id = &"spell:fire_rain"
 DisplayName = "Fire Rain"
 Icon = ExtResource("3_ts5sy")
 StackSize = 1

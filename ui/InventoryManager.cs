@@ -20,7 +20,6 @@ public partial class InventoryManager : Control {
     private int _selectedSlotIndex = -1;
     private InventoryView? _selectedInventoryView = null;
 
-
     // ReSharper disable once AsyncVoidMethod
     // Can't make _Ready return `Task` since it's a virtual function :/
     public override async void _Ready() {
