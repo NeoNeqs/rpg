@@ -112,6 +112,11 @@ public sealed partial class MouseStateMachine : Node {
     }
 
     private void ShowMouse() {
+        // Prevent mouse flicker
+        if (DisplayServer.MouseGetMode() == DisplayServer.MouseMode.Visible) {
+            return;
+        }
+        
         bool shouldWarp = (
             DisplayServer.MouseGetMode() is DisplayServer.MouseMode.Captured &&
             LastMousePosition != Vector2.Inf
@@ -129,7 +134,7 @@ public sealed partial class MouseStateMachine : Node {
 
     private void CaptureMouse() {
         // IMPORTANT: Mouse position must be saved before changing the mode to Capture.
-        // Capture mode warps the mouse to the center of the window!
+        //            Capture mode warps the mouse to the center of the window!
         LastMousePosition = GetViewport().GetMousePosition();
         DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
     }

@@ -10,11 +10,10 @@ namespace RPG.scripts.combat;
 public partial class CombatSystem : Resource {
     [Export] public StatCurves StatCurves = new();
 
-    // ReSharper disable once InconsistentNaming
-    private Stats Stats = null!;
+    private Stats _stats = null!;
 
     public void Initialize(Stats pStats) {
-        Stats = pStats;
+        _stats = pStats;
     }
 
     public double CalculateDamage(DamageEffect pDamageEffect, CombatSystem pAttacker) {
@@ -34,22 +33,22 @@ public partial class CombatSystem : Resource {
     }
 
     public long GetMaxHealth() {
-        return StatCurves.GetHealthFromStamina(Stats.GetIntegerStat(Stats.IntegerStat.Stamina));
+        return StatCurves.GetHealthFromStamina(_stats.GetIntegerStat(IntegerStat.Stamina));
     }
 
     private double CalculateDamage(
         DamageEffect pDamageEffect,
         CombatSystem pAttacker,
-        Stats.IntegerStat pResistanceStat,
-        Stats.IntegerStat pPenetrationStat,
+        IntegerStat pResistanceStat,
+        IntegerStat pPenetrationStat,
         Func<long, float> pReductionFunc,
         Func<long, float> pPenetrationFunc
     ) {
-        float reduction = pReductionFunc(Stats.GetIntegerStat(pResistanceStat));
-        float penetration = pPenetrationFunc(pAttacker.Stats.GetIntegerStat(pPenetrationStat));
+        float reduction = pReductionFunc(_stats.GetIntegerStat(pResistanceStat));
+        float penetration = pPenetrationFunc(pAttacker._stats.GetIntegerStat(pPenetrationStat));
         float finalReduction = penetration / reduction;
    
-        float totalDamage = pDamageEffect.GetTotalDamage(pAttacker.Stats) * finalReduction;
+        float totalDamage = pDamageEffect.GetTotalDamage(pAttacker._stats) * finalReduction;
         Logger.Combat.Debug($"Total dmg: {totalDamage}, Flat dmg: {pDamageEffect.FlatValue} {pDamageEffect.DamageType}, Coefficient: {pDamageEffect.StatScaleCoefficient}, StatScale: {pDamageEffect.StatScale}, Target reduction: {reduction}, Source penetration: {penetration}, Final reduction: {finalReduction}.");
 
         return totalDamage;
@@ -59,8 +58,8 @@ public partial class CombatSystem : Resource {
         return CalculateDamage(
             pDamageEffect,
             pAttacker,
-            Stats.IntegerStat.ShadowResistance,
-            Stats.IntegerStat.ShadowPenetration,
+            IntegerStat.ShadowResistance,
+            IntegerStat.ShadowPenetration,
             StatCurves.GetShadowDamageReduction,
             pAttacker.StatCurves.GetShadowDamagePenetration
         );
@@ -70,8 +69,8 @@ public partial class CombatSystem : Resource {
         return CalculateDamage(
             pDamageEffect,
             pAttacker,
-            Stats.IntegerStat.Armor,
-            Stats.IntegerStat.ArmorPenetration,
+            IntegerStat.Armor,
+            IntegerStat.ArmorPenetration,
             StatCurves.GetPhysicalDamageReduction,
             pAttacker.StatCurves.GetPhysicalDamagePenetration
         );
@@ -81,8 +80,8 @@ public partial class CombatSystem : Resource {
         return CalculateDamage(
             pDamageEffect,
             pAttacker,
-            Stats.IntegerStat.NatureResistance,
-            Stats.IntegerStat.NaturePenetration,
+            IntegerStat.NatureResistance,
+            IntegerStat.NaturePenetration,
             StatCurves.GetNatureDamageReduction,
             pAttacker.StatCurves.GetNatureDamagePenetration
         );

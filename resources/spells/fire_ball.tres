@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Gizmo" load_steps=8 format=3 uid="uid://dfebkmuinemk8"]
 
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_aep25"]
-[ext_resource type="Resource" uid="uid://ogopxk8kkl5y" path="res://resources/effects/fire_ball_effect.tres" id="2_7o5gr"]
+[ext_resource type="Resource" uid="uid://ogopxk8kkl5y" path="res://resources/effects/fire_ball.tres" id="2_7o5gr"]
 [ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="2_kggnb"]
 [ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_xqiny"]
 [ext_resource type="Script" uid="uid://cpk6hvue643ng" path="res://scripts/inventory/components/ChainSpellComponent.cs" id="3_kggnb"]
@@ -11,8 +11,9 @@
 script = ExtResource("3_kggnb")
 Spells = Array[ExtResource("2_xqiny")]([ExtResource("4_7o5gr")])
 Effects = [ExtResource("2_7o5gr")]
-CooldownSeconds = 1
+CooldownSeconds = 2.0
 Range = 1
+LinkedSpells = []
 metadata/_custom_type_script = "uid://cpk6hvue643ng"
 
 [resource]

@@ -22,6 +22,9 @@ public partial class HotbarManager : Node {
         // NOTE: Those events are player specific and are not triggered by NPC (other Entities).
         // This means those events can't be moved inside CombatManager, since all entities have the CombatManager class.
         EventBus.Instance.HotbarKeyPressed += async (Gizmo pGizmo) => { await OnHotbarKeyPressed(pGizmo); };
+        
+        // IMPORTANT: this connection must be here and not in CombatManager, because selecting entities with mouse is an action
+        //            that only player can do.
         EventBus.Instance.EntitySelected += (Entity pEntity) => {
             GetCharacter().CombatManager.TargetEntity = pEntity;
         };
@@ -43,14 +46,14 @@ public partial class HotbarManager : Node {
             return;
         }
 
-        if (spellComponent.IsAoe && !spellComponent.IsOnCooldown()) {
-            Vector3 mouseWorldPosition = character.GetWorld().GetMouseWorldPosition(spellComponent.Range);
+        if (spellComponent.IsAoe() && !spellComponent.IsOnCooldown()) {
+            Vector3 mouseWorldPosition = character.GetWorld().GetMouseWorldPosition(spellComponent.GetRange());
             if (mouseWorldPosition == Vector3.Inf) {
                 return;
             }
 
             // Go back to calling AoeDecal.Update() manually here...
-            Decal.Update(mouseWorldPosition, spellComponent.Range);
+            Decal.Update(mouseWorldPosition, spellComponent.GetRange());
             SetProcessUnhandledInput(true);
 
             _waiting = true;
@@ -101,7 +104,6 @@ public partial class HotbarManager : Node {
                 break;
         }
     }
-
 
     private PlayerCharacter GetCharacter() {
         return GetParentOrNull<PlayerCharacter>();

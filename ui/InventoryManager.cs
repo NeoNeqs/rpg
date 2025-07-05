@@ -1,7 +1,9 @@
 using Godot;
 using RPG.global;
+using RPG.global.singletons;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
+using RPG.scripts.inventory.components;
 using RPG.ui.attributes;
 using RPG.ui.hotbar;
 using RPG.ui.inventory;
@@ -28,8 +30,8 @@ public partial class InventoryManager : Control {
         // EventBus.Instance.CharacterStatsLoaded += 
         EventBus.Instance.EmptyRegionPressed += DeleteSelectedGizmo;
         CreateHotbarView(GD.Load<Inventory>("uid://b1v0bkq8bhhic"));
-
-#if TOOLS
+        
+#if DEBUG
         await ToSignal(EventBus.Instance, EventBus.SignalName.CharacterSpellBookLoaded);
         SpellView sv = null;
         HotbarView hv = null;
@@ -43,7 +45,7 @@ public partial class InventoryManager : Control {
                     break;
             }
         }
-
+        sv.Inventory.SetAt(2, ResourceDB.GetSpell("spell:fire_bomb"));
         sv.Inventory.HandleGizmoAction(0, hv.Inventory, 0, true);
         sv.Inventory.HandleGizmoAction(1, hv.Inventory, 1, true);
 #endif
@@ -51,10 +53,12 @@ public partial class InventoryManager : Control {
 
     private void CreateItemView(Inventory pInventory) {
         CreateInventoryView<ItemView>(pInventory, AssetDB.ItemView);
+       
     }
 
     private void CreateSpellView(Inventory pInventory) {
-        CreateInventoryView<SpellView>(pInventory, AssetDB.SpellView);
+        var t = CreateInventoryView<SpellView>(pInventory, AssetDB.SpellView);
+        t.Position += new Vector2(0, 150);
     }
 
     private void CreateHotbarView(Inventory pInventory) {

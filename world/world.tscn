@@ -14,4 +14,4 @@ script = ExtResource("1_h5o24")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.654522, 0)
 
 [node name="TestEnemy" parent="." instance=ExtResource("3_mmdvd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.888081, -3.47548)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.888081, -3.47548)

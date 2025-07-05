@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://cpbe2we4e4cy7"]
+
+[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="1_rtyn0"]
+
+[sub_resource type="Gradient" id="Gradient_lr0ha"]
+colors = PackedColorArray(0.212052, 0.212052, 0.212052, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dg0xp"]
+gradient = SubResource("Gradient_lr0ha")
+fill = 1
+fill_from = Vector2(0.498464, 0.492405)
+fill_to = Vector2(0, 0)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xyn1p"]
+texture = SubResource("GradientTexture2D_dg0xp")
+
+[node name="FrameEffect" type="Panel"]
+custom_minimum_size = Vector2(20, 20)
+theme_override_styles/panel = SubResource("StyleBoxTexture_xyn1p")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_rtyn0")
+expand_mode = 1

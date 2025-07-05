@@ -1,6 +1,7 @@
 using RPG.global;
 using Godot;
 using Godot.Collections;
+using RPG.global.enums;
 using RPG.scripts.combat;
 
 namespace RPG.scripts.effects;
@@ -8,7 +9,7 @@ namespace RPG.scripts.effects;
 [Tool]
 public abstract partial class StackingEffect : Effect {
     public uint FlatValue { private set; get; }
-    public Stats.IntegerStat StatScale { private set; get; }
+    public IntegerStat StatScale { private set; get; }
     public float StatScaleCoefficient { private set; get; }
 
     public ushort MaxStacks { private set; get; } = 1;
@@ -16,15 +17,12 @@ public abstract partial class StackingEffect : Effect {
     // Always start with minimum stacks!
     public int CurrentStacks { private set; get; } = 1;
 
-    public void Stack() {
+    public override void Refresh() {
         if (CurrentStacks < MaxStacks) {
             CurrentStacks++;
         }
 
-        // Reset the timer since new stack was just applied
-        if (Timer?.IsInsideTree() ?? false) {
-            Timer.Start();
-        }
+        base.Refresh();
     }
 
     public override Array<Dictionary> _GetPropertyList() {
@@ -42,7 +40,7 @@ public abstract partial class StackingEffect : Effect {
                 ["name"] = nameof(StatScale),
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Enum),
-                ["hint_string"] = Utils.EnumToHintString<Stats.IntegerStat>(),
+                ["hint_string"] = Utils.EnumToHintString<IntegerStat>(),
                 ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
             },
             new Dictionary {

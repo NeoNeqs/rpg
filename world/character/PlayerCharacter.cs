@@ -14,8 +14,12 @@ public partial class PlayerCharacter : Entity {
     // ReSharper disable once AsyncVoidMethod
     public override async void _Ready() {
         await ToSignal(GetTree().CurrentScene, Node.SignalName.Ready);
+        
         EventBus.Instance.EmitCharacterInventoryLoaded(Inventory);
         EventBus.Instance.EmitCharacterSpellBookLoaded(SpellBook);
+        CombatManager.TargetChanged += (Entity _, Entity? pNewEntity) => {
+            EventBus.Instance.EmitPlayerTargetChanged(this, pNewEntity);
+        };
     }
 
     public PlayerCharacterBody GetBody() {

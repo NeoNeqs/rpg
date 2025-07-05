@@ -79,21 +79,10 @@ public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource wher
         }
 
         Godot.Collections.Dictionary<string, TComponent?> newComponents = new();
-        var currentComponents = pValue.As<Array<TComponent>>();
+        var currentComponents = pValue.As<Array<TComponent?>>();
 
-        foreach (TComponent component in currentComponents) {
-            Script? script = component?.GetScript().As<Script?>();
-
-            // TODO: Change this to `component.GetType().IsAbstract`
-
-            // Disallow instantiation of the abstract GizmoComponent class
-            if (script?.GetBaseScript() is null) {
-                newComponents["null"] = null;
-                continue;
-            }
-
-            // TODO: Change this to `component.GetType().Name`
-            string key = script.GetGlobalName().ToString();
+        foreach (TComponent? component in currentComponents) {
+            string key = component?.GetType().Name ?? "null";
             // Attempt to extract old value from _components, otherwise set the new one
             newComponents[key] = Components.GetValueOrDefault(key, component);
         }

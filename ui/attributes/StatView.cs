@@ -1,4 +1,5 @@
 using Godot;
+using RPG.global.enums;
 using RPG.scripts.combat;
 
 namespace RPG.ui.attributes;
@@ -28,11 +29,11 @@ public partial class StatView : View {
     public void SetData(Stats pStats, string pTitle) {
         _label.Clear();
 
-        foreach (Stats.IntegerStat integerStat in Stats.GetIntegerStats()) {
+        foreach (IntegerStat integerStat in Stats.GetIntegerStats()) {
             _label.AppendText($"{integerStat.ToString()}: {pStats.GetIntegerStat(integerStat)}");
         }
 
-        foreach (Stats.DecimalStat decimalStat in Stats.GetDecimalStats()) {
+        foreach (DecimalStat decimalStat in Stats.GetDecimalStats()) {
             _label.AppendText($"{decimalStat.ToString()}: {pStats.GetDecimalStat(decimalStat)}");
         }
         

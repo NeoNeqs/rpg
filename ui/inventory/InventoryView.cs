@@ -102,8 +102,8 @@ public abstract partial class InventoryView : View {
     }
 
     private void RewireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
-        Action<ulong> castCompleteCallback = (ulong pCooldownInMicroSeconds) => {
-            UpdateSlot(pGizmoStack, pSlot, pCooldownInMicroSeconds);
+        Action<float> castCompleteCallback = (float pCooldownSeconds) => {
+            UpdateSlot(pGizmoStack, pSlot, pCooldownSeconds);
         };
         
         // Disconnect old signal...
@@ -115,7 +115,7 @@ public abstract partial class InventoryView : View {
         }
 
         if (pGizmoStack.Gizmo is null) {
-            UpdateSlot(pGizmoStack, pSlot, 0);
+            UpdateSlot(pGizmoStack, pSlot, 0.0f);
             return;
         }
 
@@ -127,11 +127,11 @@ public abstract partial class InventoryView : View {
             Logger.UI.Error($"Could not connect signal {SpellComponent.SignalName.CastComplete}. Error code: {error}", true);
         }
 
-        UpdateSlot(pGizmoStack, pSlot, pGizmoStack.Gizmo.GetRemainingCooldown());
+        UpdateSlot(pGizmoStack, pSlot, spellComponent?.GetRemainingCooldown() ?? 0.0f);
     }
 
-    private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, ulong pCooldownInMicroSeconds) {
+    private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, float pCooldownSeconds) {
         pSlot.Update(pGizmoStack);
-        pSlot.SetOnCooldown(pCooldownInMicroSeconds);
+        pSlot.SetOnCooldown(pCooldownSeconds);
     }
 }

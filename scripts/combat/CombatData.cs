@@ -10,6 +10,9 @@ public partial class CombatData : RefCounted {
     [Signal]
     public delegate void DiedEventHandler();
 
+    [Signal]
+    public delegate void CrowdControlAppliedEventHandler(CrowdControl pCrowdControl);
+
     private readonly CombatSystem _combatSystem = null!;
     
     public CrowdControl CrowdControlImmunity;
@@ -22,18 +25,21 @@ public partial class CombatData : RefCounted {
         _currentHealth = _combatSystem.GetMaxHealth();
     }
 
-    public CombatData() { }
-
+    // Parameterless constructor is required for the Godot to initialize a script/game object
+    // ReSharper disable once UnusedMember.Global
+    public CombatData() {}
+    
     public void ApplyCrowdControl(CrowdControl pCrowdControl) {
         // Prevent CC if Entity is immune
         pCrowdControl &= ~CrowdControlImmunity;
         AppliedCrowdControl |= pCrowdControl;
-        // TODO: EmitSignalCrowdControlChanged()
+        EmitSignalCrowdControlApplied(AppliedCrowdControl);
     }
 
     public void ModifyHealth(double pDamage) {
         long maxHealth = _combatSystem.GetMaxHealth();
         long testHealth = _currentHealth + (long)pDamage;
+        
         if (testHealth > maxHealth) {
             _currentHealth = maxHealth;
         } else if (testHealth < 0) {

@@ -25,7 +25,6 @@ public static class GizmoComponentExtensions {
         return pGizmo.DisplayName;
     }
 
-
     public static Texture2D GetCurrentIcon(this Gizmo pGizmo) {
         var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
 
@@ -35,15 +34,5 @@ public static class GizmoComponentExtensions {
         }
 
         return pGizmo.Icon;
-    }
-
-    public static ulong GetCooldown(this Gizmo pGizmo) {
-        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-
-        if (spellComponent is not null) {
-            return spellComponent.CooldownSeconds;
-        }
-
-        return 0;
     }
 }

@@ -1,4 +1,5 @@
 using RPG.global;
+using RPG.global.enums;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
 
@@ -13,7 +14,7 @@ public class StatSystem {
         }
 
         if (!pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
-            foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
+            foreach (IntegerStat stat in Stats.GetIntegerStats()) {
                 long currentTotal = Total.GetIntegerStat(stat);
                 Total.SetIntegerStat(stat, currentTotal + pStats.GetIntegerStat(stat));
             }
@@ -22,7 +23,7 @@ public class StatSystem {
         }
 
         if (!pStats.IsConnectedToDecimalStatChanged(OnDecimalStatChanged)) {
-            foreach (Stats.DecimalStat stat in Stats.GetDecimalStats()) {
+            foreach (DecimalStat stat in Stats.GetDecimalStats()) {
                 float currentTotal = Total.GetDecimalStat(stat);
                 Total.SetDecimalStat(stat, currentTotal + pStats.GetDecimalStat(stat));
             }
@@ -37,7 +38,7 @@ public class StatSystem {
         }
         
         if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
-            foreach (Stats.IntegerStat stat in Stats.GetIntegerStats()) {
+            foreach (IntegerStat stat in Stats.GetIntegerStats()) {
                 long currentTotal = Total.GetIntegerStat(stat);
                 Total.SetIntegerStat(stat, currentTotal - pStats.GetIntegerStat(stat));
             }
@@ -46,7 +47,7 @@ public class StatSystem {
         }
 
         if (pStats.IsConnectedToDecimalStatChanged(OnDecimalStatChanged)) {
-            foreach (Stats.DecimalStat stat in Stats.GetDecimalStats()) {
+            foreach (DecimalStat stat in Stats.GetDecimalStats()) {
                 float currentTotal = Total.GetDecimalStat(stat);
                 Total.SetDecimalStat(stat, currentTotal - pStats.GetDecimalStat(stat));
             }
@@ -92,11 +93,11 @@ public class StatSystem {
         Unlink(component.Stats);
     }
 
-    private void OnIntegerStatChanged(Stats.IntegerStat pStat, long pDelta) {
+    private void OnIntegerStatChanged(IntegerStat pStat, long pDelta) {
         Total.SetIntegerStat(pStat, pDelta);
     }
 
-    private void OnDecimalStatChanged(Stats.DecimalStat pStat, float pDelta) {
+    private void OnDecimalStatChanged(DecimalStat pStat, float pDelta) {
         Total.SetDecimalStat(pStat, pDelta);
     }
 }

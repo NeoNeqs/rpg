@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://1ge8de3fpn84"]
+
+[ext_resource type="Script" uid="uid://cwh5lxyq70vdr" path="res://ui/EntityFrame.cs" id="1_lr0ha"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lr0ha"]
+bg_color = Color(0.909647, 0, 0.208251, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dg0xp"]
+bg_color = Color(2.59906e-06, 0.522059, 0.765036, 1)
+
+[node name="EntityFrame" type="PanelContainer"]
+offset_right = 180.0
+offset_bottom = 105.0
+script = ExtResource("1_lr0ha")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="TextureProgressBar" type="ProgressBar" parent="VBoxContainer"]
+custom_minimum_size = Vector2(150, 15)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_lr0ha")
+value = 80.0
+show_percentage = false
+
+[node name="TextureProgressBar2" type="ProgressBar" parent="VBoxContainer"]
+custom_minimum_size = Vector2(150, 15)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_dg0xp")
+value = 66.35
+show_percentage = false
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 3
+columns = 8

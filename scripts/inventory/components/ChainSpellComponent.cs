@@ -1,56 +1,30 @@
-using RPG.global;
 using Godot;
 using Godot.Collections;
+using RPG.scripts.effects;
 
 namespace RPG.scripts.inventory.components;
 
 [Tool, GlobalClass]
 public sealed partial class ChainSpellComponent : SpellComponent {
-    [Export]
-    public Array<Gizmo> Spells = [];
+    [Export] public Array<Gizmo> Spells = [];
 
     private int _current = -1;
 
-    public override CastResult Cast(Gizmo pSource) {
-        Gizmo currentSpell = GetCurrentSpell() ?? pSource;
+    public override void Cast(Gizmo pSource) {
+        if (_current != -1) {
+            var spellComponent = Spells[_current].GetComponent<SpellComponent>();
 
-        if (IsOnCooldown()) {
-            return CastResult.OnCooldown;
-        }
+            if (spellComponent is null) {
+                return;
+            }
 
-        Gizmo nextSpell;
-
-
-        if (_current == -1) {
-            Chain();
-
-            nextSpell = GetCurrentSpell() ?? pSource;
-            EmitSignalCastComplete(nextSpell.GetCooldown() * 1_000_000);
-            LastCastTime = Time.GetTicksUsec();
-            return CastResult.Ok;
+            spellComponent.LastCastTimeMicroseconds = Time.GetTicksUsec();
+        } else {
+            LastCastTimeMicroseconds = Time.GetTicksUsec();
         }
 
         Chain();
-
-#if TOOLS
-        var chainSpellComponent = currentSpell.GetComponent<ChainSpellComponent>();
-        if (chainSpellComponent is not null) {
-            Logger.Combat.Warn("Chain spells should not chain into another chain spell!", true);
-        }
-#endif
-
-        var spellComponent = currentSpell.GetComponent<SpellComponent>();
-        if (spellComponent is null) {
-            return CastResult.NoSpellFound;
-        }
-
-        spellComponent.Cast(pSource);
-
-        nextSpell = GetCurrentSpell() ?? pSource;
-        EmitSignalCastComplete(nextSpell.GetCooldown() * 1_000_000);
-        LastCastTime = Time.GetTicksUsec();
-
-        return CastResult.Ok;
+        EmitSignalCastComplete(GetRemainingCooldown());
     }
 
     public Gizmo? GetCurrentSpell() {
@@ -61,16 +35,47 @@ public sealed partial class ChainSpellComponent : SpellComponent {
         return Spells[_current];
     }
 
-    private Gizmo? GetNextSpell() {
-        int next = Mathf.Wrap(_current + 1, -1, Spells.Count);
-        if (next == -1) {
-            return null;
+    public override Effect[] GetEffects() {
+        if (_current == -1) {
+            return Effects;
         }
 
-        return Spells[next];
+        return Spells[_current].GetComponent<SpellComponent>()!.GetEffects();
     }
 
     private void Chain() {
         _current = Mathf.Wrap(_current + 1, -1, Spells.Count);
+    }
+
+    public override bool IsAoe() {
+        if (_current == -1) {
+            return base.IsAoe();
+        }
+
+        return Spells[_current].GetComponent<SpellComponent>()!.IsAoe();
+    }
+
+    public override bool IsOnCooldown() {
+        if (_current == -1) {
+            return base.IsOnCooldown();
+        }
+
+        return Spells[_current].GetComponent<SpellComponent>()!.IsOnCooldown();
+    }
+
+    public override float GetRemainingCooldown() {
+        if (_current == -1) {
+            return base.GetRemainingCooldown();
+        }
+
+        return Spells[_current].GetComponent<SpellComponent>()!.GetRemainingCooldown();
+    }
+
+    public override ushort GetRange() {
+        if (_current == -1) {
+            return base.GetRange();
+        }
+
+        return Spells[_current].GetComponent<SpellComponent>()!.GetRange();
     }
 }

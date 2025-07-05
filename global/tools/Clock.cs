@@ -1,10 +1,10 @@
-#if TOOLS
 using System;
 using System.Runtime.CompilerServices;
 using Godot;
 
 namespace RPG.global.tools;
 
+#if TOOLS
 /// <summary>
 /// Measures the time a scope takes to execute.
 /// </summary>
@@ -43,10 +43,8 @@ public sealed class Clock : IDisposable {
         object pObj,
         string pTag,
         bool pAutoStart,
-        [CallerMemberName]
-        string pMethod = "",
-        [CallerLineNumber]
-        int pLine = -1) {
+        [CallerMemberName] string pMethod = "",
+        [CallerLineNumber] int pLine = -1) {
         {
             _object = pObj;
             _tag = pTag;
@@ -82,4 +80,5 @@ public sealed class Clock : IDisposable {
         ShowResult();
     }
 }
+
 #endif

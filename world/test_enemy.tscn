@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://b2yjmi2mufyqh" path="res://scripts/inventory/Inventory.cs" id="3_ktuwj"]
 [ext_resource type="Script" uid="uid://b6ma5srt1o11b" path="res://scripts/combat/Stats.cs" id="4_330o6"]
 [ext_resource type="Script" uid="uid://nl2qu660ctkt" path="res://RigidBody.cs" id="5_ktuwj"]
+[ext_resource type="PackedScene" uid="uid://w8pps00w6lrk" path="res://assets/models/character/Cow.gltf" id="6_3i4c7"]
 [ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="6_ktuwj"]
 [ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="6_o2ggr"]
 
@@ -35,9 +36,9 @@ _IntegerStats = Dictionary[String, int]({
 _DecimalStats = Dictionary[String, float]({})
 metadata/_custom_type_script = "uid://b6ma5srt1o11b"
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_p26hj"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_p2sdy"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3i4c7"]
+radius = 0.153338
+height = 0.574491
 
 [sub_resource type="Curve" id="Curve_ktuwj"]
 _limits = [1.0, 100.0, 0.0, 1.0]
@@ -110,12 +111,11 @@ continuous_cd = true
 script = ExtResource("5_ktuwj")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
-shape = SubResource("BoxShape3D_p26hj")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0104778, 0.276384, -0.0470961)
+shape = SubResource("CapsuleShape3D_3i4c7")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Body"]
-layers = 2
-mesh = SubResource("BoxMesh_p2sdy")
-skeleton = NodePath("../..")
+[node name="Cow" parent="Body" instance=ExtResource("6_3i4c7")]
+transform = Transform3D(-0.2, 0, 1.74846e-08, 0, 0.2, 0, -1.74846e-08, 0, -0.2, 0, 0, 0)
 
 [node name="CombatManager" type="Node" parent="."]
 script = ExtResource("2_p2sdy")

@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
+using RPG.global.enums;
 
 namespace RPG.scripts.combat;
 
 // IMPORTANT: Careful with adding numeric properties (Integer / Decimal) here. See `_Set()` definition down below.
 
-/// <summary>
-/// 
-/// </summary>
 [Tool, GlobalClass]
 public partial class Stats : Resource {
     [Signal]
@@ -18,31 +16,14 @@ public partial class Stats : Resource {
     [Signal]
     public delegate void DecimalStatChangedEventHandler(DecimalStat pStat, float pDelta);
 
-    // ReSharper disable UnusedMember.Global
-    public enum IntegerStat {
-        Strength,
-        Stamina,
-        Intelligence,
-        Spirit,
-        Armor,
-        ShadowResistance,
-        NatureResistance,
-        ArmorPenetration,
-        ShadowPenetration,
-        NaturePenetration,
-    }
-
-    public enum DecimalStat {
-        StrengthMultiplayer,
-        StaminaMultiplayer,
-    }
-    // ReSharper restore UnusedMember.Global
 
     // ReSharper disable once InconsistentNaming
     private Godot.Collections.Dictionary<string, long> _IntegerStats {
         set {
             _integerData = value;
+#if TOOLS
             NotifyPropertyListChanged();
+#endif
         }
         get => _integerData;
     }
@@ -53,7 +34,9 @@ public partial class Stats : Resource {
     private Godot.Collections.Dictionary<string, float> _DecimalStats {
         set {
             _decimalData = value;
+#if TOOLS
             NotifyPropertyListChanged();
+#endif
         }
         get => _decimalData;
     }
@@ -61,19 +44,6 @@ public partial class Stats : Resource {
     private Godot.Collections.Dictionary<string, float> _decimalData = new();
 
 #if TOOLS
-    // A neat trick to do compile time asserts, although the thrown error message is not very useful.
-    // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
-    // ReSharper disable once UnusedType.Local
-    private sealed class StaticAssert {
-        // IMPORTANT: Changing those names will break existing resources!
-#pragma warning disable CS0414 // Field is assigned but its value is never used
-        // ReSharper disable HeuristicUnreachableCode
-        private byte _assert1 = nameof(_DecimalStats) == "_DecimalStats" ? 0 : -1;
-        private byte _assert2 = nameof(_IntegerStats) == "_IntegerStats" ? 0 : -1;
-        // ReSharper restore HeuristicUnreachableCode
-#pragma warning restore CS0414 // Field is assigned but its value is never used
-    }
-
     // AddInteger and AddDecimal are helper properties in the Inspector that just add stats to the resource.
     private IntegerStat AddInteger {
         set {
@@ -111,7 +81,6 @@ public partial class Stats : Resource {
         _integerData.TryGetValue(key, out long oldValue);
         _integerData[key] = pValue;
 
-
         EmitSignalIntegerStatChanged(pStat, pValue - oldValue);
     }
 
@@ -141,8 +110,8 @@ public partial class Stats : Resource {
 
     public override Array<Dictionary> _GetPropertyList() {
         Array<Dictionary> propertyList = [
-            // Helper properties for the Inspector that allow adding / removing stats.
 #if TOOLS
+            // Helper properties for the Inspector that allow adding / removing stats.
             new() {
                 ["name"] = nameof(AddInteger),
                 ["type"] = Variant.From(Variant.Type.Int),
@@ -160,6 +129,7 @@ public partial class Stats : Resource {
                 ["usage"] = Variant.From(PropertyUsageFlags.Editor)
             },
 #endif
+            // Actual storage of stats:
             new() {
                 ["name"] = nameof(_IntegerStats),
                 ["type"] = Variant.From(Variant.Type.Dictionary),
@@ -266,6 +236,20 @@ public partial class Stats : Resource {
         }
 
         return default;
+    }
+
+    // A neat trick to do compile time asserts, although the thrown error message is not very useful.
+    // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
+    // ReSharper disable once UnusedType.Local
+
+    private sealed class StaticAssert {
+        // IMPORTANT: Changing those names will break existing resources!
+#pragma warning disable CS0414 // Field is assigned but its value is never used
+        // ReSharper disable HeuristicUnreachableCode
+        private byte _assert1 = nameof(_DecimalStats) == "_DecimalStats" ? 0 : -1;
+        private byte _assert2 = nameof(_IntegerStats) == "_IntegerStats" ? 0 : -1;
+        // ReSharper restore HeuristicUnreachableCode
+#pragma warning restore CS0414 // Field is assigned but its value is never used
     }
 #endif
 }

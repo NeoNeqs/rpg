@@ -63,13 +63,13 @@ public partial class InventorySlot : Control {
         }
     }
 
-    public void SetOnCooldown(ulong pCooldownInMicroseconds) {
-        if (pCooldownInMicroseconds <= 0) {
+    public void SetOnCooldown(float pCooldownSeconds) {
+        if (pCooldownSeconds <= 0.0f) {
             return;
         }
 
         CooldownDisplay? cooldownDisplay = GetCooldownDisplay();
-        cooldownDisplay?.Start(pCooldownInMicroseconds / 1_000_000.0);
+        cooldownDisplay?.Start(pCooldownSeconds);
     }
 
     public void ResetCooldown() {

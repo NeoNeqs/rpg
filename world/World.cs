@@ -24,11 +24,11 @@ public partial class World : Node3D {
     }
 
     public Array<Dictionary> IntersectShape(Vector3 pPosition, float pRadius, bool pBodyCollision, uint pCollisionMask,
-        Rid pExclude) {
+        Array<Rid> pExclude) {
         _shapeQuery.CollideWithBodies = pBodyCollision;
         _shapeQuery.CollisionMask = pCollisionMask;
         _shapeQuery.Transform = new Transform3D(Basis.Identity, pPosition);
-        _shapeQuery.Exclude = [pExclude];
+        _shapeQuery.Exclude = pExclude;
 
         PhysicsServer3D.ShapeSetData(_shapeQuery.ShapeRid, pRadius);
 
@@ -67,7 +67,6 @@ public partial class World : Node3D {
         }
 
         return _rayQuery.To;
-        // return Vector3.Inf;
     }
 
     public Entity CreateTempDummyEntity(Vector3 pPosition) {

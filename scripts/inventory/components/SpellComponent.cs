@@ -1,5 +1,4 @@
 using System;
-using RPG.global;
 using Godot;
 using RPG.scripts.effects;
 
@@ -8,11 +7,11 @@ namespace RPG.scripts.inventory.components;
 [Tool, GlobalClass]
 public partial class SpellComponent : GizmoComponent {
     [Signal]
-    public delegate void CastCompleteEventHandler(ulong pCooldownInMicroSeconds);
+    public delegate void CastCompleteEventHandler(float pCooldownSeconds);
 
     [Export]
     public Effect[] Effects {
-        private set {
+        set {
             _effects = value;
 
             foreach (Effect? effect in _effects) {
@@ -24,62 +23,68 @@ public partial class SpellComponent : GizmoComponent {
         get => _effects;
     }
 
-    [Export]
-    public ulong CooldownSeconds { private set; get; } = 1;
+    [Export(PropertyHint.Range, "0, 14400, 0.5")] public float CooldownSeconds { private set; get; } = 1;
 
-    [Export(PropertyHint.Range, "1, 65535, 1")]
-    public ushort Range { private set; get; } = 1;
+    [Export(PropertyHint.Range, "1, 65535, 1")] public ushort Range { set; get; } = 1;
 
-    public bool IsAoe => MaxRadius > 0;
+    [Export] public StringName[] LinkedSpells { private set; get; } = [];
+
     private float MaxRadius { set; get; }
 
     private Effect[] _effects = [];
-    protected ulong LastCastTime = Time.GetTicksUsec();
 
-    public enum CastResult {
-        Ok,
-        OnCooldown,
-        NoSpellFound,
+    protected internal ulong LastCastTimeMicroseconds = Time.GetTicksUsec();
+
+    public virtual void Cast(Gizmo pSource) {
+        EmitSignalCastComplete(CooldownSeconds);
+        LastCastTimeMicroseconds = Time.GetTicksUsec();
     }
 
-    public virtual CastResult Cast(Gizmo pSource) {
-        if (IsOnCooldown()) {
-            return CastResult.OnCooldown;
-        }
-
-        EmitSignalCastComplete(CooldownSeconds * 1_000_000);
-        LastCastTime = Time.GetTicksUsec();
-
-        return CastResult.Ok;
+    public virtual Effect[] GetEffects() {
+        return Effects;
     }
 
-    public bool IsOnCooldown() {
-        ulong currentTime = Time.GetTicksUsec();
+    public virtual bool IsAoe() {
+        return MaxRadius > 0;
+    }
 
-        ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
+    public virtual bool IsOnCooldown() {
+        ulong currentTimeMicroseconds = Time.GetTicksUsec();
+
+        float cooldownMicroseconds = CooldownSeconds * 1_000_000.0f;
         // IMPORTANT: This condition is 10000% correct! DO NOT CHANGE!
-        return (LastCastTime + cooldownMicroseconds > currentTime);
+        return (LastCastTimeMicroseconds + cooldownMicroseconds > currentTimeMicroseconds);
     }
 
-    public ulong GetRemainingCooldown() {
-        ulong currentTime = Time.GetTicksUsec();
-        ulong cooldownMicroseconds = CooldownSeconds * 1_000_000;
-        if (LastCastTime + cooldownMicroseconds <= currentTime) {
+    public virtual float GetRemainingCooldown() {
+        ulong currentTimeMicroseconds = Time.GetTicksUsec();
+        float cooldownMicroseconds = CooldownSeconds * 1_000_000.0f;
+        float cooldownEndTimeMicroseconds = LastCastTimeMicroseconds + cooldownMicroseconds;
+
+        if (cooldownEndTimeMicroseconds <= currentTimeMicroseconds) {
             return 0;
         }
 
-        return (LastCastTime + cooldownMicroseconds - currentTime);
+        return (cooldownEndTimeMicroseconds - currentTimeMicroseconds) / 1_000_000.0f;
     }
 
-    public bool IsCastCompleteConnected(Action<ulong> pAction) {
+    public virtual ushort GetRange() {
+        return Range;
+    }
+
+    public bool IsCastCompleteConnected(Action<float> pAction) {
         return IsConnected(SignalName.CastComplete, Callable.From(pAction));
     }
 
-    public void DisconnectCastComplete(Action<ulong> pAction) {
+    public void DisconnectCastComplete(Action<float> pAction) {
         Disconnect(SignalName.CastComplete, Callable.From(pAction));
     }
 
-    public Error ConnectCastComplete(Action<ulong> pAction) {
+    public Error ConnectCastComplete(Action<float> pAction) {
         return Connect(SignalName.CastComplete, Callable.From(pAction));
+    }
+
+    public void EmitCastComplete(float pCooldownSeconds) {
+        EmitSignalCastComplete(pCooldownSeconds);
     }
 }

@@ -3,9 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using Godot;
 
-#if !TOOLS
-using Godot.Collections;
-#endif
 
 namespace RPG.global;
 
@@ -40,7 +37,7 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
     }
 
     // TODO: Decide on levels for release builds:
-#if TOOLS
+#if DEBUG
     public static readonly Logger Core = new("Core", Level.Debug);
     public static readonly Logger Inventory = new("Inventory", Level.Debug);
     public static readonly Logger Combat = new("Combat", Level.Debug);
@@ -145,7 +142,7 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
         string driverName = RenderingServer.GetCurrentRenderingDriverName();
         string apiVersion = RenderingServer.GetVideoAdapterApiVersion();
 
-        Dictionary memInfo = OS.GetMemoryInfo();
+        Godot.Collections.Dictionary memInfo = OS.GetMemoryInfo();
         ulong available = memInfo["available"].AsUInt64();
         ulong physical = memInfo["physical"].AsUInt64();
         ulong stack = memInfo["stack"].AsUInt64();
@@ -158,20 +155,22 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
         Core.Info($"Memory: {Utils.HumanizeBytes(physical)} + {Utils.HumanizeBytes(swap)} Swap");
         Core.Info($"Stack size: {Utils.HumanizeBytes(stack)}");
 
-        Core.Info("--------------------Process Information--------------------");
+        Core.Info("--------------------Process Information-------------------");
         Core.Info($"Executable path: {OS.GetExecutablePath()}");
-        Core.Info($"Engine arguments: {OS.GetCmdlineArgs()}");
-        Core.Info($"User arguments: {OS.GetCmdlineUserArgs()}");
+        Core.Info($"Engine arguments: [{string.Join(',', OS.GetCmdlineArgs())}]");
+        Core.Info($"User arguments: [{string.Join(',', OS.GetCmdlineUserArgs())}]");
 
-        Core.Info("--------------------Storage Information--------------------");
+        Core.Info("--------------------Storage Information-------------------");
         Core.Info($"Is 'user://' persistent: {OS.IsUserfsPersistent()}");
         Core.Info($"User data dir: {OS.GetUserDataDir()}");
         Core.Info($"Config dir: {OS.GetConfigDir()}");
         Core.Info($"Cache dir: {OS.GetCacheDir()}");
         Core.Info($"Data dir: {OS.GetDataDir()}");
 
-        Core.Info("--------------------Misc Information--------------------");
+        Core.Info("---------------------Misc Information---------------------");
         Core.Info($"Is sandboxed: {OS.IsSandboxed()}");
+        
+        Core.Info("--------------------End of Information--------------------");
     }
 #endif
 }

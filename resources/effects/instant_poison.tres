@@ -1,16 +1,17 @@
 [gd_resource type="Resource" script_class="DamageEffect" load_steps=2 format=3 uid="uid://04x4lju4tlgv"]
 
-[ext_resource type="Script" uid="uid://btbq7woaywr4i" path="res://scripts/effects/DamageEffect.cs" id="1_f6b0p"]
+[ext_resource type="Script" uid="uid://btbq7woaywr4i" path="res://scripts/effects/DamageEffect.cs" id="1_atywp"]
 
 [resource]
-script = ExtResource("1_f6b0p")
-Id = &"effect:instant_poison_proc"
+script = ExtResource("1_atywp")
+Id = &"effect:instant_poison"
 DisplayName = "Instant Poison Proc"
 TickTimeout = 3
 Ticks = 1
 ApplicationChance = 1.0
 Radius = 0
 Flags = 32768
+ExcludingEffects = [&"effect:fire_ball"]
 FlatValue = 20
 StatScale = 0
 StatScaleCoefficient = 1.0

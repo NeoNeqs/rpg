@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Godot;
 using RPG.global.tools;
-using RPG.scripts;
 using RPG.scripts.effects;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
@@ -9,61 +8,92 @@ using Id = Godot.StringName;
 
 namespace RPG.global.singletons;
 
-// TODO: getEffect, getItem, etc.
-
 [Tool]
 public sealed partial class ResourceDB : Node {
     private static readonly Dictionary<Id, string> Resources = [];
 
-    public static ResourceDB Instance = null!;
+    private static ResourceDB _instance = null!;
 
     private const int MaxRecursionDepth = 2;
+
     private const string ItemLocation = "res://resources/items/";
     private const string SpellLocation = "res://resources/spells/";
     private const string EffectLocation = "res://resources/effects/";
 
+    private const string SpellPrefix = "spell:";
+    private const string ItemPrefix = "item:";
+    private const string EffectPrefix = "effect:";
+
     public ResourceDB() {
-        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-        Instance ??= this;
+        _instance = this;
     }
 
     public override void _EnterTree() {
         LoadResources();
     }
 
-    private static void LoadResources() {
-        Logger.Core.Info("Loading Resource Database.");
-
-        Resources.Clear();
-
-        LoadResourcesRecursive<Gizmo>(
-            ItemLocation,
-            "item:",
-            MaxRecursionDepth
-        );
-
-        LoadResourcesRecursive<Gizmo>(
-            SpellLocation,
-            "spell:",
-            MaxRecursionDepth
-        );
-
-        LoadResourcesRecursive<Effect>(
-            EffectLocation,
-            "effect:",
-            MaxRecursionDepth
-        );
-
-        Logger.Core.Info("Loaded Resource Database.");
+    public static Effect? GetEffect(string pId) {
+        return GetT<Effect>(pId, EffectPrefix);
     }
 
-    private static void LoadResourcesRecursive<T>(
-        string pPath,
-        string pPrefix,
-        int pDepth
-    ) where T : Resource, INamedIdentifiable {
+    public static Gizmo? GetItem(string pId) {
+        return GetT<Gizmo>(pId, ItemPrefix);
+    }
+
+    public static Gizmo? GetSpell(string pId) {
+        return GetT<Gizmo>(pId, SpellPrefix);
+    }
+
+    private static T? GetT<T>(string pId, string pPrefix) where T : Resource {
+#if TOOLS
+        if (!pId.StartsWith(pPrefix)) {
+            Logger.Core.Error(
+                $"Id '{pId}' does not specify a prefix for the requested resource. Falling back to {pPrefix}{pId}.",
+                true);
+            return null;
+        }
+#endif
+
+        if (!Resources.TryGetValue(pId, out string? resourcePath)) {
+            return null;
+        }
+
+        return GD.Load<T>(resourcePath);
+    }
+
+    private static void LoadResources() {
+        // Clear in case this class is created more than once.
+        Resources.Clear();
+
+        Logger.Core.Info("Loading Resource Database.");
+
+        {
+#if TOOLS
+            using var clock = new Clock(_instance, "Resource Loading", true);
+#endif
+            LoadResourcesRecursive(ItemLocation, ItemPrefix, MaxRecursionDepth);
+            LoadResourcesRecursive(SpellLocation, SpellPrefix, MaxRecursionDepth);
+            LoadResourcesRecursive(EffectLocation, EffectPrefix, MaxRecursionDepth);
+        }
+
+        Logger.Core.Info("Done: Loading Resource Database.");
+
+#if TOOLS
+        Logger.Core.Info("Validating Resource Database.");
+
+        // IMPORTANT: Validation must happen during editor hint, otherwise ResourceSaver will not save resources correctly.
+        if (Engine.IsEditorHint()) {
+            using var clock = new Clock(_instance, "Resource Validation", true);
+            ValidateResources();
+        }
+
+        Logger.Core.Info("Done: Validating Resource Database.");
+#endif
+    }
+
+    private static void LoadResourcesRecursive(string pPath, string pPrefix, int pDepth) {
         if (pDepth <= 0) {
-            Logger.Core.Error($"Can't load a {typeof(T).Name} from '{pPath}'. Max recursion depth reached!");
+            Logger.Core.Error($"Can't load a Resources from '{pPath}'. Max recursion depth reached!");
             return;
         }
 
@@ -74,56 +104,19 @@ public sealed partial class ResourceDB : Node {
             return;
         }
 
-#if TOOLS
-        using var clock = new Clock(Instance, $"Resource Validation of {pPrefix}{typeof(T).Name}s", false);
-#endif
-
         foreach (string item in contents) {
             string fullPath = pPath.PathJoin(item);
 
             if (item.EndsWith('/')) {
-                LoadResourcesRecursive<T>(fullPath, pPrefix, pDepth - 1);
+                LoadResourcesRecursive(fullPath, pPrefix, pDepth - 1);
                 continue;
             }
 
-            Resource? resource = ResourceLoader.Load(fullPath, typeof(T).Name);
-
-            if (resource == null) {
-                Logger.Core.Error(
-                    $"Could not load {typeof(T).Name} from '{fullPath}'. It may not be a valid {typeof(T).Name}.");
-                continue;
-            }
-
-            if (resource is not T t) {
-                Logger.Core.Error($"Resource '{fullPath}' is not {typeof(T).Name}.");
-                continue;
-            }
-
-#if TOOLS
-            if (Engine.IsEditorHint()) {
-                clock.Start();
-                ValidateResourceId(t, fullPath, pPrefix);
-
-                if (t is Gizmo gizmo) {
-                    ValidateGizmo(gizmo);
-                }
-
-                Error error = ResourceSaver.Save(t, fullPath);
-                if (error != Error.Ok) {
-                    Logger.Core.Error($"Could not save '{fullPath}'. Error code: {error}");
-                    continue;
-                }
-                clock.Stop();
-            }
-#endif
-
-            var id = resource.GetProperty<Id>(nameof(INamedIdentifiable.Id));
-            if (id is null) {
-                continue;
-            }
+            string id = FilePathToId(pPrefix, fullPath);
 
             if (Resources.TryGetValue(id, out string? existingPath)) {
-                Logger.Core.Error($"'{fullPath}' and '{existingPath}' have the same {typeof(T).Name} Id!");
+                Logger.Core.Error(
+                    $"Can't register '{fullPath}'. A resource with the same file name already exists at '{existingPath}'.");
                 continue;
             }
 
@@ -131,78 +124,72 @@ public sealed partial class ResourceDB : Node {
         }
     }
 
+    private static string FilePathToId(string pPrefix, string pFilePath) {
+        return pPrefix + pFilePath.GetBaseName().GetFile().ToSnakeCase();
+    }
+
 #if TOOLS
-    private static void ValidateGizmo(Gizmo pGizmo) {
-        bool foundSpellComponent = false;
-        bool foundChainSpellComponent = false;
+    private static void ValidateResources() {
+        foreach ((Id key, string fullPath) in Resources) {
+            string id = key.ToString();
 
-        foreach ((string _, GizmoComponent? value) in pGizmo.Components) {
-            switch (value) {
-                case ChainSpellComponent chainSpellComponent:
-                    foundChainSpellComponent = true;
-                    ValidateEffects(pGizmo, chainSpellComponent.Effects);
+            if (id.StartsWith(ItemPrefix) || id.StartsWith(SpellPrefix)) {
+                var gizmo = ResourceLoader.Load<Gizmo?>(fullPath);
 
-                    break;
-                case SpellComponent spellComponent:
-                    foundSpellComponent = true;
-                    ValidateEffects(pGizmo, spellComponent.Effects);
-                    break;
-                case null:
-                    Logger.Core.Warn($"{nameof(Gizmo)} '{pGizmo.ResourcePath}' has a null {nameof(GizmoComponent)}");
-                    break;
+                if (gizmo is null) {
+                    Logger.Core.Error(
+                        $"Could not load Resource from '{fullPath}'. It may not be a valid {nameof(Gizmo)}");
+                    continue;
+                }
+
+                ValidateGizmo(gizmo, key, fullPath);
+
+                Error error = ResourceSaver.Save(gizmo, fullPath);
+                if (error != Error.Ok) {
+                    Logger.Core.Error($"Could not save {nameof(Gizmo)} '{fullPath}'. Error code: {error}");
+                }
+            } else if (id.StartsWith(EffectPrefix)) {
+                var effect = ResourceLoader.Load<Effect?>(fullPath);
+
+                if (effect is null) {
+                    Logger.Core.Error(
+                        $"Could not load Resource from '{fullPath}'. It may not be a valid {nameof(Effect)}");
+                    continue;
+                }
+
+                ValidateEffectId(effect);
+                ValidateExcludingEffects(effect);
+
+                Error error = ResourceSaver.Save(effect, fullPath);
+                if (error != Error.Ok) {
+                    Logger.Core.Error($"Could not save {nameof(Effect)} '{fullPath}'. Error code: {error}");
+                }
+            } else {
+                Logger.Core.Error($"Unregistering resource of unknown type. Id = {id}, Path = {fullPath}");
             }
-        }
-
-        if (foundSpellComponent && foundChainSpellComponent) {
-            Logger.Core.Warn(
-                $"{nameof(Gizmo)} '{pGizmo.ResourcePath}' should not contain both {nameof(SpellComponent)} and {nameof(ChainSpellComponent)}.");
         }
     }
 
-    private static void ValidateEffects(Gizmo pGizmo, Effect?[] pEffects) {
-        foreach (Effect? effect in pEffects) {
-            if (effect is null) {
-                Logger.Core.Warn($"{nameof(Gizmo)} '{pGizmo.ResourcePath}' has a null {nameof(Effect)}.");
-                continue;
-            }
+    private static void ValidateGizmo(Gizmo pGizmo, Id pId, string pFilePath) {
+        ValidateGizmoId(pGizmo, pId, pFilePath);
 
-            if (effect.ResourcePath.Contains("::")) {
-                Logger.Core.Warn(
-                    $"{nameof(Gizmo)} '{pGizmo.ResourcePath}' should not have built-in {nameof(Effect)}(s). Instead save them to a file at '{SpellLocation}'.");
-                break;
-            }
-        }
+        ValidateGizmoComponents(pGizmo);
     }
 
-    private static void ValidateResourceId<T>(T pNamedResource, string pFilePath, string pPrefix)
-        where T : Resource, INamedIdentifiable {
-        var id = pNamedResource.GetProperty<Id>(nameof(INamedIdentifiable.Id));
-
-        if (id is null) {
-            Logger.Core.Error(
-                $"Resource '{pNamedResource.GetType().Name}' from '{pNamedResource.ResourceName}' has no valid Id property.");
-            return;
+    private static void ValidateGizmoId(Gizmo pGizmo, Id pId, string pFilePath) {
+        if (pGizmo.Id != pId) {
+            pGizmo.SetProperty(nameof(Gizmo.Id), pId);
         }
 
-        string idStr = id.ToString();
-        bool isIdEmpty = id.IsEmpty;
+        ValidateId(pId, pFilePath);
+    }
 
-        if (!idStr.StartsWith(pPrefix)) {
-            idStr = pPrefix + idStr;
-        }
-
-        if (isIdEmpty) {
-            string? name = pNamedResource.GetProperty<string>(nameof(INamedIdentifiable.DisplayName));
-            idStr = name?.Length > 0 ? idStr + name.ToSnakeCase() : idStr + pFilePath.GetBaseName().GetFile();
-        }
-
-        pNamedResource.SetProperty(nameof(INamedIdentifiable.Id), new Id(idStr));
-
+    private static void ValidateId(Id pId, string pFilePath) {
         int colonCount = 0;
         bool detectedUpperCase = false;
         bool detectedNonPrintableASCII = false;
 
-        foreach (char c in idStr) {
+        foreach (char c in pId.ToString()) {
             if (c == ':') {
                 ++colonCount;
             }
@@ -217,16 +204,111 @@ public sealed partial class ResourceDB : Node {
         }
 
         if (colonCount > 1) {
-            Logger.Core.Warn($"Id of '{pFilePath}' resource contains more than 1 colon!");
+            Logger.Core.Warn($"Id '{pId}' of '{pFilePath}' resource should not contain more than 1 colon!");
         }
 
         if (detectedUpperCase) {
-            Logger.Core.Warn($"Id of '{pFilePath}' resource contains upper case letters!");
+            Logger.Core.Warn($"Id '{pId}' of '{pFilePath}' resource should not contain upper case letters!");
         }
 
         if (detectedNonPrintableASCII) {
-            Logger.Core.Warn($"Id of '{pFilePath}' must contain only printable ASCII characters!");
+            Logger.Core.Warn($"Id '{pId}' of '{pFilePath}' must contain only printable ASCII characters!");
         }
     }
+
+    private static void ValidateGizmoComponents(Gizmo pGizmo) {
+        bool foundSpellComponent = false;
+        bool foundChainSpellComponent = false;
+
+        foreach ((string _, GizmoComponent? value) in pGizmo.Components) {
+            switch (value) {
+                case ChainSpellComponent chainSpellComponent:
+                    foundChainSpellComponent = true;
+
+                    ValidateEffects(pGizmo, chainSpellComponent.GetEffects());
+                    ValidateSpellsOfChainSpell(pGizmo, chainSpellComponent);
+                    ValidateLinkedSpells(pGizmo, chainSpellComponent);
+
+                    break;
+                case SpellComponent spellComponent:
+                    foundSpellComponent = true;
+
+                    ValidateEffects(pGizmo, spellComponent.GetEffects());
+                    ValidateLinkedSpells(pGizmo, spellComponent);
+
+                    break;
+                case null:
+                    Logger.Core.Warn($"{nameof(Gizmo)} '{pGizmo.ResourcePath}' has a null {nameof(GizmoComponent)}");
+                    break;
+            }
+        }
+
+        // Sanity check: since ChainSpellComponent and SpellComponent is weird, I need to warn myself to avoid making mistakes.
+        // ChainSpellComponent will take priority over SpellComponent!
+        if (foundSpellComponent && foundChainSpellComponent) {
+            Logger.Core.Warn(
+                $"{nameof(Gizmo)} '{pGizmo.ResourcePath}' should not contain both {nameof(SpellComponent)} and {nameof(ChainSpellComponent)}.");
+        }
+    }
+
+    private static void ValidateSpellsOfChainSpell(Gizmo pGizmo, ChainSpellComponent pChainSpellComponent) {
+        foreach (Gizmo spell in pChainSpellComponent.Spells) {
+            if (spell.ResourcePath.Contains("::")) {
+                Logger.Core.Warn(
+                    $"{nameof(ChainSpellComponent)} in {nameof(Gizmo)} '{pGizmo.ResourcePath}' should not have built-in Spell(s). Instead save them to a file at '{SpellLocation}'.");
+                break;
+            }
+        }
+    }
+
+    private static void ValidateLinkedSpells(Gizmo pGizmo, SpellComponent pSpellComponent) {
+        foreach (Id linkedSpell in pSpellComponent.LinkedSpells) {
+            if (!linkedSpell.ToString().StartsWith(SpellPrefix)) {
+                Logger.Core.Error(
+                    $"In {nameof(SpellComponent)} of '{pGizmo.ResourcePath}', linked spell '{linkedSpell}' does not start with '{SpellPrefix}' prefix.");
+                continue;
+            }
+
+            if (!Resources.ContainsKey(linkedSpell)) {
+                Logger.Core.Error(
+                    $"In {nameof(SpellComponent)} of '{pGizmo.ResourcePath}', linked spell '{linkedSpell}' have not been registered.");
+            }
+        }
+    }
+
+    private static void ValidateEffects(Gizmo pGizmo, Effect?[] pEffects) {
+        foreach (Effect? effect in pEffects) {
+            if (effect is null) {
+                Logger.Core.Warn($"{nameof(Gizmo)} '{pGizmo.ResourcePath}' has a null {nameof(Effect)}.");
+                continue;
+            }
+
+            if (effect.ResourcePath.Contains("::")) {
+                Logger.Core.Warn(
+                    $"{nameof(Gizmo)} '{pGizmo.ResourcePath}' should not have built-in {nameof(Effect)}(s). Instead save them to a file at '{EffectLocation}'.");
+                break;
+            }
+        }
+    }
+
+    private static void ValidateExcludingEffects(Effect pEffect) {
+        foreach (Id id in pEffect.ExcludingEffects) {
+            if (!id.ToString().StartsWith(EffectPrefix)) {
+                Logger.Core.Error($"In {nameof(Effect)} '{pEffect.Id}', excluded id is not an effect id '{id}'");
+            } else if (!Resources.ContainsKey(id)) {
+                Logger.Core.Error($"{nameof(Effect)} '{pEffect.Id}' is excluding an effect with unknown id '{id}'");
+            }
+        }
+    }
+
+    private static void ValidateEffectId(Effect pEffect) {
+        string id = FilePathToId(EffectPrefix, pEffect.ResourcePath);
+        if (pEffect.Id != id) {
+            pEffect.SetProperty(nameof(Effect.Id), new Id(id));
+        }
+
+        ValidateId(pEffect.Id, pEffect.ResourcePath);
+    }
+
 #endif
 }

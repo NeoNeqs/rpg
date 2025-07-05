@@ -2,6 +2,7 @@ using Godot;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
 using RPG.world;
+using RPG.world.character;
 
 namespace RPG.global.singletons;
 
@@ -30,6 +31,10 @@ public sealed partial class EventBus : Node {
     /// Emitted when the player selects an <see cref="Entity"/> with a mouse button.
     [Signal]
     public delegate void EntitySelectedEventHandler(Entity pEntity);
+
+    /// Emitted when <see cref="PlayerCharacter"/>'s current target changed
+    [Signal]
+    public delegate void PlayerTargetChangedEventHandler(PlayerCharacter pPlayerCharacter, Entity? pNewTarget);
     
     public static EventBus Instance = null!;
 
@@ -62,5 +67,9 @@ public sealed partial class EventBus : Node {
 
     public void EmitEntitySelectedEventHandler(Entity pEntity) {
         EmitSignalEntitySelected(pEntity);
+    }
+    
+    public void EmitPlayerTargetChanged(PlayerCharacter pPlayerCharacter, Entity? pNewTarget) {
+        EmitSignalPlayerTargetChanged(pPlayerCharacter, pNewTarget);
     }
 }

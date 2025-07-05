@@ -1,6 +1,8 @@
+using System;
 using Godot;
 using System.Collections.Generic;
 using RPG.global;
+using RPG.global.singletons;
 using RPG.scripts.effects;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
@@ -10,18 +12,36 @@ namespace RPG.scripts.combat;
 
 [GlobalClass]
 public partial class CombatManager : Node {
-    [Export]
-    public CombatSystem CombatSystem { private set; get; } = new();
+    [Signal]
+    public delegate void AppliedEffectEventHandler(Gizmo pEffectOwner, Effect pEffect);
+
+    [Signal]
+    public delegate void RemovedEffectEventHandler(Gizmo pEffectOwner, Effect pEffect);
+
+    [Signal]
+    public delegate void TargetChangedEventHandler(Entity pSource, Entity? pNewTarget);
+
+    [Export] public CombatSystem CombatSystem { private set; get; } = new();
 
     // Tracks currently targeted entity by player.
-    public Entity? TargetEntity { set; get; }
+    public Entity? TargetEntity {
+        set {
+            if (_targetEntity != value) {
+                EmitSignalTargetChanged(GetEntity(), value);
+            }
 
+            _targetEntity = value;
+        }
+        get => _targetEntity;
+    }
+
+    private Entity? _targetEntity;
     private CombatData CombatData => new(CombatSystem);
 
     // Keeps track of applied stacks for each `EffectComponent`, not `Effect`!
     // This has advantage of being able to define both StatEffectComponent and DamageEffectComponent on the same effect
     // and have the stacks be tracked separately.
-    private readonly Dictionary<StringName, Gizmo> _appliedEffects = [];
+    private readonly Dictionary<StringName, ValueTuple<Gizmo, Effect>> _appliedEffects = [];
 
     private readonly StatSystem _statSystem = new();
 
@@ -30,59 +50,59 @@ public partial class CombatManager : Node {
 
         _statSystem.LinkFromInventory(entity.Armory);
 
-        // ReSharper disable RedundantLambdaParameterType
         entity.BaseStatsAboutToChange += (Stats? pOld, Stats? pNew) => {
             _statSystem.Unlink(pOld);
             _statSystem.Link(pNew);
         };
-        // ReSharper restore RedundantLambdaParameterType
 
         CombatSystem.Initialize(_statSystem.Total);
     }
 
     public void Cast(Gizmo pGizmo, Entity? pTarget) {
         SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-        // Targets `pTarget` if it's not null otherwise takes current target, selected by the player
-        pTarget ??= TargetEntity;
 
-        // ReSharper disable once UseNullPropagation
-        if (spellComponent is not null) {
-            SpellComponent.CastResult result = spellComponent.Cast(pGizmo);
-            if (result == SpellComponent.CastResult.Ok) {
-                ApplyEffectsToTarget(pGizmo, spellComponent.Effects, pTarget, spellComponent.IsAoe);
-            }
-        }
-
-#if TOOLS
-        // Sanity check: since ChainSpellComponent and SpellComponent is weird, I need to warn myself to avoid making mistakes.
-        // ChainSpellComponent will take priority over SpellComponent!
-        if (spellComponent is ChainSpellComponent && pGizmo.GetComponent<SpellComponent>() is not null) {
-            Logger.Combat.Warn(
-                $"{nameof(Gizmo)} '{pGizmo.DisplayName}' has both {nameof(ChainSpellComponent)} and {nameof(SpellComponent)}. Spell will be cast through {nameof(ChainSpellComponent)} only and {nameof(SpellComponent)} will be ignored.");
-        }
-#endif
-    }
-
-    private void ApplyEffectsToTarget(Gizmo pEffectsOwner, Effect[] pEffects, Entity? pTarget, bool pIsAoe) {
-        foreach (Effect effect in pEffects) {
-            ApplyEffectToTargetEntity(pEffectsOwner, effect, pTarget, pIsAoe);
-        }
-    }
-
-    private void ApplyEffectToTargetEntity(Gizmo pEffectOwner, Effect pEffect, Entity? pTarget, bool pIsAoe) {
-        if (pEffect.IsTargetSelfOnly()) {
-            pTarget = GetEntity();
-            pIsAoe = pEffect.IsTargetAllies();
-        }
-
-        if (!IsInstanceValid(pTarget)) {
-            Logger.Combat.Debug($"No valid target to apply effects.");
+        if (spellComponent is null) {
             return;
         }
 
-        if (pIsAoe) {
-            foreach (Entity entityInRadius in pTarget.GetEntitiesInRadius(pEffect.Radius)) {
-                entityInRadius.CombatManager.ApplyEffect(pEffectOwner, pEffect, this);
+        // Targets `pTarget` if it's not null otherwise takes current target, selected by the player
+        pTarget ??= TargetEntity;
+
+        if (spellComponent.IsOnCooldown()) {
+            return;
+        }
+
+        ApplyEffectsToTarget(pGizmo, spellComponent.GetEffects(), pTarget);
+        HandleLinkedSpells(pGizmo, spellComponent);
+        // IMPORTANT: SpellComponent.Cast must be the last thing executed here so that UI can display spells 
+        //            and effects correctly.
+        spellComponent.Cast(pGizmo);
+    }
+
+    private void ApplyEffectsToTarget(Gizmo pEffectsOwner, Effect[] pEffects, Entity? pTarget) {
+        foreach (Effect effect in pEffects) {
+            ApplyEffectToTargetEntity(pEffectsOwner, effect, pTarget);
+        }
+    }
+
+    private void ApplyEffectToTargetEntity(Gizmo pEffectOwner, Effect pEffect, Entity? pTarget) {
+        if (pEffect.IsTargetSelfOnly()) {
+            pTarget = GetEntity();
+            // pIsAoe = pEffect.IsTargetAllies();
+        }
+
+        if (!IsInstanceValid(pTarget)) {
+            Logger.Combat.Debug("No valid target to apply effects.");
+            return;
+        }
+
+        if (pEffect.IsAoe) {
+            foreach (Entity entityInRadius in pTarget.GetEntitiesInRadius(pEffect.Radius, [])) {
+                bool isAlly = entityInRadius.Faction == GetEntity().Faction;
+
+                if ((isAlly && pEffect.IsTargetAllies()) || (!isAlly && !pEffect.IsTargetAllies())) {
+                    entityInRadius.CombatManager.ApplyEffect(pEffectOwner, pEffect, this);
+                }
             }
         } else {
             pTarget.CombatManager.ApplyEffect(pEffectOwner, pEffect, this);
@@ -90,9 +110,17 @@ public partial class CombatManager : Node {
     }
 
     private void ApplyEffect(Gizmo pEffectOwner, Effect pEffect, CombatManager pSource) {
-        // NOTE:
-        // Effect is a reference counted Resource. It means that if 2 different Entities receive the same effect it will not function properly.
-        // For every application of the Effect, Effect._currentTick must be separate.
+        // IMPORTANT: Since Effects are duplicated pEffect parameter is not the same as the one stored in _appliedEffects!
+
+        if (_appliedEffects.TryGetValue(pEffect.Id, out ValueTuple<Gizmo, Effect> actualData)) {
+            (Gizmo _, Effect actualEffect) = actualData;
+
+            actualEffect.Refresh();
+
+            return;
+        }
+
+        // IMPORTANT: Effects must be duplicated so that their logic is separate for each Entity that could use it.
         pEffect = (Effect)pEffect.Duplicate(false);
 
         Timer? timer = pEffect.Start();
@@ -100,27 +128,41 @@ public partial class CombatManager : Node {
         if (timer is null) {
             return;
         }
+        
+#if TOOLS
+        if (!timer.IsStopped()) {
+            Logger.Combat.Debug("This should not happen!", true);
+        }
+#endif
+
+        foreach (StringName excludingEffectId in pEffect.ExcludingEffects) {
+            if (!_appliedEffects.TryGetValue(excludingEffectId, out (Gizmo, Effect) value)) {
+                continue;
+            }
+
+            (Gizmo effectOwner, Effect effect) = value;
+            effect.CleanupAndFinish();
+            _appliedEffects.Remove(excludingEffectId);
+
+            EmitSignalRemovedEffect(effectOwner, effect);
+        }
 
         switch (pEffect) {
             case DamageEffect damageEffect:
-                // don't connect signals again
-                if (!_appliedEffects.ContainsKey(damageEffect.Id)) {
-                    damageEffect.Tick += () => OnDamageEffectTick(damageEffect, pSource);
-                    damageEffect.Finished += () => OnDamageEffectFinished(damageEffect, pSource);
-                    _appliedEffects[damageEffect.Id] = pEffectOwner;
-                }
+                damageEffect.Tick += () => OnDamageEffectTick(damageEffect, pSource);
+                damageEffect.Finished += () => OnDamageEffectFinished(damageEffect, pSource);
 
-                damageEffect.Stack();
+                _appliedEffects[damageEffect.Id] = (pEffectOwner, damageEffect);
+                EmitSignalAppliedEffect(pEffectOwner, damageEffect);
+
                 break;
             case StatEffect statEffect:
-                // don't connect signals again
-                if (!_appliedEffects.ContainsKey(statEffect.Id)) {
-                    statEffect.Tick += () => OnStatEffectTick(statEffect, pSource);
-                    statEffect.Finished += () => OnStatEffectFinished(statEffect, pSource);
-                    _appliedEffects[statEffect.Id] = pEffectOwner;
-                }
+                statEffect.Tick += () => OnStatEffectTick(statEffect, pSource);
+                statEffect.Finished += () => OnStatEffectFinished(statEffect, pSource);
+                
+                _appliedEffects[statEffect.Id] = (pEffectOwner, statEffect);
+                EmitSignalAppliedEffect(pEffectOwner, statEffect);
 
-                statEffect.Stack();
                 break;
         }
 
@@ -143,20 +185,49 @@ public partial class CombatManager : Node {
     }
 
     // ReSharper disable UnusedParameter.Local
-    private void OnStatEffectTick(StatEffect pEffect, CombatManager pSource) {
-        Logger.Combat.Debug("Applying effect");
-    }
+    private void OnStatEffectTick(StatEffect pEffect, CombatManager pSource) { }
 
     private void OnDamageEffectFinished(DamageEffect pDamageEffect, CombatManager pSource) {
         Logger.Combat.Debug(
             $"Damage effect {pDamageEffect.DisplayName} removed from {GetEntity().Name} applied by {pSource.GetEntity().Name}");
+
+        (Gizmo effectOwner, Effect effect) = _appliedEffects[pDamageEffect.Id];
+
         _appliedEffects.Remove(pDamageEffect.Id);
+        EmitSignalRemovedEffect(effectOwner, effect);
     }
 
     private void OnStatEffectFinished(StatEffect pStatEffect, CombatManager pSource) {
         Logger.Combat.Debug(
             $"Stat effect {pStatEffect.DisplayName} removed from {GetEntity().Name} applied by {pSource.GetEntity().Name}");
+
+        (Gizmo effectOwner, Effect effect) = _appliedEffects[pStatEffect.Id];
+
+        // TODO: remember do subtract the stats
+
         _appliedEffects.Remove(pStatEffect.Id);
+        EmitSignalRemovedEffect(effectOwner, effect);
+    }
+
+    private static void HandleLinkedSpells(Gizmo pSource, SpellComponent pSpellComponent) {
+        foreach (StringName linkedSpell in pSpellComponent.LinkedSpells) {
+            Gizmo? spell = ResourceDB.GetSpell(linkedSpell);
+            if (spell is null) {
+                continue;
+            }
+
+            SpellComponent? spellComponent = spell.GetComponent<SpellComponent, ChainSpellComponent>();
+            if (spellComponent is null) {
+                continue;
+            }
+
+            if (spell.Id == pSource.Id) {
+                continue;
+            }
+
+            spellComponent.LastCastTimeMicroseconds = Time.GetTicksUsec();
+            spellComponent.EmitCastComplete(spellComponent.CooldownSeconds * 1_000_000);
+        }
     }
 
     private Entity GetEntity() {

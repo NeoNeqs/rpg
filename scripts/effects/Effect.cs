@@ -1,14 +1,10 @@
-using System;
 using Godot;
 using Godot.Collections;
 using RPG.global;
+using RPG.global.enums;
 
 namespace RPG.scripts.effects;
 
-// TODO: I need to be able to apply an effect for 1 tick, but remove it after TickTimeout seconds! so the IsImmediate needs to come back.
-// TODO: Create test spells:
-//       - 20 second buff that modifies a stat Immediately and clears it only after 20 seconds have passed
-//       - Deadly Poison - stacking poison up to 5 times that deals 30 damage every 3 seconds
 [Tool, GlobalClass]
 public partial class Effect : Resource, INamedIdentifiable {
     [Signal]
@@ -16,21 +12,6 @@ public partial class Effect : Resource, INamedIdentifiable {
 
     [Signal]
     public delegate void FinishedEventHandler();
-
-    [Flags]
-    public enum EffectFlags : ulong {
-        TargetAllies = 1 << 0,
-        TargetSelfOnly = 1 << 1,
-
-        Instant = 1 << 15,
-    }
-
-// #if TOOLS
-//     if (value.IsEmpty) {
-//         _id = DisplayName.ToSnakeCase();
-//         return;
-//     }
-// #endif
 
     public StringName Id { private set; get; } = new("");
     public string DisplayName { private set; get; } = "";
@@ -41,26 +22,27 @@ public partial class Effect : Resource, INamedIdentifiable {
     public ushort TickTimeout { private set; get; } = 3;
 
     // Note: Ticks refers to the amount of applications of the effect
-    public short Ticks {
+    public short TotalTicks {
         private set {
-            _ticks = value;
-            _currentTick = value;
+            _totalTicks = value;
+            CurrentTick = value;
         }
-        get => _ticks;
+        get => _totalTicks;
     }
 
-    public double ApplicationChance { set; get; } = 1.0;
+    public float ApplicationChance { set; get; } = 1.0f;
 
-    // Radius=0 means it's not an Aoe effect, Radius > 0 means IT IS an Aoe effect
     public ushort Radius { private set; get; }
 
     public EffectFlags Flags { private set; get; }
 
+    public StringName[] ExcludingEffects { private set; get; } = [];
+
+    public bool IsAoe => Radius > 0;
     protected Timer? Timer { private set; get; }
 
-    // private StringName _id = new("");
-    private short _ticks = 1;
-    private short _currentTick = 1;
+    private short _totalTicks = 1;
+    protected short CurrentTick = 1;
 
     public Timer? Start() {
         if (!RNG.Roll(ApplicationChance)) {
@@ -83,34 +65,34 @@ public partial class Effect : Resource, INamedIdentifiable {
         return Timer;
     }
 
-    private bool IsInstant() {
-        return (Flags ^ EffectFlags.Instant) == 0;
+    public bool IsInstant() {
+        return Flags.HasFlag(EffectFlags.Instant);
     }
 
     public bool IsTargetSelfOnly() {
-        return (Flags ^ EffectFlags.TargetSelfOnly) == 0;
+        return Flags.HasFlag(EffectFlags.TargetSelfOnly);
     }
 
     public bool IsTargetAllies() {
-        return (Flags ^ EffectFlags.TargetAllies) == 0;
+        return Flags.HasFlag(EffectFlags.TargetAllies);
     }
 
     private void SetupPeriodicEffect() {
-        _currentTick--;
+        CurrentTick--;
 
-        if (_currentTick < 0) {
+        if (CurrentTick < 0) {
             CleanupAndFinish();
             return;
         }
 
         EmitSignalTick();
 
-        if (_currentTick == 0 && !IsInstant()) {
+        if ((CurrentTick == 0 && !IsInstant()) || (TotalTicks == 1 && IsInstant())) {
             CleanupAndFinish();
         }
     }
 
-    private void CleanupAndFinish() {
+    public void CleanupAndFinish() {
 #if TOOLS
         if (Timer is null) {
             Logger.Core.Critical("Timer should not be null here, but it is!", true);
@@ -120,6 +102,15 @@ public partial class Effect : Resource, INamedIdentifiable {
         Timer?.Stop();
         Timer?.QueueFree();
         EmitSignalFinished();
+    }
+
+    public virtual void Refresh() {
+        // Reset the timer since new stack was just applied
+        if (Timer?.IsInsideTree() ?? false) {
+            Timer.Start();
+        }
+
+        CurrentTick = TotalTicks;
     }
 
     public override Array<Dictionary> _GetPropertyList() {
@@ -149,7 +140,7 @@ public partial class Effect : Resource, INamedIdentifiable {
                 ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
             },
             new Dictionary() {
-                ["name"] = nameof(Ticks),
+                ["name"] = nameof(TotalTicks),
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Range),
                 ["hint_string"] = $"1, {short.MaxValue.ToString()}, 1",
@@ -174,6 +165,13 @@ public partial class Effect : Resource, INamedIdentifiable {
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Flags),
                 ["hint_string"] = Utils.EnumToHintString<EffectFlags>(),
+                ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
+            },
+            new Dictionary() {
+                ["name"] = nameof(ExcludingEffects),
+                ["type"] = Variant.From(Variant.Type.Array),
+                ["hint"] = Variant.From(PropertyHint.TypeString),
+                ["hint_string"] = $"{Variant.Type.StringName:D}:",
                 ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
             },
         ];

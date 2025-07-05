@@ -41,8 +41,6 @@ public partial class Inventory : Resource {
 
     private Array<GizmoStack> _gizmos = [];
 
-    // TODO: Not every view makes use of Columns property. Might be a good idea to make into a component, 
-    //       when more of those properties come up.
     [Export] public int Columns;
     [Export] public Array<GizmoComponent> AllowedComponents = null!;
     [Export] public InventoryFlags Flags;
@@ -101,6 +99,16 @@ public partial class Inventory : Resource {
         }
 
         return Swap(pFrom, pToInventory, pTo);
+    }
+
+    public Gizmo? FindById(StringName pId) {
+        foreach (GizmoStack gizmoStack in _gizmos) {
+            if (gizmoStack.Gizmo?.Id == pId) {
+                return gizmoStack.Gizmo;
+            }
+        }
+
+        return null;
     }
 
     public GizmoStack GetAt(int pIndex) {
@@ -286,6 +294,7 @@ public partial class Inventory : Resource {
             }
 #if TOOLS
             if (!Engine.IsEditorHint()) {
+                
                 if (_gizmos[i].Gizmo is not null) {
                     // For some reason compiler complains about null dereference here...
                     _gizmos[i].Gizmo = _gizmos[i].Gizmo?.Duplicate();

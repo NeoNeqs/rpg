@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=43 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
@@ -11,10 +11,9 @@
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="6_ggcj5"]
 [ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="6_lbca7"]
 [ext_resource type="Resource" uid="uid://dfebkmuinemk8" path="res://resources/spells/fire_ball.tres" id="7_g02qr"]
-[ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="8_xy7j0"]
+[ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="8_g02qr"]
 [ext_resource type="Resource" uid="uid://bcjqpuy8ck20l" path="res://resources/spells/instant_poison.tres" id="9_g02qr"]
 [ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="10_f1wg7"]
-[ext_resource type="Resource" uid="uid://daath6if84ulg" path="res://resources/spells/aspect_of_the_pack.tres" id="10_xy7j0"]
 [ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="11_m0gsu"]
 [ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="12_d882m"]
 [ext_resource type="Script" uid="uid://blcc2ydrwger3" path="res://world/character/AoeDecal.cs" id="15_d882m"]
@@ -33,8 +32,9 @@ metadata/_custom_type_script = "uid://b2yjmi2mufyqh"
 [sub_resource type="Resource" id="Resource_yux1m"]
 script = ExtResource("5_qdl7p")
 Effects = []
-CooldownSeconds = 0
+CooldownSeconds = 0.0
 Range = 1
+LinkedSpells = []
 metadata/_custom_type_script = "uid://bk27a6avfmj1x"
 
 [sub_resource type="Resource" id="Resource_d882m"]
@@ -45,14 +45,13 @@ AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_7k511"]
 script = ExtResource("2_c4acw")
-Gizmo = ExtResource("8_xy7j0")
+Gizmo = ExtResource("8_g02qr")
 Quantity = 1
 AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_g02qr"]
 script = ExtResource("2_c4acw")
-Gizmo = ExtResource("8_xy7j0")
-Quantity = 1
+Quantity = 0
 AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_xy7j0"]
@@ -63,8 +62,7 @@ AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_r2p0t"]
 script = ExtResource("2_c4acw")
-Gizmo = ExtResource("10_xy7j0")
-Quantity = 1
+Quantity = 0
 AllowedComponents = Array[ExtResource("6_ggcj5")]([])
 
 [sub_resource type="Resource" id="Resource_m6k5q"]
@@ -163,6 +161,7 @@ CombatManager = NodePath("CombatManager")
 Armory = SubResource("Resource_fn1hb")
 SpellBook = SubResource("Resource_s02qt")
 BaseStats = SubResource("Resource_f1wg7")
+Faction = 1
 
 [node name="Body" type="CharacterBody3D" parent="."]
 collision_layer = 2

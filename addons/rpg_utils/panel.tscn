@@ -43,13 +43,13 @@ popup/item_0/text = "(No log)"
 popup/item_0/id = 0
 popup/item_1/text = "godot.log"
 popup/item_1/id = 1
-popup/item_2/text = "godot2025-07-03T17.14.53.log"
+popup/item_2/text = "godot2025-07-03T17.20.07.log"
 popup/item_2/id = 2
-popup/item_3/text = "godot2025-07-03T17.19.11.log"
+popup/item_3/text = "godot2025-07-03T17.23.37.log"
 popup/item_3/id = 3
-popup/item_4/text = "godot2025-07-03T17.20.07.log"
+popup/item_4/text = "godot2025-07-03T23.55.28.log"
 popup/item_4/id = 4
-popup/item_5/text = "godot2025-07-03T17.23.37.log"
+popup/item_5/text = "godot2025-07-03T23.55.44.log"
 popup/item_5/id = 5
 
 [node name="Query" type="LineEdit" parent="Logs/CenterContainer/VBoxContainer/HBoxContainer"]

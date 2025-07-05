@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Godot;
 using RPG.scripts;
+using RPG.scripts.combat;
 using RPG.scripts.effects;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
@@ -33,7 +34,7 @@ internal sealed class StaticAssert {
     private byte _assert5 = nameof(DamageComponent.DamageType) == "DamageType" ? 0 : -1;
     private byte _assert6 = nameof(DamageComponent.Damage) == "Damage" ? 0 : -1;
 
-    private byte _assert7 = nameof(ItemComponent.Rarity) == "Rarity" ? 0 : -1;
+    private byte _assert7 = nameof(ItemComponent.ItemRarity) == "ItemRarity" ? 0 : -1;
     private byte _assert8 = nameof(ItemComponent.Level) == "Level" ? 0 : -1;
 
     private byte _assert9 = nameof(SpellComponent.Effects) == "Effects" ? 0 : -1;
@@ -45,7 +46,7 @@ internal sealed class StaticAssert {
     private byte _assert14 = nameof(Effect.DisplayName) == "DisplayName" ? 0 : -1;
     private byte _assert15 = nameof(Effect.Icon) == "Icon" ? 0 : -1;
     private byte _assert16 = nameof(Effect.TickTimeout) == "TickTimeout" ? 0 : -1;
-    private byte _assert17 = nameof(Effect.Ticks) == "Ticks" ? 0 : -1;
+    private byte _assert17 = nameof(Effect.TotalTicks) == "TotalTicks" ? 0 : -1;
     private byte _assert18 = nameof(Effect.ApplicationChance) == "ApplicationChance" ? 0 : -1;
     private byte _assert19 = nameof(Effect.Radius) == "Radius" ? 0 : -1;
     private byte _assert20 = nameof(Effect.Flags) == "Flags" ? 0 : -1;

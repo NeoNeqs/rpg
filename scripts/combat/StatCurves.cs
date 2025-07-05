@@ -52,7 +52,6 @@ public partial class StatCurves : Resource {
         return NaturePenetrationCurve.Sample(pNatureRes);
     }
     
-    
 #if TOOLS
     static StatCurves() {
         Tools.Assert(DefaultReductionCurve is not null, $"Missing {nameof(DefaultReductionCurve)}.");
