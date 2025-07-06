@@ -7,6 +7,9 @@ namespace RPG.scripts.inventory;
 
 [Tool, GlobalClass]
 public partial class GizmoStack : Resource {
+    
+    // DO NOT TOUCH THIS CLASS!
+    
     [Export]
     public Gizmo? Gizmo {
         set {

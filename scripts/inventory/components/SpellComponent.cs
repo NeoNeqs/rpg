@@ -71,15 +71,16 @@ public partial class SpellComponent : GizmoComponent {
     public virtual ushort GetRange() {
         return Range;
     }
-
+    
+ 
     public bool IsCastCompleteConnected(Action<float> pAction) {
         return IsConnected(SignalName.CastComplete, Callable.From(pAction));
     }
-
+    
     public void DisconnectCastComplete(Action<float> pAction) {
         Disconnect(SignalName.CastComplete, Callable.From(pAction));
     }
-
+    
     public Error ConnectCastComplete(Action<float> pAction) {
         return Connect(SignalName.CastComplete, Callable.From(pAction));
     }

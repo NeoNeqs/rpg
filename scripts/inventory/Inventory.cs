@@ -12,7 +12,7 @@ namespace RPG.scripts.inventory;
 /// <para>2. <see cref="GizmoStack"/> never changes the position.</para>
 /// </summary>
 [Tool, GlobalClass]
-public partial class Inventory : Resource {
+public partial class Inventory : Resource, IContainer<GizmoStack> {
     [Signal]
     public delegate void GizmoAboutToChangeEventHandler(GizmoStack pGizmo, int pIndex);
 

@@ -79,15 +79,15 @@ public sealed partial class ResourceDB : Node {
         Logger.Core.Info("Done: Loading Resource Database.");
 
 #if TOOLS
-        Logger.Core.Info("Validating Resource Database.");
-
-        // IMPORTANT: Validation must happen during editor hint, otherwise ResourceSaver will not save resources correctly.
         if (Engine.IsEditorHint()) {
+            Logger.Core.Info("Validating Resource Database.");
+
+            // IMPORTANT: Validation must happen during editor hint, otherwise ResourceSaver will not save resources correctly.
             using var clock = new Clock(_instance, "Resource Validation", true);
             ValidateResources();
-        }
 
-        Logger.Core.Info("Done: Validating Resource Database.");
+            Logger.Core.Info("Done: Validating Resource Database.");
+        }
 #endif
     }
 

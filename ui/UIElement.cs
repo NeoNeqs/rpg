@@ -6,6 +6,9 @@ namespace RPG.ui;
 public partial class UIElement : PanelContainer {
     private bool _dragEnabled = false;
 
+    public override void _Ready() {
+    }
+
     public override void _GuiInput(InputEvent pEvent) {
         switch (pEvent) {
             case InputEventMouseButton { ButtonIndex: MouseButton.Left } eventMouseButton: {

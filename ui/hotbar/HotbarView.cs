@@ -7,7 +7,7 @@ using EventBus = RPG.global.singletons.EventBus;
 namespace RPG.ui.hotbar;
 
 public partial class HotbarView : ItemView {
-    private static int _hotbarCounter = 0;
+    private static int _hotbarCounter;
 
     private int _hotbarId;
 
@@ -20,8 +20,8 @@ public partial class HotbarView : ItemView {
         _hotbarId = _hotbarCounter++;
     }
 
-    public override void SetData(Inventory pInventory) {
-        base.SetData(pInventory);
+    public override void InitializeWith(Inventory? pInventory) {
+        base.InitializeWith(pInventory);
 
         SetupDefaultKeybinds();
     }
@@ -39,7 +39,11 @@ public partial class HotbarView : ItemView {
             return;
         }
 
-        int size = Mathf.Min(Inventory.GetSize(), PrimaryKeys.Length);
+        if (Container is null) {
+            return;
+        }
+
+        int size = Mathf.Min(Container.GetSize(), PrimaryKeys.Length);
 
         for (int i = 0; i < size; i++) {
             StringName action = new($"hotbar_{_hotbarId}_{i}");
@@ -47,7 +51,7 @@ public partial class HotbarView : ItemView {
                 continue;
             }
 
-            GizmoStack gizmoStack = Inventory.GetAt(i);
+            GizmoStack gizmoStack = Container.GetAt(i);
             if (gizmoStack.Gizmo is null) {
                 break;
             }
@@ -66,7 +70,11 @@ public partial class HotbarView : ItemView {
             return;
         }
 #endif
-        int size = Mathf.Min(Inventory.GetSize(), PrimaryKeys.Length);
+        if (Container is null) {
+            return;
+        }
+        
+        int size = Mathf.Min(Container.GetSize(), PrimaryKeys.Length);
 
         for (int i = 0; i < size; i++) {
             StringName action = new($"hotbar_{_hotbarId}_{i}");
@@ -88,6 +96,5 @@ public partial class HotbarView : ItemView {
         }
     }
 
-
-    protected override void SetupContainer() { }
+    protected override void SetupHolder() { }
 }

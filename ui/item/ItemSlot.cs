@@ -9,6 +9,7 @@ public partial class ItemSlot : InventorySlot {
     [Export] private Panel _borderHolder = null!;
 
     public override void Update(GizmoStack? pGizmoStack) {
+        base.Update(pGizmoStack);
         if (pGizmoStack?.Gizmo is null) {
             SetBorderColor(Colors.Black);
             IconHolder.Texture = null;

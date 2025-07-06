@@ -45,9 +45,9 @@ public partial class InventoryManager : Control {
                     break;
             }
         }
-        sv.Inventory.SetAt(2, ResourceDB.GetSpell("spell:fire_bomb"));
-        sv.Inventory.HandleGizmoAction(0, hv.Inventory, 0, true);
-        sv.Inventory.HandleGizmoAction(1, hv.Inventory, 1, true);
+        sv.GetInventory().SetAt(2, ResourceDB.GetSpell("spell:fire_bomb"));
+        sv.GetInventory().HandleGizmoAction(0, hv.GetInventory(), 0, true);
+        sv.GetInventory().HandleGizmoAction(1, hv.GetInventory(), 1, true);
 #endif
     }
 
@@ -66,66 +66,70 @@ public partial class InventoryManager : Control {
         view.Position = new Vector2(400, 200);
     }
 
-    private void CreateStatView(Stats pStats, string pTitle) {
-        StatView statView = AssetDB.StatView.Instantiate<StatView>();
-
-        statView.SetData(pStats, pTitle);
-
-        AddChild(statView);
-    }
+    // private void CreateStatView(Stats pStats, string pTitle) {
+    //     var statView = AssetDB.StatView.Instantiate<StatView>();
+    //
+    //     statView.SetData(pStats, pTitle);
+    //
+    //     AddChild(statView);
+    // }
 
     private T CreateInventoryView<T>(Inventory pInventory, PackedScene pViewScene) where T : InventoryView {
-        T? itemView = pViewScene.Instantiate<T>();
+        var inventoryView = pViewScene.Instantiate<T>();
 
-        itemView.SetData(pInventory);
-        itemView.Position = new Vector2(200, 200);
-        itemView.SlotPressed += OnSlotPressed;
-        itemView.SlotHovered += OnSlotHovered;
-        itemView.SlotUnhovered += OnSlotUnhovered;
-        AddChild(itemView);
+        inventoryView.InitializeWith(pInventory);
+        inventoryView.Position = new Vector2(200, 200);
+        inventoryView.SlotPressed += OnSlotPressed;
+        inventoryView.SlotHovered += OnSlotHovered;
+        inventoryView.SlotUnhovered += OnSlotUnhovered;
+        AddChild(inventoryView);
 
-        return itemView;
+        return inventoryView;
     }
 
-    private void OnSlotPressed(InventoryView pSourceView, InventorySlot pSlot, bool pIsRightClick) {
+    private void OnSlotPressed(View<GizmoStack> pSourceView, Slot pSlot, bool pIsRightClick) {
         // if (MouseStateMachine.CurrentState != MouseStateMachine.State.UIControl) {
         //     return;
         // }
+        if (pSourceView is InventoryView inventoryView && pSlot is InventorySlot inventorySlot) {
+            if (!IsSelected()) {
+                Select(inventoryView, inventorySlot);
+                return;
+            }
 
-        if (!IsSelected()) {
-            Select(pSourceView, pSlot);
-            return;
-        }
+            Inventory.ActionResult result = _selectedInventoryView!.GetInventory().HandleGizmoAction(
+                _selectedSlotIndex,
+                inventoryView.GetInventory(),
+                pSlot.GetIndex(),
+                pIsRightClick
+            );
 
-        Inventory.ActionResult result = _selectedInventoryView!.Inventory.HandleGizmoAction(
-            _selectedSlotIndex,
-            pSourceView.Inventory,
-            pSlot.GetIndex(),
-            pIsRightClick
-        );
+            switch (result) {
+                case Inventory.ActionResult.None:
+                    Unselect(inventoryView, inventorySlot);
+                    break;
+                case Inventory.ActionResult.Leftover:
+                    GizmoStack selectedGizmoStack = _selectedInventoryView.GetInventory().GetAt(_selectedSlotIndex);
+                    _dragSlot.Update(selectedGizmoStack);
 
-        switch (result) {
-            case Inventory.ActionResult.None:
-                Unselect(pSourceView, pSlot);
-                break;
-            case Inventory.ActionResult.Leftover:
-                GizmoStack selectedGizmoStack = _selectedInventoryView.Inventory.GetAt(_selectedSlotIndex);
-                _dragSlot.Update(selectedGizmoStack);
-
-                GizmoStack pressedGizmoStack = pSourceView.Inventory.GetAt(pSlot.GetIndex());
-                pSlot.Update(pressedGizmoStack);
-                break;
-            default:
-                Logger.UI.Error($"Unhandled ActionResult {result.ToString()}.", true);
-                break;
-        }
+                    GizmoStack pressedGizmoStack = inventoryView.GetInventory().GetAt(pSlot.GetIndex());
+                    inventorySlot.Update(pressedGizmoStack);
+                    break;
+                default:
+                    Logger.UI.Error($"Unhandled ActionResult {result.ToString()}.", true);
+                    break;
+            }
+        } 
+        else {
+            Logger.UI.Error("null", true);
+        } 
     }
 
     private void DeleteSelectedGizmo() {
         if (IsSelected()) {
-            bool isDeleted = _selectedInventoryView!.Inventory.Delete(_selectedSlotIndex);
+            bool isDeleted = _selectedInventoryView!.GetInventory().Delete(_selectedSlotIndex);
             if (isDeleted) {
-                Unselect(_selectedInventoryView!, _selectedInventoryView?.GetSlot(_selectedSlotIndex)!);
+                Unselect(_selectedInventoryView!, _selectedInventoryView?.GetSlot<InventorySlot>(_selectedSlotIndex)!);
             }
         }
     }
@@ -133,7 +137,7 @@ public partial class InventoryManager : Control {
     private void Select(InventoryView pSourceView, InventorySlot pSlot) {
         int slotIndex = pSlot.GetIndex();
 
-        GizmoStack gizmoStack = pSourceView.Inventory.GetAt(slotIndex);
+        GizmoStack gizmoStack = pSourceView.GetInventory().GetAt(slotIndex);
 
         if (gizmoStack.Quantity == 0) {
             return;
@@ -151,12 +155,11 @@ public partial class InventoryManager : Control {
 
     private void Unselect(InventoryView pSourceView, InventorySlot pSlot) {
         if (MouseStateMachine.Instance.RequestState(MouseStateMachine.State.Free)) {
-            InventorySlot? selectedSlot = _selectedInventoryView?.GetSlot(_selectedSlotIndex);
+            var selectedSlot = _selectedInventoryView?.GetSlot<InventorySlot>(_selectedSlotIndex);
 
             selectedSlot?.Unselect();
-            // selectedSlot.Update(_selectedInventoryView?.Inventory.At(_selectedSlotIndex));
 
-            GizmoStack gizmoStack = pSourceView.Inventory.GetAt(pSlot.GetIndex());
+            GizmoStack gizmoStack = pSourceView.GetInventory().GetAt(pSlot.GetIndex());
             _tooltip.Update(gizmoStack);
             _dragSlot.Update(null);
 
@@ -165,12 +168,17 @@ public partial class InventoryManager : Control {
         }
     }
 
-    private void OnSlotHovered(InventoryView pSourceView, InventorySlot pSlot) {
+    private void OnSlotHovered(View<GizmoStack> pSourceView, Slot pSlot) {
+        if (pSourceView is not InventoryView inventoryView || pSlot is not InventorySlot inventorySlot) {
+            Logger.UI.Error("null", true);
+            return;
+        }
+        
         if (IsSelected()) {
             return;
         }
 
-        _tooltip.Update(pSourceView.Inventory.GetAt(pSlot.GetIndex()));
+        _tooltip.Update(inventoryView.GetInventory().GetAt(pSlot.GetIndex()));
     }
 
     private void OnSlotUnhovered() {

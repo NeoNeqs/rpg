@@ -65,6 +65,20 @@ public partial class Effect : Resource, INamedIdentifiable {
         return Timer;
     }
 
+
+    public float GetTimeLeft() {
+        float timeLeft = (CurrentTick - 1) * TickTimeout;
+        if (IsInstanceValid(Timer)) {
+            timeLeft += (float)Timer.TimeLeft;
+        }
+
+        if (timeLeft < 0.0f) {
+            return 0.0f;
+        }
+
+        return timeLeft;
+    }
+
     public bool IsInstant() {
         return Flags.HasFlag(EffectFlags.Instant);
     }

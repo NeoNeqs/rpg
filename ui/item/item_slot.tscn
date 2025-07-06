@@ -1,7 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://b7xu5k302lfn1"]
+[gd_scene load_steps=11 format=3 uid="uid://b7xu5k302lfn1"]
 
 [ext_resource type="Script" uid="uid://cexowsi487thm" path="res://ui/item/ItemSlot.cs" id="1_mhayv"]
-[ext_resource type="Script" uid="uid://b5hosqg80wnwb" path="res://ui/CooldownDisplay.cs" id="2_mhayv"]
+[ext_resource type="PackedScene" uid="uid://800667rugwug" path="res://ui/cooldown_display.tscn" id="2_mhayv"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="3_fdv6p"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]
@@ -30,12 +30,6 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 texture = SubResource("GradientTexture2D_3nf06")
-
-[sub_resource type="Gradient" id="Gradient_nqyqr"]
-colors = PackedColorArray(0, 0, 0, 0.470588, 0, 0, 0, 0.470588)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_feaih"]
-gradient = SubResource("Gradient_nqyqr")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e5rcf"]
 resource_local_to_scene = true
@@ -77,19 +71,8 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 
-[node name="CooldownDisplay" type="TextureProgressBar" parent="TextureRect"]
+[node name="CooldownDisplay" parent="TextureRect" instance=ExtResource("2_mhayv")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-step = 0.1
-fill_mode = 5
-nine_patch_stretch = true
-texture_progress = SubResource("GradientTexture2D_feaih")
-script = ExtResource("2_mhayv")
 
 [node name="Border" type="Panel" parent="."]
 layout_mode = 1

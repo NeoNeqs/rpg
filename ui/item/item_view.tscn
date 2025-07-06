@@ -12,12 +12,12 @@ texture_margin_right = 36.0
 texture_margin_bottom = 36.0
 modulate_color = Color(0.054902, 0.054902, 0.054902, 0.823529)
 
-[node name="ItemView" type="PanelContainer" node_paths=PackedStringArray("Container")]
+[node name="ItemView" type="PanelContainer" node_paths=PackedStringArray("SlotHolder")]
 offset_right = 164.0
 offset_bottom = 104.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_vl0br")
 script = ExtResource("2_g8v31")
-Container = NodePath("Grid")
+SlotHolder = NodePath("Grid")
 SlotScene = ExtResource("3_qpt2n")
 
 [node name="Grid" type="GridContainer" parent="."]

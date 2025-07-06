@@ -6,128 +6,256 @@ using RPG.scripts.inventory.components;
 
 namespace RPG.ui.inventory;
 
-public abstract partial class InventoryView : View {
-    [Signal]
-    public delegate void SlotPressedEventHandler(InventoryView pSourceView, InventorySlot pSlot, bool pIsRightClick);
+public abstract partial class InventoryView : View<GizmoStack> {
+    
+    public virtual void InitializeWith(Inventory? pContainer) {
+        if (Container == pContainer) {
+            return;
+        }
 
-    [Signal]
-    public delegate void SlotHoveredEventHandler(InventoryView pSourceView, InventorySlot pSlot);
+        if (pContainer is null) {
+            return;
+        }
 
-    [Signal]
-    public delegate void SlotUnhoveredEventHandler();
+        // Disconnect old signals
+        if (Container is Inventory inventory) {
+            inventory.SizeChanged -= OnInventorySizeChanged;
+            inventory.GizmoAboutToChange -= OnInventoryGizmoAboutToChange;
+            inventory.GizmoChanged -= OnInventoryGizmoChanged;
+        }
 
+        Container = pContainer;
 
-    [Export] public Container Container = null!;
-    [Export] public PackedScene SlotScene = null!;
-    public Inventory Inventory = null!;
+        GetInventory().SizeChanged += OnInventorySizeChanged;
+        GetInventory().GizmoAboutToChange += OnInventoryGizmoAboutToChange;
+        GetInventory().GizmoChanged += OnInventoryGizmoChanged;
 
-    public virtual void SetData(Inventory pInventory) {
-        Inventory = pInventory;
-        Inventory.SizeChanged += OnInventorySizeChanged;
-        Inventory.GizmoAboutToChange += OnInventoryGizmoAboutToChange;
-        Inventory.GizmoChanged += OnInventoryGizmoUpdate;
-        
-
-        SetupContainer();
-        ResizeContainer();
+        SetupHolder();
+        ResizeHolder();
     }
 
     private void OnInventoryGizmoAboutToChange(GizmoStack pGizmoStack, int pIndex) {
-        InventorySlot? slot = GetSlot(pIndex);
+        var slot = GetSlot<InventorySlot>(pIndex);
         if (pGizmoStack.Gizmo is null || slot is null) {
             return;
         }
 
-        RewireGizmo(pGizmoStack, slot);
+        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
 
-        // SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-        // if (spellComponent is not null) {
-        //     spellComponent.CastComplete -= slot.SetOnCooldown;
-        // }
-
-        slot.ResetCooldown();
+        if (spellComponent is null) {
+            UpdateSlot(pGizmoStack, slot, 0.0f);
+            return;
+        }
+        
+        if (spellComponent.IsCastCompleteConnected(slot.CastCompleteCallback)) {
+            spellComponent.DisconnectCastComplete(slot.CastCompleteCallback);
+        }
+        
+        UpdateSlot(pGizmoStack, slot, spellComponent.GetRemainingCooldown());
     }
 
-    public InventorySlot? GetSlot(int pIndex) {
-        return Container.GetChildOrNull<InventorySlot>(pIndex);
-    }
-
-    protected abstract void SetupContainer();
-
-    private void OnInventorySizeChanged() {
-        ResizeContainer();
-    }
-
-    private void OnInventoryGizmoUpdate(GizmoStack pGizmoStack, int pIndex) {
-        InventorySlot? slot = GetSlot(pIndex);
+    private void OnInventoryGizmoChanged(GizmoStack pGizmoStack, int pIndex) {
+        var slot = GetSlot<InventorySlot>(pIndex);
 
         if (slot is null) {
-            Logger.Inventory.Error($"BUG! Slot with an index {pIndex} does not exist.", true);
+            Logger.Inventory.Critical($"BUG! Slot with an index {pIndex} does not exist.", true);
             return;
         }
 
-        RewireGizmo(pGizmoStack, slot);
+        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+
+        if (spellComponent is null) {
+            UpdateSlot(pGizmoStack, slot, 0.0f);
+            return;
+        }
+        
+        var error = spellComponent.ConnectCastComplete(slot.CastCompleteCallback);
+        UpdateSlot(pGizmoStack, slot, spellComponent.GetRemainingCooldown());
     }
 
-    protected virtual void ResizeContainer() {
-        int oldSize = Container.GetChildCount();
-        int newSize = Inventory.GetSize();
-
-        int slotsToAdd = Math.Max(0, newSize - oldSize);
-        int slotsToRemove = Math.Max(0, oldSize - newSize);
-
-        for (int i = 0; i < slotsToAdd; i++) {
-            AddSlot(Inventory.GetAt(oldSize + i));
-        }
-
-        for (int i = 0; i < slotsToRemove; i++) {
-            var slot = Container.GetChildOrNull<Node?>(oldSize - 1 - i);
-            slot?.QueueFree();
-        }
-
-        // Shrink container to tightly fit all the slots
-        Size = CustomMinimumSize;
+    private void OnInventorySizeChanged() {
+        ResizeHolder();
     }
 
-    private void AddSlot(GizmoStack pGizmoStack) {
+    protected override void AddSlot(int pIndex) {
+        if (Container is null) {
+            Logger.UI.Critical("BUG! Container should not be null here!", true);
+            return;
+        }
+
+        GizmoStack gizmoStack = Container.GetAt(pIndex);
         var slot = SlotScene.Instantiate<InventorySlot>();
-        slot.Update(pGizmoStack);
+
+        slot.Update(gizmoStack);
+        // TODO: those signals won't be ever disconnected...
+        // https://docs.godotengine.org/en/4.4/tutorials/scripting/c_sharp/c_sharp_signals.html
         slot.LeftMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, false);
         slot.RightMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, true);
         slot.Hovered += () => EmitSignalSlotHovered(this, slot);
         slot.Unhovered += EmitSignalSlotUnhovered;
-        Container.AddChild(slot);
-
-        RewireGizmo(pGizmoStack, slot);
-    }
-
-    private void RewireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
-        Action<float> castCompleteCallback = (float pCooldownSeconds) => {
-            UpdateSlot(pGizmoStack, pSlot, pCooldownSeconds);
+        SlotHolder.AddChild(slot);
+        
+        slot.CastCompleteCallback = (float pCooldownSeconds) => {
+            UpdateSlot(gizmoStack, slot, pCooldownSeconds);
         };
-        
-        // Disconnect old signal...
-        GizmoStack currentGizmoStack = Inventory.GetAt(pSlot.GetIndex());
-        
-        SpellComponent? currentSpellComponent = currentGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
-        if (currentSpellComponent != null && currentSpellComponent.IsCastCompleteConnected(castCompleteCallback)) {
-            currentSpellComponent.DisconnectCastComplete(castCompleteCallback);
-        }
 
-        if (pGizmoStack.Gizmo is null) {
-            UpdateSlot(pGizmoStack, pSlot, 0.0f);
+        SpellComponent? spellComponent = gizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+
+        if (spellComponent is null) {
+            UpdateSlot(gizmoStack, slot, 0.0f);
             return;
         }
-
-        // ...and connect new
-        SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-        Error? error = spellComponent?.ConnectCastComplete(castCompleteCallback);
         
-        if (error is not null && error != Error.Ok) {
-            Logger.UI.Error($"Could not connect signal {SpellComponent.SignalName.CastComplete}. Error code: {error}", true);
-        }
+        spellComponent.ConnectCastComplete(slot.CastCompleteCallback);
+    }
 
-        UpdateSlot(pGizmoStack, pSlot, spellComponent?.GetRemainingCooldown() ?? 0.0f);
+    // public static void Rewire(GizmoStack pGizmoStack, InventorySlot pSlot, bool flag) {
+    //     Action<float> a = (float pCooldownSeconds) => {
+    //         UpdateSlot(pGizmoStack, pSlot, pCooldownSeconds);
+    //     };
+    //     
+    //     Callable castCompleteCallback = Callable.From(a);
+    //
+    //     if (pGizmoStack.Gizmo is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         return;
+    //     }
+    //     
+    //     SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+    //
+    //     if (spellComponent is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         return;
+    //     }
+    //
+    //     if (flag) {
+    //         if (spellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+    //             UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //             return;
+    //         }
+    //
+    //         Error? error = spellComponent.ConnectCastComplete(castCompleteCallback);
+    //         if (error != Error.Ok) {
+    //             Logger.UI.Error($"Could not connect signal {SpellComponent.SignalName.CastComplete}. Error code: {error}",
+    //                 true);
+    //             UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //             return;
+    //         }
+    //         GD.Print($"Wired: {pSlot.GetIndex()}");
+    //
+    //         UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //     } else {
+    //         if (!spellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+    //             UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //             return;
+    //         }
+    //         GD.Print($"Unwired: {pSlot.GetIndex()}");
+    //         spellComponent.DisconnectCastComplete(castCompleteCallback);
+    //     }
+    // }
+    
+
+    // protected static void WireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
+    //     Action<float> castCompleteCallback = (float pCooldownSeconds) => {
+    //         UpdateSlot(pGizmoStack, pSlot, pCooldownSeconds);
+    //     };
+    //
+    //     if (pGizmoStack.Gizmo is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         return;
+    //     }
+    //
+    //     SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+    //     if (spellComponent is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         return;
+    //     }
+    //
+    //     if (spellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+    //         UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //         return;
+    //     }
+    //
+    //     Error? error = spellComponent.ConnectCastComplete(castCompleteCallback);
+    //     if (error != Error.Ok) {
+    //         Logger.UI.Error($"Could not connect signal {SpellComponent.SignalName.CastComplete}. Error code: {error}",
+    //             true);
+    //         UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //         return;
+    //     }
+    //     GD.Print($"Wired: {pSlot.GetIndex()}");
+    //
+    //     UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    // }
+    //
+    // protected static void UnwireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
+    //     
+    //     Action<float> castCompleteCallback = (float pCooldownSeconds) => {
+    //         UpdateSlot(pGizmoStack, pSlot, pCooldownSeconds);
+    //     };
+    //
+    //     if (pGizmoStack.Gizmo is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         // GD.Print("a");
+    //         return;
+    //     }
+    //
+    //     SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+    //
+    //     if (spellComponent is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         // GD.Print("b");
+    //         return;
+    //     }
+    //
+    //     if (!spellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+    //         UpdateSlot(pGizmoStack, pSlot, spellComponent.GetRemainingCooldown());
+    //         // GD.Print("c");
+    //         return;
+    //     }
+    //     GD.Print($"Unwired: {pSlot.GetIndex()}");
+    //     spellComponent.DisconnectCastComplete(castCompleteCallback);
+    // }
+
+    // private void RewireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
+    //     if (Container is null) {
+    //         Logger.UI.Critical("BUG! Container should not be null here!", true);
+    //         return;
+    //     }
+    //
+    //     Action<float> castCompleteCallback = (float pCooldownSeconds) => {
+    //         UpdateSlot(pGizmoStack, pSlot, pCooldownSeconds);
+    //     };
+    //
+    //     GizmoStack currentGizmoStack = Container.GetAt(pSlot.GetIndex());
+    //     Gizmo? currentGizmo = currentGizmoStack.Gizmo;
+    //
+    //     SpellComponent? currentSpellComponent = currentGizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+    //
+    //     // Disconnect old signal...
+    //     if (currentSpellComponent != null && currentSpellComponent.IsCastCompleteConnected(castCompleteCallback)) {
+    //         currentSpellComponent.DisconnectCastComplete(castCompleteCallback);
+    //     }
+    //
+    //     if (pGizmoStack.Gizmo is null) {
+    //         UpdateSlot(pGizmoStack, pSlot, 0.0f);
+    //         return;
+    //     }
+    //
+    //     // ...and connect new
+    //     SpellComponent? spellComponent = pGizmoStack.Gizmo.GetComponent<SpellComponent, ChainSpellComponent>();
+    //     Error? error = spellComponent?.ConnectCastComplete(castCompleteCallback);
+    //
+    //     if (error is not null && error != Error.Ok) {
+    //         Logger.UI.Error($"Could not connect signal {SpellComponent.SignalName.CastComplete}. Error code: {error}",
+    //             true);
+    //     }
+    //
+    //     UpdateSlot(pGizmoStack, pSlot, spellComponent?.GetRemainingCooldown() ?? 0.0f);
+    // }
+
+    public Inventory GetInventory() {
+        return (Inventory)Container!;
     }
 
     private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, float pCooldownSeconds) {

@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using RPG.global;
 using RPG.global.singletons;
 using RPG.scripts.effects;
@@ -11,7 +12,7 @@ using RPG.world;
 namespace RPG.scripts.combat;
 
 [GlobalClass]
-public partial class CombatManager : Node {
+public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
     [Signal]
     public delegate void AppliedEffectEventHandler(Gizmo pEffectOwner, Effect pEffect);
 
@@ -41,8 +42,8 @@ public partial class CombatManager : Node {
     // Keeps track of applied stacks for each `EffectComponent`, not `Effect`!
     // This has advantage of being able to define both StatEffectComponent and DamageEffectComponent on the same effect
     // and have the stacks be tracked separately.
-    private readonly Dictionary<StringName, ValueTuple<Gizmo, Effect>> _appliedEffects = [];
-
+    private readonly OrderedDictionary<StringName, (Gizmo, Effect)> _appliedEffects = [];
+    
     private readonly StatSystem _statSystem = new();
 
     public override void _EnterTree() {
@@ -56,6 +57,10 @@ public partial class CombatManager : Node {
         };
 
         CombatSystem.Initialize(_statSystem.Total);
+    }
+
+    public ReadOnlyDictionary<StringName, (Gizmo, Effect)> GetAppliedEffects() {
+        return _appliedEffects.AsReadOnly<StringName, (Gizmo, Effect)>();
     }
 
     public void Cast(Gizmo pGizmo, Entity? pTarget) {
@@ -116,7 +121,6 @@ public partial class CombatManager : Node {
             (Gizmo _, Effect actualEffect) = actualData;
 
             actualEffect.Refresh();
-
             return;
         }
 
@@ -128,7 +132,7 @@ public partial class CombatManager : Node {
         if (timer is null) {
             return;
         }
-        
+
 #if TOOLS
         if (!timer.IsStopped()) {
             Logger.Combat.Debug("This should not happen!", true);
@@ -159,7 +163,7 @@ public partial class CombatManager : Node {
             case StatEffect statEffect:
                 statEffect.Tick += () => OnStatEffectTick(statEffect, pSource);
                 statEffect.Finished += () => OnStatEffectFinished(statEffect, pSource);
-                
+
                 _appliedEffects[statEffect.Id] = (pEffectOwner, statEffect);
                 EmitSignalAppliedEffect(pEffectOwner, statEffect);
 
@@ -232,5 +236,13 @@ public partial class CombatManager : Node {
 
     private Entity GetEntity() {
         return GetParent<Entity>();
+    }
+
+    public int GetSize() {
+        return _appliedEffects.Count;
+    }
+    
+    public (Gizmo, Effect) GetAt(int pIndex) {
+        return _appliedEffects.GetAt(pIndex).Value;
     }
 }

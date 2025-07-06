@@ -13,7 +13,8 @@ public partial class CooldownDisplay : TextureProgressBar {
         
         Value = 100;
         _tween = CreateTween();
-        _tween.TweenProperty(this, "value", Variant.From(0.0), pCooldownInSeconds);
+        
+        _tween.TweenProperty(this, new NodePath(Range.PropertyName.Value), Variant.From(0.0), pCooldownInSeconds);
     }
 
     public void Reset() {

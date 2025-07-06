@@ -12,12 +12,12 @@ texture_margin_right = 36.0
 texture_margin_bottom = 36.0
 modulate_color = Color(0.054902, 0.054902, 0.054902, 0.823529)
 
-[node name="SpellView" type="PanelContainer" node_paths=PackedStringArray("Container")]
+[node name="SpellView" type="PanelContainer" node_paths=PackedStringArray("SlotHolder")]
 offset_right = 1920.0
 offset_bottom = 1080.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_317su")
 script = ExtResource("1_lv7r0")
-Container = NodePath("List")
+SlotHolder = NodePath("List")
 SlotScene = ExtResource("2_ybdat")
 
 [node name="List" type="VBoxContainer" parent="."]

@@ -26,7 +26,6 @@ public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource wher
             return (T2)value2!;
         }
 
-
         if (Components.TryGetValue(typeof(T1).Name, out TComponent? value1)) {
             return (T1)value1!;
         }
