@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Resource_4hwfl"]
 script = ExtResource("2_4hwfl")
 Effects = [ExtResource("2_ts5sy")]
-CooldownSeconds = 1.0
+CooldownSeconds = 5.0
 Range = 8
 LinkedSpells = []
 metadata/_custom_type_script = "uid://bk27a6avfmj1x"

@@ -6,12 +6,16 @@ namespace RPG.scripts.inventory.components;
 
 [Tool, GlobalClass]
 public sealed partial class ChainSpellComponent : SpellComponent {
-    [Export] public Array<Gizmo> Spells = [];
+    [Export] public Gizmo[] Spells = [];
 
     private int _current = -1;
 
     public override void Cast(Gizmo pSource) {
-        if (_current != -1) {
+        if (_current == -1) {
+            LastCastTimeMicroseconds = Time.GetTicksUsec();
+            float cooldown = Chain();
+            EmitSignalCastComplete(cooldown);
+        } else {
             var spellComponent = Spells[_current].GetComponent<SpellComponent>();
 
             if (spellComponent is null) {
@@ -19,12 +23,9 @@ public sealed partial class ChainSpellComponent : SpellComponent {
             }
 
             spellComponent.LastCastTimeMicroseconds = Time.GetTicksUsec();
-        } else {
-            LastCastTimeMicroseconds = Time.GetTicksUsec();
+            float cooldown = Chain();
+            EmitSignalCastComplete(cooldown);
         }
-
-        Chain();
-        EmitSignalCastComplete(GetRemainingCooldown());
     }
 
     public Gizmo? GetCurrentSpell() {
@@ -43,8 +44,17 @@ public sealed partial class ChainSpellComponent : SpellComponent {
         return Spells[_current].GetComponent<SpellComponent>()!.GetEffects();
     }
 
-    private void Chain() {
-        _current = Mathf.Wrap(_current + 1, -1, Spells.Count);
+    private float Chain() {
+        _current = Mathf.Wrap(_current + 1, -1, Spells.Length);
+
+        if (_current == -1) {
+            LastCastTimeMicroseconds = Time.GetTicksUsec();
+            return CooldownSeconds;
+        }
+
+        var sp = Spells[_current].GetComponent<SpellComponent>()!;
+        sp.LastCastTimeMicroseconds = Time.GetTicksUsec();
+        return sp.CooldownSeconds;
     }
 
     public override bool IsAoe() {

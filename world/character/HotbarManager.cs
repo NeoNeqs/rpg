@@ -46,7 +46,11 @@ public partial class HotbarManager : Node {
             return;
         }
 
-        if (spellComponent.IsAoe() && !spellComponent.IsOnCooldown()) {
+        if (spellComponent.IsOnCooldown()) {
+            return;
+        }
+    
+        if (spellComponent.IsAoe()) {
             Vector3 mouseWorldPosition = character.GetWorld().GetMouseWorldPosition(spellComponent.GetRange());
             if (mouseWorldPosition == Vector3.Inf) {
                 return;

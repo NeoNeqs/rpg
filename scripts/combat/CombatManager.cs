@@ -72,7 +72,6 @@ public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
 
         // Targets `pTarget` if it's not null otherwise takes current target, selected by the player
         pTarget ??= TargetEntity;
-
         if (spellComponent.IsOnCooldown()) {
             return;
         }
