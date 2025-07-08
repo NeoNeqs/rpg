@@ -36,6 +36,14 @@ public partial class CombatData : RefCounted {
         EmitSignalCrowdControlApplied(AppliedCrowdControl);
     }
 
+    public bool IsImmuneTo(CrowdControl pCrowdControl) {
+        return CrowdControlImmunity.HasFlag(pCrowdControl);
+    }
+
+    public bool HasApplied(CrowdControl pCrowdControl) {
+        return AppliedCrowdControl.HasFlag(pCrowdControl);
+    }
+    
     public void ModifyHealth(double pDamage) {
         long maxHealth = _combatSystem.GetMaxHealth();
         long testHealth = _currentHealth + (long)pDamage;

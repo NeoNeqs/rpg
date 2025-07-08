@@ -1,4 +1,3 @@
-
 namespace RPG.global.enums;
 
 public enum IntegerStat {

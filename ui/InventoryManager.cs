@@ -3,14 +3,13 @@ using RPG.global;
 using RPG.global.singletons;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
-using RPG.scripts.inventory.components;
-using RPG.ui.attributes;
-using RPG.ui.hotbar;
-using RPG.ui.inventory;
-using RPG.ui.item;
-using RPG.ui.spell;
 using EventBus = RPG.global.singletons.EventBus;
+using HotbarView = RPG.ui.views.hotbar.HotbarView;
+using InventorySlot = RPG.ui.views.inventory.InventorySlot;
+using InventoryView = RPG.ui.views.inventory.InventoryView;
+using ItemView = RPG.ui.views.item.ItemView;
 using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
+using SpellView = RPG.ui.views.spell.SpellView;
 
 namespace RPG.ui;
 
@@ -75,7 +74,7 @@ public partial class InventoryManager : Control {
     // }
 
     private void CreateEffectView(CombatManager pCombatManager) {
-        var effectView = AssetDB.EffectView.Instantiate<EffectView>();
+        var effectView = AssetDB.EffectView.Instantiate<views.effect.EffectView>();
         effectView.InitializeWith(pCombatManager);
         
     }
@@ -93,7 +92,7 @@ public partial class InventoryManager : Control {
         return inventoryView;
     }
 
-    private void OnSlotPressed(View<GizmoStack> pSourceView, Slot pSlot, bool pIsRightClick) {
+    private void OnSlotPressed(views.View<GizmoStack> pSourceView, views.Slot pSlot, bool pIsRightClick) {
         // if (MouseStateMachine.CurrentState != MouseStateMachine.State.UIControl) {
         //     return;
         // }
@@ -174,8 +173,8 @@ public partial class InventoryManager : Control {
         }
     }
 
-    private void OnSlotHovered(View<GizmoStack> pSourceView, Slot pSlot) {
-        if (pSourceView is not InventoryView inventoryView || pSlot is not InventorySlot inventorySlot) {
+    private void OnSlotHovered(views.View<GizmoStack> pSourceView, views.Slot pSlot) {
+        if (pSourceView is not InventoryView inventoryView || pSlot is not InventorySlot) {
             Logger.UI.Error("null", true);
             return;
         }

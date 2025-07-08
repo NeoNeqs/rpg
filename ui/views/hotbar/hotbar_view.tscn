@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://dpcqcelyap0p1"]
+
+[ext_resource type="Script" uid="uid://c6gk4st2vlt33" path="res://ui/views/hotbar/HotbarView.cs" id="1_0uvli"]
+[ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="1_2s74n"]
+[ext_resource type="PackedScene" uid="uid://b7xu5k302lfn1" path="res://ui/views/item/item_slot.tscn" id="2_ncn4q"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ncn4q"]
+texture = ExtResource("1_2s74n")
+texture_margin_left = 36.0
+texture_margin_top = 36.0
+texture_margin_right = 36.0
+texture_margin_bottom = 36.0
+modulate_color = Color(0.054902, 0.054902, 0.054902, 0.823529)
+
+[node name="Hotbar" type="PanelContainer" node_paths=PackedStringArray("SlotHolder")]
+clip_contents = true
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_ncn4q")
+script = ExtResource("1_0uvli")
+SlotHolder = NodePath("HBoxContainer")
+SlotScene = ExtResource("2_ncn4q")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2

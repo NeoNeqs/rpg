@@ -1,14 +1,16 @@
 using Godot;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
+using RPG.ui.elements;
 using RPG.world;
 using RPG.world.character;
+using Entity = RPG.world.entity.Entity;
 
 namespace RPG.global.singletons;
 
 public sealed partial class EventBus : Node {
     
-    /// Emitted when the player clicks on an empty <see cref="RPG.ui.UI"/> region (where there are no <see cref="RPG.ui.UIElement"/>).
+    /// Emitted when the player clicks on an empty <see cref="RPG.ui.UI"/> region (where there are no <see cref="UIElement"/>).
     [Signal]
     public delegate void EmptyRegionPressedEventHandler();
     
@@ -39,7 +41,7 @@ public sealed partial class EventBus : Node {
     public static EventBus Instance = null!;
 
     public EventBus() {
-        Instance ??= this;
+        Instance = this;
     }
 
     public void EmitEmptyRegionPressed() {

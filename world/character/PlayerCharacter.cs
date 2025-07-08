@@ -5,7 +5,7 @@ using EventBus = RPG.global.singletons.EventBus;
 namespace RPG.world.character;
 
 [GlobalClass]
-public partial class PlayerCharacter : Entity {
+public partial class PlayerCharacter : entity.Entity {
     [Signal]
     public delegate void UserInputEventHandler();
 
@@ -17,7 +17,7 @@ public partial class PlayerCharacter : Entity {
         
         EventBus.Instance.EmitCharacterInventoryLoaded(Inventory);
         EventBus.Instance.EmitCharacterSpellBookLoaded(SpellBook);
-        CombatManager.TargetChanged += (Entity _, Entity? pNewEntity) => {
+        CombatManager.TargetChanged += (entity.Entity _, entity.Entity? pNewEntity) => {
             EventBus.Instance.EmitPlayerTargetChanged(this, pNewEntity);
         };
     }

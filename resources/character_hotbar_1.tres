@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="Inventory" load_steps=19 format=3 uid="uid://b1v0bkq8bhhic"]
+
+[ext_resource type="Script" uid="uid://cyd1y5aqm7k2y" path="res://scripts/inventory/components/ItemComponent.cs" id="1_d5cor"]
+[ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="2_ul07o"]
+[ext_resource type="Script" uid="uid://cpk6hvue643ng" path="res://scripts/inventory/components/ChainSpellComponent.cs" id="3_dgmur"]
+[ext_resource type="Script" uid="uid://do8hg8vd5v8ui" path="res://scripts/inventory/GizmoStack.cs" id="4_qvmo6"]
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="5_nj430"]
+[ext_resource type="Script" uid="uid://b2yjmi2mufyqh" path="res://scripts/inventory/Inventory.cs" id="6_6o3je"]
+
+[sub_resource type="Resource" id="Resource_myb1p"]
+script = ExtResource("1_d5cor")
+ItemRarity = 0
+Level = 1
+metadata/_custom_type_script = "uid://cyd1y5aqm7k2y"
+
+[sub_resource type="Resource" id="Resource_4wiiq"]
+script = ExtResource("2_ul07o")
+Effects = []
+CooldownSeconds = 0.0
+Range = 1
+LinkedSpells = []
+metadata/_custom_type_script = "uid://bk27a6avfmj1x"
+
+[sub_resource type="Resource" id="Resource_3ed7h"]
+script = ExtResource("3_dgmur")
+Spells = []
+Effects = []
+CooldownSeconds = 0.0
+Range = 1
+LinkedSpells = []
+metadata/_custom_type_script = "uid://cpk6hvue643ng"
+
+[sub_resource type="Resource" id="Resource_o4522"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_wqcwk"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_yf3bx"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_tagvt"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_25v8q"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_gs0nq"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_2s7j6"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_7r841"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[sub_resource type="Resource" id="Resource_yertu"]
+script = ExtResource("4_qvmo6")
+Quantity = 0
+AllowedComponents = Array[ExtResource("5_nj430")]([])
+
+[resource]
+script = ExtResource("6_6o3je")
+Gizmos = Array[ExtResource("4_qvmo6")]([SubResource("Resource_o4522"), SubResource("Resource_wqcwk"), SubResource("Resource_yf3bx"), SubResource("Resource_tagvt"), SubResource("Resource_25v8q"), SubResource("Resource_gs0nq"), SubResource("Resource_2s7j6"), SubResource("Resource_7r841"), SubResource("Resource_yertu")])
+Columns = 0
+AllowedComponents = [SubResource("Resource_myb1p"), SubResource("Resource_4wiiq"), SubResource("Resource_3ed7h")]
+Flags = 2
+metadata/_custom_type_script = "uid://b2yjmi2mufyqh"

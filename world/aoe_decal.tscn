@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bnxsviv27yjmn"]
+
+[ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="1_4v4a8"]
+[ext_resource type="Script" uid="uid://blcc2ydrwger3" path="res://world/AoeDecal.cs" id="2_nqbbo"]
+
+[node name="AoeDecal" type="Decal"]
+visible = false
+size = Vector3(1, 1, 1)
+texture_albedo = ExtResource("1_4v4a8")
+distance_fade_begin = 0.0
+distance_fade_length = 4198.35
+cull_mask = 1
+script = ExtResource("2_nqbbo")
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+target_position = Vector3(0, -50, 0)

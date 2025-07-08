@@ -8,6 +8,7 @@ using RPG.scripts.effects;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
 using RPG.world;
+using Entity = RPG.world.entity.Entity;
 
 namespace RPG.scripts.combat;
 
@@ -44,19 +45,19 @@ public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
     // and have the stacks be tracked separately.
     private readonly OrderedDictionary<StringName, (Gizmo, Effect)> _appliedEffects = [];
     
-    private readonly StatSystem _statSystem = new();
+    private readonly StatLinker _statLinker = new();
 
     public override void _EnterTree() {
         Entity entity = GetEntity();
 
-        _statSystem.LinkFromInventory(entity.Armory);
+        _statLinker.LinkFromInventory(entity.Armory);
 
         entity.BaseStatsAboutToChange += (Stats? pOld, Stats? pNew) => {
-            _statSystem.Unlink(pOld);
-            _statSystem.Link(pNew);
+            _statLinker.Unlink(pOld);
+            _statLinker.Link(pNew);
         };
 
-        CombatSystem.Initialize(_statSystem.Total);
+        CombatSystem.Initialize(_statLinker.Total);
     }
 
     public ReadOnlyDictionary<StringName, (Gizmo, Effect)> GetAppliedEffects() {

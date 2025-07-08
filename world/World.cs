@@ -10,8 +10,6 @@ public partial class World : Node3D {
     private readonly PhysicsRayQueryParameters3D _rayQuery = new();
     private readonly PhysicsShapeQueryParameters3D _shapeQuery = new();
 
-    [Export] private Decal _decal;
-
     public override void _EnterTree() {
         _rayQuery.CollideWithBodies = true;
         _rayQuery.CollisionMask = 1;
@@ -69,13 +67,17 @@ public partial class World : Node3D {
         return _rayQuery.To;
     }
 
-    public Entity CreateTempDummyEntity(Vector3 pPosition) {
-        Entity? entity = AssetDB.DummyEntity.Instantiate<Entity>();
+    public entity.Entity CreateTempDummyEntity(Vector3 pPosition) {
+        var entity = AssetDB.DummyEntity.Instantiate<entity.Entity>();
         AddChild(entity);
         entity.GlobalPosition = pPosition;
 
         // HACK: this should make the entity live for 2 frames.
         entity.CallDeferred(Node.MethodName.QueueFree);
         return entity;
+    }
+
+    public AoeDecal GetDecal() {
+        return GetNode<AoeDecal>("AoeDecal");
     }
 }

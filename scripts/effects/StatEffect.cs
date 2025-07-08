@@ -2,14 +2,12 @@ using RPG.global;
 using Godot;
 using Godot.Collections;
 using RPG.global.enums;
-using RPG.scripts.combat;
 
 namespace RPG.scripts.effects;
 
 [Tool, GlobalClass]
 public sealed partial class StatEffect : StackingEffect {
     public IntegerStat Stat { private set; get; }
-    
     
     public override Array<Dictionary> _GetPropertyList() {
         Array<Dictionary> properties = base._GetPropertyList();

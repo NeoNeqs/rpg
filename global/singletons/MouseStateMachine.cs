@@ -1,4 +1,6 @@
 using Godot;
+using RPG.ui.elements;
+using RPG.ui.views.inventory;
 
 namespace RPG.global.singletons;
 
@@ -15,10 +17,10 @@ public sealed partial class MouseStateMachine : Node {
         /// Free state allows any other state to be activated.
         Free,
 
-        /// Used when the player interacts with <see cref="RPG.ui.UIElement"/>s.
+        /// Used when the player interacts with <see cref="UIElement"/>s.
         UIControl,
 
-        /// Used specifically when player interacts with <see cref="RPG.ui.inventory.InventoryView"/>s.
+        /// Used specifically when player interacts with <see cref="InventoryView"/>s.
         InventoryControl,
 
         /// Used when player controls the camera.
@@ -30,7 +32,7 @@ public sealed partial class MouseStateMachine : Node {
 
     public MouseStateMachine() {
         // Prevent overwriting the Instance in case this singleton is instanced more than once
-        Instance ??= this;
+        Instance = this;
     }
 
     public State CurrentState { private set; get; } = State.Free;
@@ -72,11 +74,6 @@ public sealed partial class MouseStateMachine : Node {
     /// <param name="pNewState">Specifies the state this class should change to.</param>
     /// <returns><c>True</c> if the state was changed, otherwise <c>false</c>.</returns>
     public bool RequestState(State pNewState) {
-        bool shouldWarp = (
-            DisplayServer.MouseGetMode() is DisplayServer.MouseMode.Captured &&
-            LastMousePosition != Vector2.Inf
-        );
-
         if (CurrentState is not State.Free && pNewState is not State.Free) {
             return false;
         }

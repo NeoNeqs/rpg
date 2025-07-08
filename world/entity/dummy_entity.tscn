@@ -1,0 +1,75 @@
+[gd_scene load_steps=15 format=3 uid="uid://cwqk02m3lsujx"]
+
+[ext_resource type="Script" uid="uid://copluoykji72n" path="res://world/entity/Entity.cs" id="1_b42e5"]
+[ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="2_1ns7f"]
+[ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="6_5gf7w"]
+[ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="6_u6gj0"]
+
+[sub_resource type="Curve" id="Curve_35jrf"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_0xnjn"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_5gf7w"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_u6gj0"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_nj1i4"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_1yc0x"]
+_limits = [1.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_8ft1f"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_mbxsp"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_1yc0x"]
+script = ExtResource("6_u6gj0")
+ArmorReductionCurve = SubResource("Curve_0xnjn")
+ArmorPenetrationCurve = SubResource("Curve_35jrf")
+ShadowReductionCurve = SubResource("Curve_1yc0x")
+ShadowPenetrationCurve = SubResource("Curve_nj1i4")
+NatureReductionCurve = SubResource("Curve_u6gj0")
+NaturePenetrationCurve = SubResource("Curve_5gf7w")
+StrengthCurve = SubResource("Curve_mbxsp")
+StaminaCurve = SubResource("Curve_8ft1f")
+metadata/_custom_type_script = "uid://4m7emmkgdioy"
+
+[sub_resource type="Resource" id="Resource_nj1i4"]
+script = ExtResource("6_5gf7w")
+StatCurves = SubResource("Resource_1yc0x")
+metadata/_custom_type_script = "uid://bp1c67o5mclqa"
+
+[node name="DummyEntity" type="Node3D" node_paths=PackedStringArray("CombatManager")]
+script = ExtResource("1_b42e5")
+CombatManager = NodePath("CombatManager")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+collision_layer = 0
+collision_mask = 0
+input_ray_pickable = false
+
+[node name="CombatManager" type="Node" parent="."]
+script = ExtResource("2_1ns7f")
+CombatSystem = SubResource("Resource_nj1i4")
+metadata/_custom_type_script = "uid://dbsutjhc4nqxg"

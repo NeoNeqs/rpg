@@ -1,0 +1,60 @@
+[gd_scene load_steps=8 format=3 uid="uid://c8g6pbejkj2y8"]
+
+[ext_resource type="PackedScene" uid="uid://800667rugwug" path="res://ui/views/cooldown_display.tscn" id="1_icl1p"]
+[ext_resource type="Script" uid="uid://hde8spl3k0ms" path="res://ui/views/effect/EffectSlot.cs" id="1_o6shh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbfhx"]
+
+[sub_resource type="Gradient" id="Gradient_q2k4p"]
+interpolation_color_space = 1
+colors = PackedColorArray(0.092397, 0.0923971, 0.092397, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_3nf06"]
+gradient = SubResource("Gradient_q2k4p")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gbfhx"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+texture = SubResource("GradientTexture2D_3nf06")
+modulate_color = Color(1, 2, 2, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ji56f"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+texture = SubResource("GradientTexture2D_3nf06")
+
+[node name="Effectslot" type="Button" node_paths=PackedStringArray("IconHolder")]
+custom_minimum_size = Vector2(20, 20)
+anchors_preset = -1
+anchor_right = 0.0260417
+anchor_bottom = 0.0462963
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gbfhx")
+theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_gbfhx")
+theme_override_styles/hover = SubResource("StyleBoxTexture_gbfhx")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_ji56f")
+theme_override_styles/normal = SubResource("StyleBoxTexture_ji56f")
+script = ExtResource("1_o6shh")
+IconHolder = NodePath("TextureRect")
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="CooldownDisplay" parent="TextureRect" instance=ExtResource("1_icl1p")]
+layout_mode = 1
+metadata/_edit_use_anchors_ = true

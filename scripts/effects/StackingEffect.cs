@@ -2,7 +2,6 @@ using RPG.global;
 using Godot;
 using Godot.Collections;
 using RPG.global.enums;
-using RPG.scripts.combat;
 
 namespace RPG.scripts.effects;
 

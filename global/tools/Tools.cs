@@ -2,14 +2,13 @@
 using System.Diagnostics;
 using Godot;
 using RPG.scripts;
-using RPG.scripts.combat;
 using RPG.scripts.effects;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
 
 namespace RPG.global.tools;
 
-public sealed class Tools {
+public static class Tools {
     [Conditional("TOOLS")]
     public static void Assert(bool pCondition, string pMessage = "") {
         if (!pCondition) {
@@ -21,6 +20,7 @@ public sealed class Tools {
 // A neat trick to do compile time asserts, although the thrown error message is not very useful.
 // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
 // ReSharper disable once UnusedType.Local
+// ReSharper disable once UnusedType.Global
 internal sealed class StaticAssert {
     // IMPORTANT: Changing those names will break existing resources!
 #pragma warning disable CS0414 // Field is assigned but its value is never used

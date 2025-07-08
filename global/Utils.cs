@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using RPG.global.enums;
 
 namespace RPG.global;
 

@@ -1,5 +1,6 @@
 using Godot;
 using RPG.world;
+using Entity = RPG.world.entity.Entity;
 
 namespace RPG.scripts.inventory.components;
 

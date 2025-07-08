@@ -1,5 +1,4 @@
 using Godot;
-using Godot.Collections;
 using RPG.scripts.effects;
 
 namespace RPG.scripts.inventory.components;
