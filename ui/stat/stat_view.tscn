@@ -1,13 +1,11 @@
 [gd_scene load_steps=2 format=3 uid="uid://bgftddgnyd2kb"]
 
-[ext_resource type="Script" uid="uid://o5m3xu76grjl" path="res://ui/attributes/StatView.cs" id="1_m3323"]
+[ext_resource type="Script" uid="uid://o5m3xu76grjl" path="res://ui/stat/StatView.cs" id="1_7urr3"]
 
-[node name="AttributeView" type="PanelContainer" node_paths=PackedStringArray("_label")]
+[node name="StatView" type="PanelContainer"]
 offset_right = 267.0
 offset_bottom = 303.0
-script = ExtResource("1_m3323")
-_label = NodePath("VBoxContainer/List")
-Title = "Attribute View"
+script = ExtResource("1_7urr3")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2

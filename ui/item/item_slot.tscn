@@ -49,8 +49,8 @@ outline_color = Color(0, 0, 0, 1)
 
 [node name="ItemSlot" type="Button" node_paths=PackedStringArray("_borderHolder", "TextHolder", "IconHolder")]
 custom_minimum_size = Vector2(50, 50)
-offset_right = 60.0
-offset_bottom = 60.0
+offset_right = 50.0
+offset_bottom = 50.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gbfhx")
 theme_override_styles/hover_pressed = SubResource("StyleBoxTexture_gbfhx")
 theme_override_styles/hover = SubResource("StyleBoxTexture_gbfhx")

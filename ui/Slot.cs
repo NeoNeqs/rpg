@@ -4,7 +4,6 @@ using Godot;
 namespace RPG.ui;
 
 public abstract partial class Slot : Control {
-    
     [Signal]
     public delegate void LeftMouseButtonPressedEventHandler();
 
@@ -17,17 +16,16 @@ public abstract partial class Slot : Control {
     [Signal]
     public delegate void UnhoveredEventHandler();
     
-    [Export] public Label TextHolder = null!;
+    
     [Export] public TextureRect IconHolder = null!;
     
     public void SetOnCooldown(float pCooldownSeconds) {
         CooldownDisplay? cooldownDisplay = GetCooldownDisplay();
-        
         if (pCooldownSeconds <= 0.0f) {
             cooldownDisplay?.Reset();
             return;
         }
-
+        
         cooldownDisplay?.Start(pCooldownSeconds);
     }
     

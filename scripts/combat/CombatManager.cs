@@ -17,7 +17,7 @@ public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
     public delegate void AppliedEffectEventHandler(Gizmo pEffectOwner, Effect pEffect);
 
     [Signal]
-    public delegate void RemovedEffectEventHandler(Gizmo pEffectOwner, Effect pEffect);
+    public delegate void RemovedEffectEventHandler(Gizmo pEffectOwner, Effect pEffect, int pIndex);
 
     [Signal]
     public delegate void TargetChangedEventHandler(Entity pSource, Entity? pNewTarget);
@@ -145,9 +145,10 @@ public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
 
             (Gizmo effectOwner, Effect effect) = value;
             effect.CleanupAndFinish();
+            var index = _appliedEffects.IndexOf(excludingEffectId);
             _appliedEffects.Remove(excludingEffectId);
 
-            EmitSignalRemovedEffect(effectOwner, effect);
+            EmitSignalRemovedEffect(effectOwner, effect, index);
         }
 
         switch (pEffect) {
@@ -194,10 +195,13 @@ public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
         Logger.Combat.Debug(
             $"Damage effect {pDamageEffect.DisplayName} removed from {GetEntity().Name} applied by {pSource.GetEntity().Name}");
 
+        
         (Gizmo effectOwner, Effect effect) = _appliedEffects[pDamageEffect.Id];
 
+        var index = _appliedEffects.IndexOf(pDamageEffect.Id);
+        
         _appliedEffects.Remove(pDamageEffect.Id);
-        EmitSignalRemovedEffect(effectOwner, effect);
+        EmitSignalRemovedEffect(effectOwner, effect, index);
     }
 
     private void OnStatEffectFinished(StatEffect pStatEffect, CombatManager pSource) {
@@ -207,9 +211,11 @@ public partial class CombatManager : Node, IContainer<(Gizmo, Effect)> {
         (Gizmo effectOwner, Effect effect) = _appliedEffects[pStatEffect.Id];
 
         // TODO: remember do subtract the stats
+        
+        var index = _appliedEffects.IndexOf(pStatEffect.Id);
 
         _appliedEffects.Remove(pStatEffect.Id);
-        EmitSignalRemovedEffect(effectOwner, effect);
+        EmitSignalRemovedEffect(effectOwner, effect, index);
     }
 
     private static void HandleLinkedSpells(Gizmo pSource, SpellComponent pSpellComponent) {

@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://ll2wqn87n73j" path="res://ui/UI.cs" id="1_bo1jx"]
 [ext_resource type="FontVariation" uid="uid://cpyi8mh1nlaeq" path="res://resources/fonts/noto_sans_display.tres" id="2_ajbqs"]
-[ext_resource type="Script" uid="uid://dm8q2ltaisfv6" path="res://ui/fps_label.gd" id="3_sxu0e"]
 [ext_resource type="Texture2D" uid="uid://bwul5gadbcraq" path="res://assets/textures/ui/panel-026.png" id="4_3l7w4"]
 [ext_resource type="Script" uid="uid://p0sljkx77l6c" path="res://ui/InventoryManager.cs" id="5_gycre"]
 [ext_resource type="PackedScene" uid="uid://dc68bk011ci4s" path="res://ui/tooltip.tscn" id="6_jmxi2"]
@@ -10,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dv35l74o11cdq" path="res://ui/inventory/DragSlot.cs" id="8_gycre"]
 [ext_resource type="Script" uid="uid://bon170ghm6q6l" path="res://ui/Frames.cs" id="9_ay4pc"]
 [ext_resource type="PackedScene" uid="uid://1ge8de3fpn84" path="res://ui/entity_frame.tscn" id="9_pa1oa"]
+[ext_resource type="Script" uid="uid://dy1sjhg2iwlkk" path="res://ui/PoorTextLabel.cs" id="11_bi8hs"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_lv10c"]
 font = ExtResource("2_ajbqs")
@@ -37,7 +37,6 @@ offset_bottom = 36.0
 grow_horizontal = 0
 label_settings = SubResource("LabelSettings_lv10c")
 vertical_alignment = 2
-script = ExtResource("3_sxu0e")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
 visible = false
@@ -89,3 +88,11 @@ offset_left = 282.0
 offset_top = 37.0
 offset_right = 463.0
 offset_bottom = 142.0
+
+[node name="PoorTextLabel" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("11_bi8hs")
+metadata/_custom_type_script = "uid://dy1sjhg2iwlkk"

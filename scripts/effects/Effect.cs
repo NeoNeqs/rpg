@@ -68,8 +68,11 @@ public partial class Effect : Resource, INamedIdentifiable {
 
     public float GetTimeLeft() {
         float timeLeft = (CurrentTick - 1) * TickTimeout;
-        if (IsInstanceValid(Timer)) {
+        
+        if (IsInstanceValid(Timer) && !Timer.IsStopped()) {
             timeLeft += (float)Timer.TimeLeft;
+        } else {
+            timeLeft += TickTimeout;
         }
 
         if (timeLeft < 0.0f) {

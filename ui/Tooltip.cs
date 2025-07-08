@@ -45,7 +45,7 @@ public partial class Tooltip : PanelContainer {
         }
 
         // _label.Update(pGizmoStack.Gizmo.GetTooltip());
-        // Logger.UI.Critical("Gizmos don't have tooltips yet...");
+        Logger.UI.Critical("Gizmos don't have tooltips yet...");
 
         Size = CustomMinimumSize;
         Visible = true;

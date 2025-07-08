@@ -47,7 +47,8 @@ public partial class PoorTextLabel : VBoxContainer {
             hbox = new HBoxContainer();
             hbox.AddThemeConstantOverride("separation", 0);
             AddChild(hbox);
-            pRelative.CustomMinimumSize = new Vector2(200, 0);
+            pRelative.CustomMinimumSize = pRelative.CustomMinimumSize with { X = pRelative.CustomMinimumSize.X / 2 };
+            // pRelative.CustomMinimumSize = new Vector2(200, 0);
             pRelative.Reparent(hbox);
             pRelative.AutowrapMode = TextServer.AutowrapMode.Off;
         }

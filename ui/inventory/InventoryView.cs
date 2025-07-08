@@ -86,6 +86,8 @@ public abstract partial class InventoryView : View<GizmoStack> {
         GizmoStack gizmoStack = Container.GetAt(pIndex);
         var slot = SlotScene.Instantiate<InventorySlot>();
 
+        
+        // FIND_ME:
         slot.Update(gizmoStack);
         // TODO: those signals won't be ever disconnected...
         // https://docs.godotengine.org/en/4.4/tutorials/scripting/c_sharp/c_sharp_signals.html
@@ -102,7 +104,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
         SpellComponent? spellComponent = gizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
 
         if (spellComponent is null) {
-            UpdateSlot(gizmoStack, slot, 0.0f);
+            // UpdateSlot(gizmoStack, slot, 0.0f);
             return;
         }
         

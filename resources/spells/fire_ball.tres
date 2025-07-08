@@ -9,7 +9,7 @@
 
 [sub_resource type="Resource" id="Resource_47hi4"]
 script = ExtResource("3_kggnb")
-Spells = Array[ExtResource("2_xqiny")]([ExtResource("4_7o5gr")])
+Spells = [ExtResource("4_7o5gr")]
 Effects = [ExtResource("2_7o5gr")]
 CooldownSeconds = 2.0
 Range = 1

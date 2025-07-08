@@ -12,6 +12,7 @@ public static class AssetDB {
     public static readonly PackedScene SpellView = GD.Load<PackedScene>("uid://d4bn283eravlm");
     public static readonly PackedScene HotbarView = GD.Load<PackedScene>("uid://dpcqcelyap0p1");
     public static readonly PackedScene StatView = GD.Load<PackedScene>("uid://bgftddgnyd2kb");
+    public static readonly PackedScene EffectView = GD.Load<PackedScene>("uid://dgj6q1dd4jh75");
 
 #if TOOLS
     static AssetDB() {

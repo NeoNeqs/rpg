@@ -74,6 +74,12 @@ public partial class InventoryManager : Control {
     //     AddChild(statView);
     // }
 
+    private void CreateEffectView(CombatManager pCombatManager) {
+        var effectView = AssetDB.EffectView.Instantiate<EffectView>();
+        effectView.InitializeWith(pCombatManager);
+        
+    }
+
     private T CreateInventoryView<T>(Inventory pInventory, PackedScene pViewScene) where T : InventoryView {
         var inventoryView = pViewScene.Instantiate<T>();
 

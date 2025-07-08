@@ -10,6 +10,8 @@ public abstract partial class InventorySlot : Slot {
     
     public Action<float> CastCompleteCallback = null!;
     
+    [Export] public Label TextHolder = null!;
+    
     public virtual void Update(GizmoStack? pGizmoStack) {
     }
    

@@ -4,12 +4,15 @@ namespace RPG.ui;
 
 [GlobalClass]
 public partial class UIElement : PanelContainer {
+    [Export] public bool DragEnabled = true;
+
     private bool _dragEnabled = false;
 
-    public override void _Ready() {
-    }
-
     public override void _GuiInput(InputEvent pEvent) {
+        if (!DragEnabled) {
+            return;
+        }
+
         switch (pEvent) {
             case InputEventMouseButton { ButtonIndex: MouseButton.Left } eventMouseButton: {
                 _dragEnabled = eventMouseButton.IsPressed();
