@@ -4,9 +4,8 @@ namespace RPG.ui.elements;
 
 [GlobalClass]
 public partial class UIElement : PanelContainer {
+    private bool _dragEnabled;
     [Export] public bool DragEnabled = true;
-
-    private bool _dragEnabled = false;
 
     public override void _GuiInput(InputEvent pEvent) {
         if (!DragEnabled) {

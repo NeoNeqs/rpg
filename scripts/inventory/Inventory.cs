@@ -1,15 +1,15 @@
 using System;
+using global::RPG.global;
 using Godot;
 using Godot.Collections;
-using RPG.global;
-using GizmoComponent = RPG.scripts.inventory.components.GizmoComponent;
+using RPG.scripts.inventory.components;
 
 namespace RPG.scripts.inventory;
 
 /// <summary>
-/// <para>Holds <see cref="GizmoStack"/>s. This class has 2 guarantees in place:</para>
-/// <para>1. Every <see cref="GizmoStack"/> is initialized and never null</para>
-/// <para>2. <see cref="GizmoStack"/> never changes the position.</para>
+///     <para>Holds <see cref="GizmoStack" />s. This class has 2 guarantees in place:</para>
+///     <para>1. Every <see cref="GizmoStack" /> is initialized and never null</para>
+///     <para>2. <see cref="GizmoStack" /> never changes the position.</para>
 /// </summary>
 [Tool, GlobalClass]
 public partial class Inventory : Resource, IContainer<GizmoStack> {
@@ -24,14 +24,20 @@ public partial class Inventory : Resource, IContainer<GizmoStack> {
 
     public enum ActionResult : byte {
         None,
-        Leftover,
+        Leftover
     }
 
     [Flags]
     public enum InventoryFlags : byte {
         Owning = 1 << 0,
-        Editable = 1 << 1,
+        Editable = 1 << 1
     }
+
+    private Array<GizmoStack> _gizmos = [];
+    [Export] public Array<GizmoComponent> AllowedComponents = null!;
+
+    [Export] public int Columns;
+    [Export] public InventoryFlags Flags;
 
     [Export]
     public Array<GizmoStack> Gizmos {
@@ -39,11 +45,13 @@ public partial class Inventory : Resource, IContainer<GizmoStack> {
         get => _gizmos;
     }
 
-    private Array<GizmoStack> _gizmos = [];
+    public GizmoStack GetAt(int pIndex) {
+        return _gizmos[pIndex];
+    }
 
-    [Export] public int Columns;
-    [Export] public Array<GizmoComponent> AllowedComponents = null!;
-    [Export] public InventoryFlags Flags;
+    public int GetSize() {
+        return Gizmos.Count;
+    }
 
     public ActionResult HandleGizmoAction(int pFrom, Inventory pToInventory, int pTo, bool pSingle) {
         GizmoStack fromGizmoStack = GetAt(pFrom);
@@ -111,18 +119,10 @@ public partial class Inventory : Resource, IContainer<GizmoStack> {
         return null;
     }
 
-    public GizmoStack GetAt(int pIndex) {
-        return _gizmos[pIndex];
-    }
-
     public void SetAt(int pIndex, Gizmo pGizmo) {
         EmitSignalGizmoAboutToChange(_gizmos[pIndex], pIndex);
         _gizmos[pIndex].Gizmo = pGizmo.Duplicate();
         EmitSignalGizmoChanged(_gizmos[pIndex], pIndex);
-    }
-
-    public int GetSize() {
-        return Gizmos.Count;
     }
 
     public bool Delete(int pFrom) {
@@ -294,9 +294,9 @@ public partial class Inventory : Resource, IContainer<GizmoStack> {
             }
 #if TOOLS
             if (!Engine.IsEditorHint()) {
-                
-                if (_gizmos[i].Gizmo is not null) {
+                if (_gizmos[i].Gizmo is not null)
                     // For some reason compiler complains about null dereference here...
+                {
                     _gizmos[i].Gizmo = _gizmos[i].Gizmo?.Duplicate();
                 }
             }

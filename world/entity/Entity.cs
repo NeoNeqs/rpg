@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using RPG.global.enums;
+using RPG.scripts;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
 
@@ -10,61 +9,106 @@ namespace RPG.world.entity;
 [GlobalClass]
 public partial class Entity : Node3D {
     [Signal]
+    public delegate void AboutToBeFreedEventHandler();
+
+    [Signal]
     public delegate void BaseStatsAboutToChangeEventHandler(Stats? pOld, Stats? pNew);
 
-    [Export] public CombatManager CombatManager = null!;
-    [Export] public Inventory? Armory;
-    [Export] public Inventory SpellBook = null!;
+    private Stats _baseStats = null!;
+
+    [Export] public Faction MainFaction = null!;
+
+    // Temporary Faction with no ID 
+    public Faction? OverrideFaction;
+    [Export] public Faction PersonalFaction = null!;
+
+    [Export] public SpellManager SpellManager { private set; get; } = null!;
+    [Export] public Inventory Armory { private set; get; } = null!;
+    [Export] public Inventory SpellBook { private set; get; } = null!;
 
     [Export]
-    public Stats? BaseStats {
+    public Stats BaseStats {
         private set {
+            // TODO: check if this works:
+
             // This setter will be called by the editor when the object is created (way before `_Ready` and `_EnterTree`)
-            // So the 1 frame delay is hack to allow child nodes to connect to the signal below.
+            // So the delay is a hack to allow child nodes to connect to the signal below.
             CallDeferred(nameof(EmitBaseStatsAboutToChanged), Variant.From(_baseStats), Variant.From(value));
             _baseStats = value;
         }
         get => _baseStats;
     }
 
-    [Export] public Faction Faction;
-
-    private Stats? _baseStats;
-
     private void EmitBaseStatsAboutToChanged(Stats? pOld, Stats? pNew) {
         EmitSignalBaseStatsAboutToChange(pOld, pNew);
     }
 
-    // TODO: figure out how to make pExclude a default parameter
-    public List<Entity> GetEntitiesInRadius(float pRadius, Array<Rid> pExclude) {
-        var result = new List<Entity>();
+    public override void _EnterTree() {
+        TreeExiting += () => {
+            if (IsQueuedForDeletion()) {
+                EmitSignalAboutToBeFreed();
+            }
+        };
+    }
 
-        Array<Rid> exclude = [GetChild<PhysicsBody3D>(0).GetRid()];
-        exclude.AddRange(pExclude);
+    public bool IsEnemyOf(Entity pOther) {
+        if (OverrideFaction is not null) {
+            if (OverrideFaction.HasReputation(pOther.PersonalFaction.Id)) {
+                return OverrideFaction.IsEnemyNoCheck(pOther.PersonalFaction.Id);
+            }
 
-        Array<Dictionary> queryResults = GetWorld().IntersectShape(
-            GlobalTransform.Origin,
-            pRadius,
-            true,
-            2,
-            exclude
-        );
-
-        foreach (Dictionary queryResult in queryResults) {
-            GodotObject collider = queryResult["collider"].AsGodotObject();
-
-            // TODO: Add LoS checks. After we have all Entities in radius check if a raycast can hit that Entity. 
-            //       Only then add it.
-
-            if (collider is PhysicsBody3D body && body.GetParent() is Entity ent && ent != this) {
-                result.Add(ent);
+            if (OverrideFaction.HasReputation(pOther.MainFaction.Id)) {
+                return OverrideFaction.IsEnemyNoCheck(pOther.MainFaction.Id);
             }
         }
 
-        return result;
+        if (PersonalFaction.HasReputation(pOther.PersonalFaction.Id)) {
+            return PersonalFaction.IsEnemyNoCheck(pOther.PersonalFaction.Id);
+        }
+
+        if (PersonalFaction.HasReputation(pOther.MainFaction.Id)) {
+            return PersonalFaction.IsEnemyNoCheck(pOther.MainFaction.Id);
+        }
+
+        if (MainFaction.HasReputation(pOther.PersonalFaction.Id)) {
+            return MainFaction.IsEnemyNoCheck(pOther.PersonalFaction.Id);
+        }
+
+        if (MainFaction.HasReputation(pOther.MainFaction.Id)) {
+            return MainFaction.IsEnemyNoCheck(pOther.MainFaction.Id);
+        }
+
+        return true;
+    }
+
+    public Entity? GetNearestEnemy() {
+        ModelHolder modelHolder = GetModelHolder();
+
+        Array<Entity> nodes = modelHolder.GetEntitiesInSight();
+
+        Entity? closestEnemy = null;
+        float shortestDistanceSquared = float.MaxValue;
+        foreach (Entity entity in nodes) {
+            if (!IsEnemyOf(entity)) {
+                continue;
+            }
+
+            float distanceSquared = GlobalPosition.DistanceSquaredTo(entity.GlobalPosition);
+
+            if (distanceSquared < shortestDistanceSquared) {
+                shortestDistanceSquared = distanceSquared;
+                closestEnemy = entity;
+            }
+        }
+
+        return closestEnemy;
     }
 
     public World GetWorld() {
         return GetParent<World>();
+    }
+
+    public ModelHolder GetModelHolder() {
+        return GetChild(0).GetChild<ModelHolder>(0);
     }
 }

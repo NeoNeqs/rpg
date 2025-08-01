@@ -15,9 +15,9 @@ public static class GizmoComponentExtensions {
     }
 
     public static string GetCurrentDisplayName(this Gizmo pGizmo) {
-        var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
+        var sequenceSpellComponent = pGizmo.GetComponent<SequenceSpellComponent>();
 
-        Gizmo? currentSpell = chainSpellComponent?.GetCurrentSpell();
+        Gizmo? currentSpell = sequenceSpellComponent?.GetCurrentSpell();
         if (currentSpell is not null) {
             return currentSpell.DisplayName;
         }
@@ -25,12 +25,12 @@ public static class GizmoComponentExtensions {
         return pGizmo.DisplayName;
     }
 
-    public static Texture2D GetCurrentIcon(this Gizmo pGizmo) {
-        var chainSpellComponent = pGizmo.GetComponent<ChainSpellComponent>();
+    public static Texture2D? GetCurrentIcon(this Gizmo pGizmo) {
+        var sequenceSpellComponent = pGizmo.GetComponent<SequenceSpellComponent>();
 
-        Gizmo? currentSpell = chainSpellComponent?.GetCurrentSpell();
-        if (currentSpell is not null) {
-            return currentSpell.Icon;
+        Gizmo? currentGizmo = sequenceSpellComponent?.GetCurrentSpell();
+        if (currentGizmo is not null) {
+            return currentGizmo.Icon;
         }
 
         return pGizmo.Icon;

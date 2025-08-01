@@ -1,23 +1,12 @@
-[gd_resource type="Resource" script_class="Gizmo" load_steps=6 format=3 uid="uid://dw12y16tldqce"]
+[gd_resource type="Resource" script_class="Gizmo" load_steps=3 format=3 uid="uid://dw12y16tldqce"]
 
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_nvwiv"]
-[ext_resource type="Script" uid="uid://cyd1y5aqm7k2y" path="res://scripts/inventory/components/ItemComponent.cs" id="2_e4stg"]
-[ext_resource type="Texture2D" uid="uid://do2wmv7d8ttsd" path="res://assets/textures/item/stick.svg" id="3_36xfn"]
 [ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="4_5hfxm"]
-
-[sub_resource type="Resource" id="Resource_recvg"]
-script = ExtResource("2_e4stg")
-ItemRarity = 2
-Level = 20
-metadata/_custom_type_script = "uid://cyd1y5aqm7k2y"
 
 [resource]
 script = ExtResource("4_5hfxm")
 Id = &"item:training_sword"
-DisplayName = ""
-Icon = ExtResource("3_36xfn")
+DisplayName = "Training Sword"
 StackSize = 1
-Components = Dictionary[String, ExtResource("1_nvwiv")]({
-"ItemComponent": SubResource("Resource_recvg")
-})
+Components = Dictionary[String, ExtResource("1_nvwiv")]({})
 metadata/_custom_type_script = "uid://be1ycgpodowgh"

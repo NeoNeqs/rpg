@@ -1,15 +1,16 @@
-[gd_resource type="Resource" script_class="DamageEffect" load_steps=2 format=3 uid="uid://ogopxk8kkl5y"]
+[gd_resource type="Resource" script_class="DamageEffect" load_steps=3 format=3 uid="uid://ogopxk8kkl5y"]
 
 [ext_resource type="Script" uid="uid://btbq7woaywr4i" path="res://scripts/effects/DamageEffect.cs" id="1_iui8u"]
+[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="1_wawkv"]
 
 [resource]
 script = ExtResource("1_iui8u")
 Id = &"effect:fire_ball"
 DisplayName = "Fire Ball"
+Icon = ExtResource("1_wawkv")
 TickTimeout = 3
 TotalTicks = 1
 ApplicationChance = 1.0
-Radius = 0
 Flags = 4
 ExcludingEffects = []
 FlatValue = 0

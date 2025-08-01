@@ -1,6 +1,6 @@
 using Godot;
 using RPG.scripts.inventory;
-using InventorySlot = RPG.ui.views.inventory.InventorySlot;
+using RPG.ui.views.inventory;
 
 namespace RPG.ui.views.spell;
 

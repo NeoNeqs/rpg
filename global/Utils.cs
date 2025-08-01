@@ -24,10 +24,10 @@ public static class Utils {
     }
 
     public static string EnumToHintString<TEnum>() where TEnum : struct, Enum {
-        return string.Join(',', Array.ConvertAll(Enum.GetNames<TEnum>(), pItem => pItem.ToString()));
+        return string.Join(',', Enum.GetNames<TEnum>());
     }
 
-    public static void SetProperty<T>(this object pInstance, string pPropertyName, T pNewValue) where T : class {
+    public static void SetProperty<T>(this object pInstance, string pPropertyName, T pNewValue) {
         Type? type = pInstance.GetType();
         PropertyInfo? property = null;
 
@@ -51,7 +51,7 @@ public static class Utils {
         property.SetValue(pInstance, pNewValue);
     }
 
-    public static T? GetProperty<T>(this object pInstance, string pPropertyName) where T : class {
+    public static T? GetProperty<T>(this object pInstance, string pPropertyName) {
         Type? type = pInstance.GetType();
         PropertyInfo? property = null;
 
@@ -69,7 +69,7 @@ public static class Utils {
         if (property == null) {
             Logger.Core.Error(
                 $"Property '{pPropertyName}' not found on type '{pInstance.GetType().Name}' or its base types.");
-            return null;
+            return default;
         }
 
         object? value = property.GetValue(pInstance);

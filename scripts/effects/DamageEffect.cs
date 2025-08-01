@@ -1,4 +1,4 @@
-using RPG.global;
+using global::RPG.global;
 using Godot;
 using Godot.Collections;
 using RPG.global.enums;
@@ -11,14 +11,14 @@ public sealed partial class DamageEffect : StackingEffect {
     public DamageType DamageType { private set; get; }
 
     public float GetTotalDamage(Stats pAttackerStats) {
-        return FlatValue + (pAttackerStats.GetIntegerStat(StatScale) * StatScaleCoefficient);
+        return FlatValue + pAttackerStats.GetIntegerStat(StatScale) * StatScaleCoefficient;
     }
 
     public override Array<Dictionary> _GetPropertyList() {
         Array<Dictionary> properties = base._GetPropertyList();
 
         properties.AddRange([
-            new Dictionary() {
+            new Dictionary {
                 ["name"] = nameof(DamageType),
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Enum),

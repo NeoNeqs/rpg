@@ -1,6 +1,6 @@
 using Godot;
 using RPG.scripts.inventory;
-using ItemSlot = RPG.ui.views.item.ItemSlot;
+using RPG.ui.views.item;
 
 namespace RPG.ui;
 
@@ -18,7 +18,7 @@ public partial class DragSlot : ItemSlot {
             Visible = true;
             base.Update(pGizmoStack);
         }
-        
+
         SetProcess(Visible);
     }
 }

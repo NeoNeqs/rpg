@@ -1,26 +1,29 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Godot;
-
 
 namespace RPG.global;
 
 /// <summary>
-/// Abstraction on top of Godot's print functions with additional logging features:
-/// <para> 1. Logging current date and time </para>
-/// <para> 2. Logging severity levels </para>
-/// <para> 3. Named loggers </para>
-/// <para> 4. Logging from different threats </para>
-/// <para> 5. Colorful output </para>
-/// <para> 6. Predictable output, format should easily be parsable with a regex </para>
-/// <para> 7. Easy to sort / filter </para>
+///     Abstraction on top of Godot's print functions with additional logging features:
+///     <para> 1. Logging current date and time </para>
+///     <para> 2. Logging severity levels </para>
+///     <para> 3. Named loggers </para>
+///     <para> 4. Logging from different threats </para>
+///     <para> 5. Colorful output </para>
+///     <para> 6. Predictable output, format should easily be parsable with a regex </para>
+///     <para> 7. Easy to sort / filter </para>
 /// </summary>
 /// <param name="pTag">The general tag (a name) that defines what this logger is related to.</param>
-/// <param name="pCurrentLevel">Controls the minimum allowed level for logging. Any logging below <paramref name="pCurrentLevel"/> will be ignored.</param>
+/// <param name="pCurrentLevel">
+///     Controls the minimum allowed level for logging. Any logging below
+///     <paramref name="pCurrentLevel" /> will be ignored.
+/// </param>
 public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
     public enum Level {
-        /// Used only for debugging purposes, should not be present in release builds 
+        /// Used only for debugging purposes, should not be present in release builds
         Debug,
 
         /// Useful information that require no action.
@@ -33,7 +36,7 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
         Error,
 
         /// A more serious error, usually triggered in unrecoverable state and so it may follow a crash.
-        Critical,
+        Critical
     }
 
     // TODO: Decide on levels for release builds:
@@ -47,6 +50,33 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
     public static readonly Logger Inventory = new("Inventory", Level.Info);
     public static readonly Logger Combat = new("Combat", Level.Info);
     public static readonly Logger UI = new("UI", Level.Info);
+#endif
+
+#if TOOLS
+    public void Debug([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Debug, pHandler.ToString(), pVerbose);
+    }
+
+    public void Info([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Info, pHandler.ToString(), pVerbose);
+    }
+
+    public void Warn([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Warn, pHandler.ToString(), pVerbose);
+    }
+
+    public void Error([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Error, pHandler.ToString(), pVerbose);
+    }
+
+    public void Critical([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Critical, pHandler.ToString(), pVerbose);
+    }
 #endif
 
     [Conditional("DEBUG")]
@@ -169,7 +199,7 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
 
         Core.Info("---------------------Misc Information---------------------");
         Core.Info($"Is sandboxed: {OS.IsSandboxed()}");
-        
+
         Core.Info("--------------------End of Information--------------------");
     }
 #endif

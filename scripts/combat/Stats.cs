@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using RPG.global.enums;
+using Array = System.Array;
 
 namespace RPG.scripts.combat;
 
@@ -11,10 +12,14 @@ namespace RPG.scripts.combat;
 [Tool, GlobalClass]
 public partial class Stats : Resource {
     [Signal]
-    public delegate void IntegerStatChangedEventHandler(IntegerStat pStat, long pDelta);
+    public delegate void DecimalStatChangedEventHandler(DecimalStat pStat, float pDelta);
 
     [Signal]
-    public delegate void DecimalStatChangedEventHandler(DecimalStat pStat, float pDelta);
+    public delegate void IntegerStatChangedEventHandler(IntegerStat pStat, long pDelta);
+
+    private Godot.Collections.Dictionary<string, float> _decimalData = new();
+
+    private Godot.Collections.Dictionary<string, long> _integerData = new();
 
 
     // ReSharper disable once InconsistentNaming
@@ -28,8 +33,6 @@ public partial class Stats : Resource {
         get => _integerData;
     }
 
-    private Godot.Collections.Dictionary<string, long> _integerData = new();
-
     // ReSharper disable once InconsistentNaming
     private Godot.Collections.Dictionary<string, float> _DecimalStats {
         set {
@@ -40,27 +43,6 @@ public partial class Stats : Resource {
         }
         get => _decimalData;
     }
-
-    private Godot.Collections.Dictionary<string, float> _decimalData = new();
-
-#if TOOLS
-    // AddInteger and AddDecimal are helper properties in the Inspector that just add stats to the resource.
-    private IntegerStat AddInteger {
-        set {
-            if (_integerData.TryAdd(value.ToString(), 1)) {
-                NotifyPropertyListChanged();
-            }
-        }
-    }
-
-    private DecimalStat AddDecimal {
-        set {
-            if (_decimalData.TryAdd(value.ToString(), 1.0f)) {
-                NotifyPropertyListChanged();
-            }
-        }
-    }
-#endif
 
     public long GetIntegerStat(IntegerStat pStat, long pDefault = 0) {
         string key = pStat.ToString();
@@ -117,7 +99,7 @@ public partial class Stats : Resource {
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Enum),
                 ["hint_string"] = string.Join(',',
-                    System.Array.ConvertAll(Enum.GetNames<IntegerStat>(), pItem => pItem.ToString())),
+                    Array.ConvertAll(Enum.GetNames<IntegerStat>(), pItem => pItem.ToString())),
                 ["usage"] = Variant.From(PropertyUsageFlags.Editor)
             },
             new() {
@@ -125,7 +107,7 @@ public partial class Stats : Resource {
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Enum),
                 ["hint_string"] = string.Join(',',
-                    System.Array.ConvertAll(Enum.GetNames<DecimalStat>(), pItem => pItem.ToString())),
+                    Array.ConvertAll(Enum.GetNames<DecimalStat>(), pItem => pItem.ToString())),
                 ["usage"] = Variant.From(PropertyUsageFlags.Editor)
             },
 #endif
@@ -219,6 +201,25 @@ public partial class Stats : Resource {
 
         return default;
     }
+
+#if TOOLS
+    // AddInteger and AddDecimal are helper properties in the Inspector that just add stats to the resource.
+    private IntegerStat AddInteger {
+        set {
+            if (_integerData.TryAdd(value.ToString(), 1)) {
+                NotifyPropertyListChanged();
+            }
+        }
+    }
+
+    private DecimalStat AddDecimal {
+        set {
+            if (_decimalData.TryAdd(value.ToString(), 1.0f)) {
+                NotifyPropertyListChanged();
+            }
+        }
+    }
+#endif
 
 #if TOOLS
     public override bool _PropertyCanRevert(StringName pProperty) {

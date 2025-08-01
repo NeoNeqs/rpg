@@ -1,11 +1,11 @@
-using RPG.global;
+using global::RPG.global;
+using Godot;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
 
 namespace RPG.ui.views.inventory;
 
 public abstract partial class InventoryView : View<GizmoStack> {
-    
     public virtual void InitializeWith(Inventory? pContainer) {
         if (Container == pContainer) {
             return;
@@ -33,41 +33,41 @@ public abstract partial class InventoryView : View<GizmoStack> {
     }
 
     private void OnInventoryGizmoAboutToChange(GizmoStack pGizmoStack, int pIndex) {
-        var slot = GetSlot<views.inventory.InventorySlot>(pIndex);
+        var slot = GetSlot<InventorySlot>(pIndex);
         if (pGizmoStack.Gizmo is null || slot is null) {
             return;
         }
 
-        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, SequenceSpellComponent>();
 
         if (spellComponent is null) {
             UpdateSlot(pGizmoStack, slot, 0.0f);
             return;
         }
-        
+
         if (spellComponent.IsCastCompleteConnected(slot.CastCompleteCallback)) {
             spellComponent.DisconnectCastComplete(slot.CastCompleteCallback);
         }
-        
+
         UpdateSlot(pGizmoStack, slot, spellComponent.GetRemainingCooldown());
     }
 
     private void OnInventoryGizmoChanged(GizmoStack pGizmoStack, int pIndex) {
-        var slot = GetSlot<views.inventory.InventorySlot>(pIndex);
+        var slot = GetSlot<InventorySlot>(pIndex);
 
         if (slot is null) {
             Logger.Inventory.Critical($"BUG! Slot with an index {pIndex} does not exist.", true);
             return;
         }
 
-        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+        SpellComponent? spellComponent = pGizmoStack.Gizmo?.GetComponent<SpellComponent, SequenceSpellComponent>();
 
         if (spellComponent is null) {
             UpdateSlot(pGizmoStack, slot, 0.0f);
             return;
         }
-        
-        var error = spellComponent.ConnectCastComplete(slot.CastCompleteCallback);
+
+        Error error = spellComponent.ConnectCastComplete(slot.CastCompleteCallback);
         UpdateSlot(pGizmoStack, slot, spellComponent.GetRemainingCooldown());
     }
 
@@ -75,6 +75,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
         ResizeHolder();
     }
 
+    // TODO: Move to View class to reuse this code! Check EffectView!
     protected override void AddSlot(int pIndex) {
         if (Container is null) {
             Logger.UI.Critical("BUG! Container should not be null here!", true);
@@ -82,30 +83,25 @@ public abstract partial class InventoryView : View<GizmoStack> {
         }
 
         GizmoStack gizmoStack = Container.GetAt(pIndex);
-        var slot = SlotScene.Instantiate<views.inventory.InventorySlot>();
+        var slot = SlotScene.Instantiate<InventorySlot>();
 
-        
-        // FIND_ME:
         slot.Update(gizmoStack);
-        // TODO: those signals won't be ever disconnected...
-        // https://docs.godotengine.org/en/4.4/tutorials/scripting/c_sharp/c_sharp_signals.html
         slot.LeftMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, false);
         slot.RightMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, true);
         slot.Hovered += () => EmitSignalSlotHovered(this, slot);
         slot.Unhovered += EmitSignalSlotUnhovered;
         SlotHolder.AddChild(slot);
-        
-        slot.CastCompleteCallback = (float pCooldownSeconds) => {
-            UpdateSlot(gizmoStack, slot, pCooldownSeconds);
-        };
 
-        SpellComponent? spellComponent = gizmoStack.Gizmo?.GetComponent<SpellComponent, ChainSpellComponent>();
+        slot.CastCompleteCallback = (float pCooldownSeconds) => { UpdateSlot(gizmoStack, slot, pCooldownSeconds); };
 
-        if (spellComponent is null) {
+        SpellComponent? spellComponent = gizmoStack.Gizmo?.GetComponent<SpellComponent, SequenceSpellComponent>();
+
+        if (spellComponent is null)
             // UpdateSlot(gizmoStack, slot, 0.0f);
+        {
             return;
         }
-        
+
         spellComponent.ConnectCastComplete(slot.CastCompleteCallback);
     }
 
@@ -153,7 +149,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
     //         spellComponent.DisconnectCastComplete(castCompleteCallback);
     //     }
     // }
-    
+
 
     // protected static void WireGizmo(GizmoStack pGizmoStack, InventorySlot pSlot) {
     //     Action<float> castCompleteCallback = (float pCooldownSeconds) => {
@@ -258,7 +254,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
         return (Inventory)Container!;
     }
 
-    private static void UpdateSlot(GizmoStack pGizmoStack, views.inventory.InventorySlot pSlot, float pCooldownSeconds) {
+    private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, float pCooldownSeconds) {
         pSlot.Update(pGizmoStack);
         pSlot.SetOnCooldown(pCooldownSeconds);
     }

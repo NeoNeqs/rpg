@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://ceyw8mdtd21wl"]
+
+[ext_resource type="Script" uid="uid://b8npinhx4w552" path="res://world/entity/ModelHolder.cs" id="1_3yx7m"]
+[ext_resource type="Shape3D" uid="uid://cx78nl58jcwlj" path="res://resources/cone.tres" id="2_3yx7m"]
+
+[node name="ModelHolder" type="Node3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+script = ExtResource("1_3yx7m")
+
+[node name="Area3D" type="Area3D" parent="."]
+input_ray_pickable = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = ExtResource("2_3yx7m")

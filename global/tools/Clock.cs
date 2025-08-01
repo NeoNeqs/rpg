@@ -6,16 +6,18 @@ namespace RPG.global.tools;
 
 #if TOOLS
 /// <summary>
-/// Measures the time a scope takes to execute.
+///     Measures the time a scope takes to execute.
 /// </summary>
-/// <example> Measure a method:
+/// <example>
+///     Measure a method:
 ///     <code>
 ///         void Foo() {
 ///             using var clock = new Clock(this, "");
 ///         }
 ///     </code>
 /// </example>
-/// <example> Measure a scope:
+/// <example>
+///     Measure a scope:
 ///     <code>
 ///         void Foo() {
 ///             if (...some condition...) {
@@ -24,7 +26,7 @@ namespace RPG.global.tools;
 ///         }
 ///     </code>
 /// </example>
-public sealed class Clock : IDisposable {
+public ref struct Clock : IDisposable {
     private readonly object _object;
     private readonly string _tag;
     private readonly string _method;
@@ -37,8 +39,14 @@ public sealed class Clock : IDisposable {
     /// <param name="pObj">The object that created the Clock instance. Usually you should pass <c>this</c>.</param>
     /// <param name="pTag">The name of the scope that is being measured.</param>
     /// <param name="pAutoStart">Whether the Clock should immediately begin measuring or not.</param>
-    /// <param name="pMethod">The name of the method from <paramref name="pObj" />, that created the Clock instance. Will be filled automatically by <see cref="System.Runtime.CompilerServices.CallerMemberNameAttribute"/>.</param>
-    /// <param name="pLine">The line number from <paramref name="pObj" />, that created the Clock instance. Will be filled automatically by <see cref="System.Runtime.CompilerServices.CallerLineNumberAttribute"/>.</param>
+    /// <param name="pMethod">
+    ///     The name of the method from <paramref name="pObj" />, that created the Clock instance. Will be
+    ///     filled automatically by <see cref="System.Runtime.CompilerServices.CallerMemberNameAttribute" />.
+    /// </param>
+    /// <param name="pLine">
+    ///     The line number from <paramref name="pObj" />, that created the Clock instance. Will be filled
+    ///     automatically by <see cref="System.Runtime.CompilerServices.CallerLineNumberAttribute" />.
+    /// </param>
     public Clock(
         object pObj,
         string pTag,
@@ -69,7 +77,7 @@ public sealed class Clock : IDisposable {
 
     public void ShowResult() {
         string humanizedTime = Utils.HumanizeMicroseconds(_accumulatedTime);
-        Logger.Core.Info($"({_tag}) {_object.GetType().Name}::{_method}:{_line} -> {humanizedTime}");
+        Logger.Core.Info($"{_tag}: {_object.GetType().Name}::{_method}:{_line} -> {humanizedTime}");
     }
 
     public void Dispose() {

@@ -1,11 +1,14 @@
-using RPG.global;
+using global::RPG.global;
 using Godot;
 using Godot.Collections;
 using RPG.global.enums;
 
 namespace RPG.scripts.effects;
 
-[Tool]
+// TODO: Move stacking logic to the Effect class
+// TODO: Rename this class to ScalingEffect
+
+[Tool, GlobalClass]
 public abstract partial class StackingEffect : Effect {
     public uint FlatValue { private set; get; }
     public IntegerStat StatScale { private set; get; }

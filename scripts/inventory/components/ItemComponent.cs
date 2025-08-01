@@ -19,7 +19,7 @@ public partial class ItemComponent : GizmoComponent {
             ItemRarity.Rare => Colors.DodgerBlue,
             ItemRarity.Epic => Colors.BlueViolet,
             ItemRarity.Legendary => Colors.OrangeRed,
-            _ => Colors.Black,
+            _ => Colors.Black
         };
     }
 }

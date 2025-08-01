@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dnladpgp5dwts"]
 
-[ext_resource type="Script" path="res://addons/godot-plugin-refresher/plugin_refresher.gd" id="1"]
+[ext_resource type="Script" uid="uid://c64whhto1wr18" path="res://addons/godot-plugin-refresher/plugin_refresher.gd" id="1"]
 
 [node name="HBoxContainer" type="HBoxContainer"]
 script = ExtResource("1")

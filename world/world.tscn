@@ -1,15 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://bis4dc1eunhgd"]
+[gd_scene load_steps=7 format=3 uid="uid://bis4dc1eunhgd"]
 
 [ext_resource type="PackedScene" uid="uid://c7n3fws3wd5yu" path="res://levels/test_level.tscn" id="1_4717r"]
 [ext_resource type="Script" uid="uid://bbgyfcod2ucxm" path="res://world/World.cs" id="1_h5o24"]
 [ext_resource type="PackedScene" uid="uid://iivb1yj1wg2a" path="res://world/character/character.tscn" id="2_h5o24"]
 [ext_resource type="PackedScene" uid="uid://blk21fp6k13se" path="res://world/entity/test_enemy.tscn" id="3_mmdvd"]
-[ext_resource type="PackedScene" uid="uid://bnxsviv27yjmn" path="res://world/aoe_decal.tscn" id="5_mmdvd"]
+[ext_resource type="Texture2D" uid="uid://cg74nveil4vpb" path="res://icon.svg" id="5_fn3g3"]
+[ext_resource type="Script" uid="uid://blcc2ydrwger3" path="res://world/AoeDecal.cs" id="6_sc4t8"]
 
 [node name="World" type="Node3D"]
+process_mode = 3
 script = ExtResource("1_h5o24")
 
 [node name="TestLevel" parent="." instance=ExtResource("1_4717r")]
+process_mode = 3
 
 [node name="Character" parent="." instance=ExtResource("2_h5o24")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.654522, 0)
@@ -17,5 +20,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.654522, 0)
 [node name="TestEnemy" parent="." instance=ExtResource("3_mmdvd")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.888081, -3.47548)
 
-[node name="AoeDecal" parent="." node_paths=PackedStringArray("_character") instance=ExtResource("5_mmdvd")]
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026, 0.648, -3.161)
+
+[node name="AoeDecal" type="Sprite3D" parent="." node_paths=PackedStringArray("_character")]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.311913, 0)
+modulate = Color(1, 1, 1, 0.356863)
+texture = ExtResource("5_fn3g3")
+script = ExtResource("6_sc4t8")
 _character = NodePath("../Character")

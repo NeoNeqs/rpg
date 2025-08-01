@@ -1,28 +1,28 @@
-[gd_resource type="Resource" script_class="Gizmo" load_steps=8 format=3 uid="uid://dfebkmuinemk8"]
+[gd_resource type="Resource" script_class="Gizmo" load_steps=7 format=3 uid="uid://dfebkmuinemk8"]
 
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_aep25"]
-[ext_resource type="Resource" uid="uid://ogopxk8kkl5y" path="res://resources/effects/fire_ball.tres" id="2_7o5gr"]
-[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="2_kggnb"]
+[ext_resource type="Resource" uid="uid://ogopxk8kkl5y" path="res://resources/effects/fire_ball.tres" id="2_47hi4"]
 [ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_xqiny"]
-[ext_resource type="Script" uid="uid://cpk6hvue643ng" path="res://scripts/inventory/components/ChainSpellComponent.cs" id="3_kggnb"]
-[ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="4_7o5gr"]
+[ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="3_7o5gr"]
+[ext_resource type="Texture2D" uid="uid://b7334qd7vclt6" path="res://assets/textures/spell/fire-ray.svg" id="4_ptoff"]
 
-[sub_resource type="Resource" id="Resource_47hi4"]
-script = ExtResource("3_kggnb")
-Spells = [ExtResource("4_7o5gr")]
-Effects = [ExtResource("2_7o5gr")]
-CooldownSeconds = 2.0
+[sub_resource type="Resource" id="Resource_v1jnt"]
+script = ExtResource("3_7o5gr")
+Effects = [ExtResource("2_47hi4")]
+CooldownSeconds = 1.0
 Range = 1
+CastTimeSeconds = 0.0
 LinkedSpells = []
-metadata/_custom_type_script = "uid://cpk6hvue643ng"
+SpellFlags = 0
+metadata/_custom_type_script = "uid://bk27a6avfmj1x"
 
 [resource]
 script = ExtResource("2_xqiny")
 Id = &"spell:fire_ball"
-DisplayName = "Fire ball"
-Icon = ExtResource("2_kggnb")
+DisplayName = "Fire Ball"
+Icon = ExtResource("4_ptoff")
 StackSize = 1
 Components = Dictionary[String, ExtResource("1_aep25")]({
-"ChainSpellComponent": SubResource("Resource_47hi4")
+"SpellComponent": SubResource("Resource_v1jnt")
 })
 metadata/_custom_type_script = "uid://be1ycgpodowgh"

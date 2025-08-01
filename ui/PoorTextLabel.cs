@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using global::RPG.global;
 using Godot;
 
 namespace RPG.ui;
@@ -25,7 +26,6 @@ public partial class PoorTextLabel : VBoxContainer {
         Label currentLabel = CreateLabel(this);
 
         foreach (Match match in TagRegex.Matches(pLine)) {
-            // foreach (Group matchGroup in match.Groups) {
             if (match.Value == "#right#") {
                 currentLabel = HandleRightTag(currentLabel);
             } else if (match.Value.StartsWith("#color=")) {
@@ -35,7 +35,6 @@ public partial class PoorTextLabel : VBoxContainer {
             } else {
                 currentLabel.Text += match.Value;
             }
-            // }
         }
     }
 
@@ -46,7 +45,8 @@ public partial class PoorTextLabel : VBoxContainer {
         if (node is not HBoxContainer hbox) {
             hbox = new HBoxContainer();
             hbox.AddThemeConstantOverride("separation", 0);
-            AddChild(hbox);
+            this.AddChildOwned(hbox, this);
+
             pRelative.CustomMinimumSize = pRelative.CustomMinimumSize with { X = pRelative.CustomMinimumSize.X / 2 };
             // pRelative.CustomMinimumSize = new Vector2(200, 0);
             pRelative.Reparent(hbox);
@@ -75,7 +75,7 @@ public partial class PoorTextLabel : VBoxContainer {
 
     private Label HandleColorTag(Label pCurrentLabel, string pTag) {
         string colorCode = pTag.Substring(7, pTag.Length - 8);
-        
+
         Color color = Color.FromString(colorCode, Colors.White);
 
         if (pCurrentLabel.Text.Length == 0) {
@@ -117,7 +117,7 @@ public partial class PoorTextLabel : VBoxContainer {
         Label label = new() {
             SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
             HorizontalAlignment = HorizontalAlignment.Left,
-            LabelSettings = new LabelSettings() {
+            LabelSettings = new LabelSettings {
                 FontColor = Colors.White
             }
         };

@@ -5,16 +5,15 @@
 [resource]
 script = ExtResource("1_atywp")
 Id = &"effect:instant_poison"
-DisplayName = "Instant Poison Proc"
+DisplayName = ""
 TickTimeout = 3
 TotalTicks = 1
 ApplicationChance = 1.0
-Radius = 0
-Flags = 32768
-ExcludingEffects = [&"effect:fire_ball"]
-FlatValue = 20
+Flags = 0
+ExcludingEffects = []
+FlatValue = 0
 StatScale = 0
-StatScaleCoefficient = 1.0
+StatScaleCoefficient = 0.0
 MaxStacks = 1
-DamageType = 2
+DamageType = 0
 metadata/_custom_type_script = "uid://btbq7woaywr4i"

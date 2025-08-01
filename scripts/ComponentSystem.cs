@@ -6,12 +6,12 @@ namespace RPG.scripts;
 
 [Tool]
 public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource where TComponent : Resource {
+    public const string ComponentsExportName = "components";
     // Components are stored in a Dictionary, but displayed as an Array in the Inspector.
     // See also `_GetPropertyList()`, `_Set()` and `_Get()` below.
 
+    // TODO: string -> StringName
     public Godot.Collections.Dictionary<string, TComponent?> Components { private set; get; } = [];
-
-    public const string ComponentsExportName = "components";
 
     public T? GetComponent<T>() where T : TComponent {
         if (Components.TryGetValue(typeof(T).Name, out TComponent? value)) {
@@ -60,7 +60,7 @@ public partial class ComponentSystem<[MustBeVariant] TComponent> : Resource wher
                 ["name"] = nameof(Components),
                 ["type"] = (long)Variant.Type.Dictionary,
                 ["usage"] = (long)PropertyUsageFlags.NoEditor | (long)PropertyUsageFlags.ScriptVariable
-            },
+            }
         ];
     }
 

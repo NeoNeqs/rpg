@@ -1,9 +1,12 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
 
 namespace RPG.ui.views;
 
 public abstract partial class Slot : Control {
+    [Signal]
+    public delegate void HoveredEventHandler();
+
     [Signal]
     public delegate void LeftMouseButtonPressedEventHandler();
 
@@ -11,37 +14,34 @@ public abstract partial class Slot : Control {
     public delegate void RightMouseButtonPressedEventHandler();
 
     [Signal]
-    public delegate void HoveredEventHandler();
-
-    [Signal]
     public delegate void UnhoveredEventHandler();
-    
-    
+
+
     [Export] public TextureRect IconHolder = null!;
-    
+
     public void SetOnCooldown(float pCooldownSeconds) {
-        views.CooldownDisplay? cooldownDisplay = GetCooldownDisplay();
+        CooldownDisplay? cooldownDisplay = GetCooldownDisplay();
         if (pCooldownSeconds <= 0.0f) {
             cooldownDisplay?.Reset();
             return;
         }
-        
+
         cooldownDisplay?.Start(pCooldownSeconds);
     }
-    
-    private views.CooldownDisplay? GetCooldownDisplay() {
-        var display = IconHolder.GetNodeOrNull<views.CooldownDisplay>("CooldownDisplay");
+
+    protected CooldownDisplay? GetCooldownDisplay() {
+        var display = IconHolder.GetNodeOrNull<CooldownDisplay>("CooldownDisplay");
 
         if (display is null) {
             Logger.UI.Error(
-                $"Slot id='{GetInstanceId()}', at index='{GetIndex()}' does not have a '{nameof(views.CooldownDisplay)}' node attached.");
+                $"Slot id='{GetInstanceId()}', at index='{GetIndex()}' does not have a '{nameof(CooldownDisplay)}' node attached.");
             return null;
         }
 
         return display;
     }
-    
-    
+
+
     public override void _GuiInput(InputEvent pEvent) {
         if (pEvent is not InputEventMouseButton mouseButton) {
             return;
@@ -70,7 +70,7 @@ public abstract partial class Slot : Control {
                 break;
         }
     }
-    
+
     public override void _Notification(int pWhat) {
         switch (pWhat) {
             case (int)NotificationMouseEnter:
@@ -81,7 +81,7 @@ public abstract partial class Slot : Control {
                 break;
         }
     }
-    
+
     public void Select() {
         Modulate = new Color(1.0f, 1.0f, 1.0f, 0.5f);
     }

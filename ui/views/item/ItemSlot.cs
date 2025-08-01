@@ -1,7 +1,7 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
 using RPG.scripts.inventory;
-using InventorySlot = RPG.ui.views.inventory.InventorySlot;
+using RPG.ui.views.inventory;
 
 namespace RPG.ui.views.item;
 
@@ -32,7 +32,7 @@ public partial class ItemSlot : InventorySlot {
             Logger.UI.Error("Unhandled style box type.", true);
             return;
         }
-        
+
         styleBoxFlat.BorderColor = pColor;
     }
 }

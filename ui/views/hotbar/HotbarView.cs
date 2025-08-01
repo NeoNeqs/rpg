@@ -1,20 +1,20 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
+using RPG.global.singletons;
 using RPG.scripts.inventory;
-using EventBus = RPG.global.singletons.EventBus;
-using ItemView = RPG.ui.views.item.ItemView;
+using RPG.ui.views.item;
 
 namespace RPG.ui.views.hotbar;
 
 public partial class HotbarView : ItemView {
     private static int _hotbarCounter;
 
-    private int _hotbarId;
-
     private static readonly Key[] PrimaryKeys = [
         Key.Key1, Key.Key2, Key.Key3, Key.Key4, Key.Key5,
         Key.Q, Key.E, Key.R, Key.F, Key.G, Key.C, Key.X
     ];
+
+    private int _hotbarId;
 
     public override void _EnterTree() {
         _hotbarId = _hotbarCounter++;
@@ -66,14 +66,14 @@ public partial class HotbarView : ItemView {
         int modifierMask = _hotbarId;
 #if TOOLS
         if (modifierMask > 0b111) {
-            Logger.UI.Error($"Run out of possible modifiers fot hotbars! Max number of hotbars is 8!");
+            Logger.UI.Error("Run out of possible modifiers fot hotbars! Max number of hotbars is 8!");
             return;
         }
 #endif
         if (Container is null) {
             return;
         }
-        
+
         int size = Mathf.Min(Container.GetSize(), PrimaryKeys.Length);
 
         for (int i = 0; i < size; i++) {
@@ -87,7 +87,7 @@ public partial class HotbarView : ItemView {
                 continue;
             }
 
-            InputMap.ActionAddEvent(action, new InputEventKey() {
+            InputMap.ActionAddEvent(action, new InputEventKey {
                 Keycode = PrimaryKeys[i],
                 CtrlPressed = (modifierMask & 0b001) != 0,
                 AltPressed = (modifierMask & 0b010) != 0,

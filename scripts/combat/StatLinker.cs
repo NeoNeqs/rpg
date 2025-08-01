@@ -1,4 +1,4 @@
-using RPG.global;
+using global::RPG.global;
 using RPG.global.enums;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
@@ -36,7 +36,7 @@ public class StatLinker {
         if (pStats is null) {
             return;
         }
-        
+
         if (pStats.IsConnectedToIntegerStatChanged(OnIntegerStatChanged)) {
             foreach (IntegerStat stat in Stats.GetIntegerStats()) {
                 long currentTotal = Total.GetIntegerStat(stat);

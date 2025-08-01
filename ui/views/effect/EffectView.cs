@@ -1,55 +1,47 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
 using RPG.scripts.combat;
-using RPG.scripts.effects;
-using RPG.scripts.inventory;
 
 namespace RPG.ui.views.effect;
 
-public partial class EffectView : View<(Gizmo, Effect)> {
-    public void InitializeWith(CombatManager? pContainer) {
+public partial class EffectView : View<AppliedEffect> {
+    public void InitializeWith(SpellManager? pContainer) {
         if (Container == pContainer) {
-            GD.Print("A");
-            return;
-        }
-
-        if (pContainer is null) {
-            GD.Print("B");
             return;
         }
 
         // Disconnect old signals
-        if (Container is CombatManager combatManager) {
+        if (Container is SpellManager combatManager) {
             combatManager.AppliedEffect -= OnEffectApplied;
             combatManager.RemovedEffect -= OnEffectRemoved;
-            // inventory.SizeChanged -= OnInventorySizeChanged;
-            // inventory.GizmoAboutToChange -= OnInventoryGizmoAboutToChange;
-            // inventory.GizmoChanged -= OnInventoryGizmoChanged;
+
+            foreach (Node node in SlotHolder.GetChildren()) {
+                SlotHolder.RemoveChild(node);
+                node.QueueFree();
+            }
         }
 
         Container = pContainer;
-        GetCombatManager().AppliedEffect += OnEffectApplied;
-        GetCombatManager().RemovedEffect += OnEffectRemoved;
-        // GetInventory().SizeChanged += OnInventorySizeChanged;
-        // GetInventory().GizmoAboutToChange += OnInventoryGizmoAboutToChange;
-        // GetInventory().GizmoChanged += OnInventoryGizmoChanged;
-
-        SetupHolder();
-        ResizeHolder();
+        if (Container is not null) {
+            combatManager = GetCombatManager();
+            combatManager.AppliedEffect += OnEffectApplied;
+            combatManager.RemovedEffect += OnEffectRemoved;
+            ResizeHolder();
+        }
     }
 
-    private void OnEffectRemoved(Gizmo pEffectOwner, Effect pEffect, int pIndex) {
-        var slot = GetSlot<views.effect.EffectSlot>(pIndex)!;
+    private void OnEffectRemoved(AppliedEffect pAppliedEffect, int pIndex) {
+        var slot = GetSlot<EffectSlot>(pIndex)!;
         SlotHolder.RemoveChild(slot);
         slot.QueueFree();
     }
 
-    private void OnEffectApplied(Gizmo pEffectOwner, Effect pEffect) {
+    // TODO: make this take ValueTuple as a parameter
+    private void OnEffectApplied(AppliedEffect pAppliedEffect) {
         ResizeHolder();
 
-        var slot = GetSlot<views.effect.EffectSlot>(SlotHolder.GetChildCount() - 1)!;
-        slot.Update((pEffectOwner, pEffect));
-        
+        var slot = GetSlot<EffectSlot>(SlotHolder.GetChildCount() - 1)!;
+        slot.Update(pAppliedEffect);
     }
 
     protected override void AddSlot(int pIndex) {
@@ -58,22 +50,18 @@ public partial class EffectView : View<(Gizmo, Effect)> {
             return;
         }
 
-        (Gizmo, Effect) data = Container.GetAt(pIndex);
-        var slot = SlotScene.Instantiate<views.effect.EffectSlot>();
+        AppliedEffect data = Container.GetAt(pIndex);
+        var slot = SlotScene.Instantiate<EffectSlot>();
         slot.Update(data);
-        
+
         slot.LeftMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, false);
         slot.RightMouseButtonPressed += () => EmitSignalSlotPressed(this, slot, true);
         slot.Hovered += () => EmitSignalSlotHovered(this, slot);
         slot.Unhovered += EmitSignalSlotUnhovered;
-        SlotHolder.AddChild(slot);
-        
-        
-        
-    }
-    
-    public CombatManager GetCombatManager() {
-        return (CombatManager)Container!;
+        SlotHolder.AddChildOwned(slot, this);
     }
 
+    public SpellManager GetCombatManager() {
+        return (SpellManager)Container!;
+    }
 }

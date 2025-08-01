@@ -1,6 +1,6 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
-using InventoryView = RPG.ui.views.inventory.InventoryView;
+using RPG.ui.views.inventory;
 
 namespace RPG.ui.views.item;
 

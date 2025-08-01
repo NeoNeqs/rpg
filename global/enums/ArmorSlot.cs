@@ -1,7 +1,7 @@
 namespace RPG.global.enums;
 
-public enum ArmorSlot {
-    Head,
-    Neck,
-    Chest,
+public enum ArmorSlot : byte {
+    Head = 0,
+    Neck = 1,
+    Chest = 2
 }

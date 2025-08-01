@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bis4dc1eunhgd" path="res://world/world.tscn" id="3_h2yge"]
 
 [node name="Main" type="Node"]
+process_mode = 3
 script = ExtResource("1_h2yge")
 
 [node name="UI" parent="." instance=ExtResource("2_em4k5")]

@@ -7,9 +7,13 @@ namespace RPG.scripts.inventory;
 
 [Tool, GlobalClass]
 public partial class GizmoStack : Resource {
-    
+    private Gizmo? _gizmo;
+    private long _quantity;
+
+    [Export] public Array<GizmoComponent> AllowedComponents = [];
+
     // DO NOT TOUCH THIS CLASS!
-    
+
     [Export]
     public Gizmo? Gizmo {
         set {
@@ -33,11 +37,6 @@ public partial class GizmoStack : Resource {
         }
         get => _gizmo is null ? 0 : Math.Clamp(_quantity, 0, _gizmo.StackSize);
     }
-
-    [Export] public Array<GizmoComponent> AllowedComponents = [];
-
-    private Gizmo? _gizmo;
-    private long _quantity;
 
     public bool IsEmpty() {
         return _quantity == 0;

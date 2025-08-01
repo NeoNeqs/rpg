@@ -1,8 +1,7 @@
 using Godot;
-using InventoryView = RPG.ui.views.inventory.InventoryView;
+using RPG.ui.views.inventory;
 
 namespace RPG.ui.views.spell;
 
 [GlobalClass]
-public partial class SpellView : InventoryView {
-}
+public partial class SpellView : InventoryView { }

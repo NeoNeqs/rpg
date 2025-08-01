@@ -1,30 +1,29 @@
 using System;
 using Godot;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
+using RPG.global.singletons;
 
 namespace RPG.world.character.components;
 
 [GlobalClass]
 public partial class CameraController : Node {
-    private float _cameraSensitivity = 3.0f;
-    private float _scrollSensitivity = 0.2f;
-
-    private SpringArm3D Arm => Pivot.GetChild<SpringArm3D>(0);
-    private PlayerCharacterBody Body => GetBody();
-    private Node3D Pivot => Body.GetPivot();
-    private Node3D Model => Body.GetModel();
-
-    private bool _skipMotionEventOnce = true;
-    private bool _freeLookEnabled;
-    private bool _turnEnabled;
-    private float _scrollVelocity;
-
     private const float MaxScrollVelocity = 1.3f;
     private const float SpringLengthDecay = 8.0f;
     private const float MinSpringLength = 0.5f;
     private const float MaxSpringLength = 9.0f;
     private const float MinArmPitch = -Mathf.Pi / 2f;
     private const float MaxArmPitch = Mathf.Pi / 4f;
+    private float _cameraSensitivity = 3.0f;
+    private bool _freeLookEnabled;
+    private float _scrollSensitivity = 0.2f;
+    private float _scrollVelocity;
+
+    private bool _skipMotionEventOnce = true;
+    private bool _turnEnabled;
+
+    private SpringArm3D Arm => Pivot.GetChild<SpringArm3D>(0);
+    private PlayerCharacterBody Body => GetBody();
+    private Node3D Pivot => Body.GetPivot();
+    private Node3D Model => Body.GetModel();
 
     public override void _PhysicsProcess(double pDelta) {
         if (Input.IsActionJustPressed("camera_zoom_in")) {
@@ -71,9 +70,10 @@ public partial class CameraController : Node {
         // Yes, skip the first frame of camera motion. Otherwise, camera gets glitchy and bitchy about it.
         if (_freeLookEnabled || _turnEnabled) {
             _skipMotionEventOnce = true;
-        } else {
+        } else
             // Defer the state release by 1 frame. 
             // This allows AOE spells to be cast properly in PlayerCharacter
+        {
             MouseStateMachine.Instance.RequestStateDeferred(MouseStateMachine.State.Free);
         }
     }
@@ -94,7 +94,12 @@ public partial class CameraController : Node {
         }
 
         if (_freeLookEnabled || _turnEnabled) {
-            MouseStateMachine.Instance.RequestState(MouseStateMachine.State.CameraControl);
+            if (MouseStateMachine.Instance.CurrentState != MouseStateMachine.State.CameraControl) {
+                if (!MouseStateMachine.Instance.RequestState(MouseStateMachine.State.CameraControl)) {
+                    return;
+                }
+            }
+
             Pivot.RotateY(-pEventMouseMotion.Relative.X * _cameraSensitivity * 0.001f);
             Arm.RotateX(-pEventMouseMotion.Relative.Y * _cameraSensitivity * 0.001f);
             Arm.Rotation = Arm.Rotation with {

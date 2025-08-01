@@ -6,5 +6,5 @@ namespace RPG.global.enums;
 public enum CrowdControl : ulong {
     Polymorph = 1 << 0,
     Stun = 1 << 1,
-    Root = 1 << 2,
+    Root = 1 << 2
 }

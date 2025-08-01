@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://iivb1yj1wg2a"]
+[gd_scene load_steps=30 format=3 uid="uid://iivb1yj1wg2a"]
 
 [ext_resource type="Script" uid="uid://dbo1dwrnn5qru" path="res://world/character/PlayerCharacter.cs" id="1_pdabv"]
 [ext_resource type="PackedScene" uid="uid://bpnsv045afu5t" path="res://assets/models/character/Pirate_Male.gltf" id="2_1jngo"]
@@ -9,12 +9,11 @@
 [ext_resource type="Script" uid="uid://b6ma5srt1o11b" path="res://scripts/combat/Stats.cs" id="4_pdabv"]
 [ext_resource type="Script" uid="uid://bk27a6avfmj1x" path="res://scripts/inventory/components/SpellComponent.cs" id="5_qdl7p"]
 [ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="6_ggcj5"]
-[ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/CombatManager.cs" id="6_lbca7"]
+[ext_resource type="Script" uid="uid://dbsutjhc4nqxg" path="res://scripts/combat/SpellManager.cs" id="6_lbca7"]
 [ext_resource type="Resource" uid="uid://dfebkmuinemk8" path="res://resources/spells/fire_ball.tres" id="7_g02qr"]
 [ext_resource type="Resource" uid="uid://8u7wfnel2xpp" path="res://resources/spells/fire_rain.tres" id="8_g02qr"]
 [ext_resource type="Resource" uid="uid://bcjqpuy8ck20l" path="res://resources/spells/instant_poison.tres" id="9_g02qr"]
-[ext_resource type="Script" uid="uid://4m7emmkgdioy" path="res://scripts/combat/StatCurves.cs" id="10_f1wg7"]
-[ext_resource type="Script" uid="uid://bp1c67o5mclqa" path="res://scripts/combat/CombatSystem.cs" id="11_m0gsu"]
+[ext_resource type="PackedScene" uid="uid://ceyw8mdtd21wl" path="res://world/entity/model_holder.tscn" id="12_ggcj5"]
 [ext_resource type="Script" uid="uid://b2coni50v0uls" path="res://world/character/components/CameraController.cs" id="15_ggcj5"]
 [ext_resource type="Script" uid="uid://bk7iy0hrav8gb" path="res://world/character/components/MovementController.cs" id="15_qdl7p"]
 [ext_resource type="Script" uid="uid://bl5tc275grlvk" path="res://world/character/components/HotbarManager.cs" id="19_7k511"]
@@ -32,7 +31,9 @@ script = ExtResource("5_qdl7p")
 Effects = []
 CooldownSeconds = 0.0
 Range = 1
+CastTimeSeconds = 0.0
 LinkedSpells = []
+SpellFlags = 0
 metadata/_custom_type_script = "uid://bk27a6avfmj1x"
 
 [sub_resource type="Resource" id="Resource_d882m"]
@@ -98,81 +99,25 @@ func _physics_process(_delta: float) -> void:
 	get_parent().get_parent().get_child(1).visible = get_hit_length() > 0.6
 "
 
-[sub_resource type="Curve" id="Curve_35jrf"]
-_limits = [1.0, 100.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Curve" id="Curve_0xnjn"]
-_limits = [1.0, 100.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_5gf7w"]
-_limits = [1.0, 100.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Curve" id="Curve_u6gj0"]
-_limits = [1.0, 100.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_nj1i4"]
-_limits = [1.0, 100.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 100), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Curve" id="Curve_1yc0x"]
-_limits = [1.0, 100.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 100), 2.57483, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_8ft1f"]
-_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_mbxsp"]
-_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
-point_count = 2
-
-[sub_resource type="Resource" id="Resource_sckb1"]
-script = ExtResource("10_f1wg7")
-ArmorReductionCurve = SubResource("Curve_0xnjn")
-ArmorPenetrationCurve = SubResource("Curve_35jrf")
-ShadowReductionCurve = SubResource("Curve_1yc0x")
-ShadowPenetrationCurve = SubResource("Curve_nj1i4")
-NatureReductionCurve = SubResource("Curve_u6gj0")
-NaturePenetrationCurve = SubResource("Curve_5gf7w")
-StrengthCurve = SubResource("Curve_mbxsp")
-StaminaCurve = SubResource("Curve_8ft1f")
-
-[sub_resource type="Resource" id="Resource_vqai4"]
-script = ExtResource("11_m0gsu")
-StatCurves = SubResource("Resource_sckb1")
-metadata/_custom_type_script = "uid://bp1c67o5mclqa"
-
-[node name="Character" type="Node3D" node_paths=PackedStringArray("CombatManager")]
+[node name="Character" type="Node3D" node_paths=PackedStringArray("SpellManager")]
+process_mode = 3
 script = ExtResource("1_pdabv")
 Inventory = ExtResource("2_m0gsu")
-CombatManager = NodePath("CombatManager")
+SpellManager = NodePath("SpellManager")
 Armory = SubResource("Resource_fn1hb")
 SpellBook = SubResource("Resource_s02qt")
 BaseStats = SubResource("Resource_f1wg7")
-Faction = 1
 
 [node name="Body" type="CharacterBody3D" parent="."]
 collision_layer = 2
 script = ExtResource("2_fn1hb")
 
+[node name="ModelHolder" parent="Body" instance=ExtResource("12_ggcj5")]
+ModelScene = ExtResource("2_1jngo")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.380275, -0.04477)
 shape = SubResource("CapsuleShape3D_1jngo")
-
-[node name="Model" type="Node3D" parent="Body"]
-
-[node name="Pirate_Male" parent="Body/Model" instance=ExtResource("2_1jngo")]
-transform = Transform3D(-0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, 0, 0, 0)
 
 [node name="Pivot" type="Node3D" parent="Body"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.426638, 0)
@@ -182,20 +127,25 @@ spring_length = 5.0
 script = SubResource("GDScript_qdl7p")
 
 [node name="Camera3D" type="Camera3D" parent="Body/Pivot/Arm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00176167, -1.19209e-07, 0.00301743)
+current = true
+fov = 120.0
 
 [node name="MovementController" type="Node" parent="Body"]
+process_mode = 3
 script = ExtResource("15_qdl7p")
 metadata/_custom_type_script = "uid://bk7iy0hrav8gb"
 
 [node name="CameraController" type="Node" parent="Body"]
+process_mode = 3
 script = ExtResource("15_ggcj5")
 metadata/_custom_type_script = "uid://b2coni50v0uls"
 
-[node name="CombatManager" type="Node" parent="."]
+[node name="SpellManager" type="Node" parent="."]
 script = ExtResource("6_lbca7")
-CombatSystem = SubResource("Resource_vqai4")
 metadata/_custom_type_script = "uid://dbsutjhc4nqxg"
 
 [node name="HotbarManager" type="Node" parent="."]
+process_mode = 1
 script = ExtResource("19_7k511")
 metadata/_custom_type_script = "uid://bl5tc275grlvk"

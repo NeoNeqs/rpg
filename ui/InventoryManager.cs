@@ -1,25 +1,24 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
 using RPG.global.singletons;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
-using EventBus = RPG.global.singletons.EventBus;
-using HotbarView = RPG.ui.views.hotbar.HotbarView;
-using InventorySlot = RPG.ui.views.inventory.InventorySlot;
-using InventoryView = RPG.ui.views.inventory.InventoryView;
-using ItemView = RPG.ui.views.item.ItemView;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
-using SpellView = RPG.ui.views.spell.SpellView;
+using RPG.ui.views;
+using RPG.ui.views.effect;
+using RPG.ui.views.hotbar;
+using RPG.ui.views.inventory;
+using RPG.ui.views.item;
+using RPG.ui.views.spell;
 
 namespace RPG.ui;
 
 [GlobalClass]
 public partial class InventoryManager : Control {
-    [Export] private Tooltip _tooltip = null!;
     [Export] private DragSlot _dragSlot = null!;
+    private InventoryView? _selectedInventoryView;
 
     private int _selectedSlotIndex = -1;
-    private InventoryView? _selectedInventoryView = null;
+    [Export] private Tooltip _tooltip = null!;
 
     // ReSharper disable once AsyncVoidMethod
     // Can't make _Ready return `Task` since it's a virtual function :/
@@ -29,7 +28,7 @@ public partial class InventoryManager : Control {
         // EventBus.Instance.CharacterStatsLoaded += 
         EventBus.Instance.EmptyRegionPressed += DeleteSelectedGizmo;
         CreateHotbarView(GD.Load<Inventory>("uid://b1v0bkq8bhhic"));
-        
+
 #if DEBUG
         await ToSignal(EventBus.Instance, EventBus.SignalName.CharacterSpellBookLoaded);
         SpellView sv = null;
@@ -44,6 +43,7 @@ public partial class InventoryManager : Control {
                     break;
             }
         }
+
         sv.GetInventory().SetAt(2, ResourceDB.GetSpell("spell:fire_bomb"));
         sv.GetInventory().HandleGizmoAction(0, hv.GetInventory(), 0, true);
         sv.GetInventory().HandleGizmoAction(1, hv.GetInventory(), 1, true);
@@ -52,7 +52,6 @@ public partial class InventoryManager : Control {
 
     private void CreateItemView(Inventory pInventory) {
         CreateInventoryView<ItemView>(pInventory, AssetDB.ItemView);
-       
     }
 
     private void CreateSpellView(Inventory pInventory) {
@@ -73,10 +72,9 @@ public partial class InventoryManager : Control {
     //     AddChild(statView);
     // }
 
-    private void CreateEffectView(CombatManager pCombatManager) {
-        var effectView = AssetDB.EffectView.Instantiate<views.effect.EffectView>();
-        effectView.InitializeWith(pCombatManager);
-        
+    private void CreateEffectView(SpellManager pSpellManager) {
+        var effectView = AssetDB.EffectView.Instantiate<EffectView>();
+        effectView.InitializeWith(pSpellManager);
     }
 
     private T CreateInventoryView<T>(Inventory pInventory, PackedScene pViewScene) where T : InventoryView {
@@ -92,7 +90,7 @@ public partial class InventoryManager : Control {
         return inventoryView;
     }
 
-    private void OnSlotPressed(views.View<GizmoStack> pSourceView, views.Slot pSlot, bool pIsRightClick) {
+    private void OnSlotPressed(View<GizmoStack> pSourceView, Slot pSlot, bool pIsRightClick) {
         // if (MouseStateMachine.CurrentState != MouseStateMachine.State.UIControl) {
         //     return;
         // }
@@ -124,10 +122,9 @@ public partial class InventoryManager : Control {
                     Logger.UI.Error($"Unhandled ActionResult {result.ToString()}.", true);
                     break;
             }
-        } 
-        else {
+        } else {
             Logger.UI.Error("null", true);
-        } 
+        }
     }
 
     private void DeleteSelectedGizmo() {
@@ -173,12 +170,12 @@ public partial class InventoryManager : Control {
         }
     }
 
-    private void OnSlotHovered(views.View<GizmoStack> pSourceView, views.Slot pSlot) {
+    private void OnSlotHovered(View<GizmoStack> pSourceView, Slot pSlot) {
         if (pSourceView is not InventoryView inventoryView || pSlot is not InventorySlot) {
             Logger.UI.Error("null", true);
             return;
         }
-        
+
         if (IsSelected()) {
             return;
         }

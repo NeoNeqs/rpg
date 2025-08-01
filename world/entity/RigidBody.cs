@@ -1,5 +1,5 @@
 using Godot;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
+using RPG.global.singletons;
 
 namespace RPG.world.entity;
 
@@ -9,7 +9,7 @@ public partial class RigidBody : RigidBody3D {
     public delegate void BodySelectedEventHandler();
 
     private bool _isHovering;
-    
+
     public override void _EnterTree() {
         MouseEntered += () => { _isHovering = true; };
         MouseExited += () => { _isHovering = false; };
@@ -18,7 +18,6 @@ public partial class RigidBody : RigidBody3D {
     public override void _UnhandledInput(InputEvent pEvent) {
         if (pEvent is InputEventMouseButton mouseButtonEvent && pEvent.IsPressed() &&
             mouseButtonEvent.ButtonIndex == MouseButton.Left && _isHovering) {
-
             if (MouseStateMachine.Instance.RequestState(MouseStateMachine.State.WorldInteract)) {
                 EmitSignalBodySelected();
                 GetViewport().SetInputAsHandled();

@@ -1,15 +1,14 @@
+using global::RPG.global;
 using Godot;
-using RPG.global;
 using RPG.scripts.inventory;
 
 namespace RPG.ui;
 
 public partial class Tooltip : PanelContainer {
-    private Viewport _viewport = null!;
-
     private readonly Vector2 _offset = new(20, 0);
 
     [Export] private PoorTextLabel _label = null!;
+    private Viewport _viewport = null!;
 
     public override void _Ready() {
         _viewport = GetViewport();

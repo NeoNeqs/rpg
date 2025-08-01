@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Effect" load_steps=2 format=3 uid="uid://dotkldjij1sfw"]
+
+[ext_resource type="Script" uid="uid://d20dme40xr43" path="res://scripts/effects/Effect.cs" id="1_1ebsw"]
+
+[resource]
+script = ExtResource("1_1ebsw")
+Id = &"effect:aa"
+DisplayName = ""
+TickTimeout = 3
+TotalTicks = 1
+ApplicationChance = 1.0
+Flags = 0
+ExcludingEffects = []
+metadata/_custom_type_script = "uid://d20dme40xr43"

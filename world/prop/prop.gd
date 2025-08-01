@@ -53,7 +53,8 @@ func _ready() -> void:
 
 func _update_shape(p_new_shape: String) -> void:
 	_prop_data = load(_get_prop_path(p_new_shape))
-	mesh = _prop_data.mesh
+
+	#mesh = _prop_data.mesh.duplicate(true)
 
 	var mat: BaseMaterial3D = get_metarial()
 	mat.uv1_triplanar = _prop_data.use_triplanar
@@ -63,14 +64,14 @@ func _update_shape(p_new_shape: String) -> void:
 func _update_collision() -> void:
 	if not is_node_ready():
 		return
+		
+	if not enable_collision:
+		return
 
 	for child: Node in get_children():
 		if child is PhysicsBody3D:
 			remove_child(child)
 			child.queue_free()
-
-	if not enable_collision:
-		return
 
 	# Don't generate collisions when editing a scene in the editor
 	if not Engine.is_editor_hint():

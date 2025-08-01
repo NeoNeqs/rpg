@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
+using global::RPG.global;
 using Godot;
+using RPG.global.enums;
+using RPG.global.singletons;
 using RPG.scripts.inventory;
 using RPG.scripts.inventory.components;
-using EventBus = RPG.global.singletons.EventBus;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
+using RPG.world.entity;
 
 namespace RPG.world.character.components;
 
@@ -12,7 +14,7 @@ public partial class HotbarManager : Node {
     [Signal]
     public delegate void UserInputEventHandler();
 
-    private bool _shouldCast;
+    private bool _castCanceled;
     private bool _waiting;
 
     public override void _Ready() {
@@ -22,9 +24,7 @@ public partial class HotbarManager : Node {
 
         // IMPORTANT: this connection must be here and not in CombatManager, because selecting entities with mouse is an action
         //            that only player can do.
-        EventBus.Instance.EntitySelected += (entity.Entity pEntity) => {
-            GetCharacter().CombatManager.TargetEntity = pEntity;
-        };
+        EventBus.Instance.EntitySelected += (Entity pEntity) => { GetCharacter().SpellManager.TargetEntity = pEntity; };
 
         // NOTE: `this._UnhandledInput` must only fire when specifically requested to not mess up _shouldCast state.
         SetProcessUnhandledInput(false);
@@ -34,28 +34,20 @@ public partial class HotbarManager : Node {
         if (_waiting) {
             _waiting = false;
             EmitSignalUserInput();
-        }
-
-        PlayerCharacter character = GetCharacter();
-        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent, ChainSpellComponent>();
-
-        if (spellComponent is null) {
             return;
         }
 
-        if (spellComponent.IsOnCooldown()) {
+        PlayerCharacter character = GetCharacter();
+        SpellComponent? spellComponent = pGizmo.GetComponent<SpellComponent, SequenceSpellComponent>();
+
+        if (spellComponent is null || spellComponent.IsOnCooldown()) {
             return;
         }
 
         if (spellComponent.IsAoe()) {
-            Vector3 mouseWorldPosition = character.GetWorld().GetMouseWorldPosition(spellComponent.GetRange());
-            if (mouseWorldPosition == Vector3.Inf) {
-                return;
-            }
-
             AoeDecal decal = GetCharacter().GetWorld().GetDecal();
-            
-            decal.Update(mouseWorldPosition, spellComponent.GetRange());
+
+            await decal.Update(spellComponent.GetRange());
             SetProcessUnhandledInput(true);
 
             _waiting = true;
@@ -68,18 +60,33 @@ public partial class HotbarManager : Node {
             _waiting = false;
 
             SetProcessUnhandledInput(false);
-            
+
             decal.Disable();
+        }
 
-            entity.Entity dummyTarget = character.GetWorld().CreateTempDummyEntity(decal.GlobalPosition);
-            if (_shouldCast) {
-                character.CombatManager.Cast(pGizmo, dummyTarget);
-            }
+        if (spellComponent.CastTimeSeconds > 0) {
+            await ToSignal(GetTree().CreateTimer(spellComponent.CastTimeSeconds), Timer.SignalName.Timeout);
+        }
 
+        if (_castCanceled) {
             return;
         }
 
-        character.CombatManager.Cast(pGizmo, null);
+        CastResult castResult = character.SpellManager.CastNoCDCheck(pGizmo, spellComponent);
+
+        switch (castResult) {
+            // case CastResult.WrongTarget:
+            // Logger.Combat.Info("Can't attack that target!");
+            // break;
+            case CastResult.NoValidTarget:
+                Logger.Combat.Critical("Unable to attain a valid target for the spell", true);
+                break;
+            case CastResult.Ok:
+            case CastResult.NoSpellComponent:
+            case CastResult.OnCooldown:
+            default:
+                break;
+        }
     }
 
     public override void _UnhandledInput(InputEvent pEvent) {
@@ -87,13 +94,14 @@ public partial class HotbarManager : Node {
             // Important: Most user actions must be triggered when action is released and NOT pressed!
             case InputEventMouseButton mouseEvent
                 when pEvent.IsReleased() && mouseEvent.ButtonIndex == MouseButton.Left:
-                _shouldCast = true;
+                _castCanceled = false;
                 EmitSignalUserInput();
                 break;
             case InputEventMouseButton mouseEvent2
                 when pEvent.IsReleased() && mouseEvent2.ButtonIndex == MouseButton.Right:
+            case InputEventKey keyEvent when keyEvent.IsPressed() && keyEvent.Keycode == Key.Escape:
 
-                _shouldCast = false;
+                _castCanceled = true;
                 EmitSignalUserInput();
                 break;
         }
@@ -103,7 +111,7 @@ public partial class HotbarManager : Node {
         // ReSharper disable once ConvertSwitchStatementToSwitchExpression
         switch (pEvent) {
             case InputEventKey keyEvent when keyEvent.IsPressed() && keyEvent.Keycode == Key.Escape:
-                GetCharacter().CombatManager.TargetEntity = null;
+                GetCharacter().SpellManager.TargetEntity = null;
                 break;
         }
     }
