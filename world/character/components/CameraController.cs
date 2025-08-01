@@ -1,6 +1,6 @@
 using System;
 using Godot;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
+using RPG.global.singletons;
 
 namespace RPG.world.character.components;
 
@@ -94,7 +94,12 @@ public partial class CameraController : Node {
         }
 
         if (_freeLookEnabled || _turnEnabled) {
-            MouseStateMachine.Instance.RequestState(MouseStateMachine.State.CameraControl);
+            if (MouseStateMachine.Instance.CurrentState != MouseStateMachine.State.CameraControl) {
+                if (!MouseStateMachine.Instance.RequestState(MouseStateMachine.State.CameraControl)) {
+                    return;
+                }
+            }
+
             Pivot.RotateY(-pEventMouseMotion.Relative.X * _cameraSensitivity * 0.001f);
             Arm.RotateX(-pEventMouseMotion.Relative.Y * _cameraSensitivity * 0.001f);
             Arm.Rotation = Arm.Rotation with {

@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://byr7o45km88lx"]
+[gd_scene load_steps=3 format=3 uid="uid://byr7o45km88lx"]
 
-[ext_resource type="Script" uid="uid://cqlhap7630tng" path="res://ui/debug/debug_console.gd" id="1_nrbya"]
-[ext_resource type="Script" uid="uid://2pqoll4sjbdc" path="res://ui/debug/log_display.gd" id="2_tkld6"]
-[ext_resource type="Script" uid="uid://bxwi0j6ibycvd" path="res://ui/debug/prompt.gd" id="3_ugdhf"]
+[ext_resource type="Script" uid="uid://cm1nuodti6qo6" path="res://ui/debug/DebugConsole.cs" id="1_nrbya"]
+[ext_resource type="Script" uid="uid://n58ueypb3gbl" path="res://ui/debug/Prompt.cs" id="2_tkld6"]
 
 [node name="DebugConsole" type="PanelContainer"]
 anchors_preset = 15
@@ -29,7 +28,6 @@ focus_mode = 2
 mouse_filter = 1
 scroll_following = true
 selection_enabled = true
-script = ExtResource("2_tkld6")
 
 [node name="Timer" type="Timer" parent="MarginContainer/VBoxContainer/RichTextLabel"]
 wait_time = 0.2
@@ -38,8 +36,8 @@ autostart = true
 [node name="LineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
+focus_mode = 1
 keep_editing_on_text_submit = true
-script = ExtResource("3_ugdhf")
+script = ExtResource("2_tkld6")
 
-[connection signal="timeout" from="MarginContainer/VBoxContainer/RichTextLabel/Timer" to="MarginContainer/VBoxContainer/RichTextLabel" method="_on_timer_timeout"]
-[connection signal="text_submitted" from="MarginContainer/VBoxContainer/LineEdit" to="." method="_on_command_entered"]
+[connection signal="text_submitted" from="MarginContainer/VBoxContainer/LineEdit" to="." method="OnCommandSubmitted"]

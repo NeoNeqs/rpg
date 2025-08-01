@@ -1,20 +1,28 @@
-[gd_resource type="Resource" script_class="DamageEffect" load_steps=2 format=3 uid="uid://cersqsvar0pkb"]
+[gd_resource type="Resource" script_class="DamageEffect" load_steps=5 format=3 uid="uid://cersqsvar0pkb"]
 
+[ext_resource type="Texture2D" uid="uid://oauwek8drqx4" path="res://assets/textures/spell/heavy-rain.svg" id="1_7uiux"]
 [ext_resource type="Script" uid="uid://btbq7woaywr4i" path="res://scripts/effects/DamageEffect.cs" id="1_kl8rq"]
+[ext_resource type="Script" uid="uid://bx8u7ag424raw" path="res://scripts/AoeEffectBehavior.cs" id="1_pctrq"]
+
+[sub_resource type="Resource" id="Resource_fx0a4"]
+script = ExtResource("1_pctrq")
+Radius = 5.0
+metadata/_custom_type_script = "uid://bx8u7ag424raw"
 
 [resource]
 script = ExtResource("1_kl8rq")
 Id = &"effect:fire_rain"
 DisplayName = "Fire Rain"
+Icon = ExtResource("1_7uiux")
 TickTimeout = 3
-TotalTicks = 10
+TotalTicks = 1
 ApplicationChance = 1.0
-Radius = 5
 Flags = 0
 ExcludingEffects = []
-FlatValue = 30
-StatScale = 2
-StatScaleCoefficient = 1.3
+Behavior = SubResource("Resource_fx0a4")
+FlatValue = 0
+StatScale = 0
+StatScaleCoefficient = 0.0
 MaxStacks = 1
 DamageType = 0
 metadata/_custom_type_script = "uid://btbq7woaywr4i"

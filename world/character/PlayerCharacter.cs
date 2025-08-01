@@ -1,11 +1,12 @@
 using Godot;
+using RPG.global.singletons;
 using RPG.scripts.inventory;
-using EventBus = RPG.global.singletons.EventBus;
+using RPG.world.entity;
 
 namespace RPG.world.character;
 
 [GlobalClass]
-public partial class PlayerCharacter : entity.Entity {
+public partial class PlayerCharacter : Entity {
     [Signal]
     public delegate void UserInputEventHandler();
 
@@ -17,9 +18,10 @@ public partial class PlayerCharacter : entity.Entity {
         
         EventBus.Instance.EmitCharacterInventoryLoaded(Inventory);
         EventBus.Instance.EmitCharacterSpellBookLoaded(SpellBook);
-        CombatManager.TargetChanged += (entity.Entity _, entity.Entity? pNewEntity) => {
+        SpellManager.TargetChanged += (Entity _, Entity? pNewEntity) => {
             EventBus.Instance.EmitPlayerTargetChanged(this, pNewEntity);
         };
+        base._Ready();
     }
 
     public PlayerCharacterBody GetBody() {

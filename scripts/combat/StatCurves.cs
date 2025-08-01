@@ -23,7 +23,6 @@ public partial class StatCurves : Resource {
     [Export] public Curve StrengthCurve = (Curve)DefaultStatCurve.Duplicate();
     [Export] public Curve StaminaCurve = (Curve)DefaultStatCurve.Duplicate();
 
-
     public long GetHealthFromStamina(long pStamina) {
         return (long)StaminaCurve.Sample(pStamina);
     }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c7n3fws3wd5yu"]
+[gd_scene load_steps=23 format=3 uid="uid://c7n3fws3wd5yu"]
 
 [ext_resource type="Texture2D" uid="uid://beim1glubpohi" path="res://assets/textures/prototype/green/texture_10.png" id="1_1c2mv"]
 [ext_resource type="Script" uid="uid://dwktvik6f4wrn" path="res://world/prop/prop.gd" id="1_xtdv1"]
@@ -21,12 +21,44 @@ albedo_texture = ExtResource("1_1c2mv")
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="BoxMesh" id="BoxMesh_ukyni"]
+[sub_resource type="BoxMesh" id="BoxMesh_gmgay"]
+size = Vector3(100, 0.6, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gmgay"]
+size = Vector3(100, 0.6, 100)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ptq8"]
 albedo_texture = ExtResource("3_f7g2b")
 uv1_triplanar = true
 uv1_world_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_w7r7j"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_o6mel"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_e7anx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ur00s"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wndkh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ly3hx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4n8tn"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wkb0e"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_paa45"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gmgay"]
+albedo_texture = ExtResource("3_f7g2b")
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_axl34"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_gmgay"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
 
 [node name="TestLevel" type="Node3D"]
 
@@ -39,72 +71,89 @@ light_color = Color(0.625008, 0.625008, 0.625008, 1)
 shadow_enabled = true
 
 [node name="Floor" type="MeshInstance3D" parent="."]
-transform = Transform3D(127.01, 0, 0, 0, 0.718, 0, 0, 0, 100, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_s3kq4")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_gmgay")
 script = ExtResource("1_xtdv1")
 color = "green"
 texture = 10
+enable_collision = false
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D"]
+shape = SubResource("BoxShape3D_gmgay")
 
 [node name="Prop" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, 0)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_w7r7j")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop5" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -10.522, 2.43134, 0)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_o6mel")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop8" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.42697, 2.43134, 0)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_e7anx")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, 7.90601)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_ur00s")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop6" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -10.9803, 2.43134, 7.90601)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_wndkh")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop7" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.29876, 2.43134, 7.90601)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_ly3hx")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -3.89151, 2.43134, -7.72012)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_4n8tn")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop4" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -9.91228, 2.43134, -7.72012)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_wkb0e")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
 
 [node name="Prop9" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 4.22404, 0, 0, 0, 5.20935, -7.02344, 2.43134, -7.72012)
 material_override = SubResource("StandardMaterial3D_4ptq8")
-mesh = SubResource("BoxMesh_ukyni")
+mesh = SubResource("BoxMesh_paa45")
 script = ExtResource("1_xtdv1")
 metadata/_custom_type_script = "uid://dwktvik6f4wrn"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.916857, 0, 0, 0, 3.23676, 0, 0, 0, 4.65452, 2.64636, 1.98318, 4.54877)
+material_override = SubResource("StandardMaterial3D_gmgay")
+mesh = SubResource("BoxMesh_axl34")
+script = ExtResource("1_xtdv1")
+enable_collision = false
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_gmgay")

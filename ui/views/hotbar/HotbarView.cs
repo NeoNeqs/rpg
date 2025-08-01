@@ -1,8 +1,8 @@
 using Godot;
 using RPG.global;
+using RPG.global.singletons;
 using RPG.scripts.inventory;
-using EventBus = RPG.global.singletons.EventBus;
-using ItemView = RPG.ui.views.item.ItemView;
+using RPG.ui.views.item;
 
 namespace RPG.ui.views.hotbar;
 

@@ -33,7 +33,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
     }
 
     private void OnInventoryGizmoAboutToChange(GizmoStack pGizmoStack, int pIndex) {
-        var slot = GetSlot<views.inventory.InventorySlot>(pIndex);
+        var slot = GetSlot<InventorySlot>(pIndex);
         if (pGizmoStack.Gizmo is null || slot is null) {
             return;
         }
@@ -53,7 +53,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
     }
 
     private void OnInventoryGizmoChanged(GizmoStack pGizmoStack, int pIndex) {
-        var slot = GetSlot<views.inventory.InventorySlot>(pIndex);
+        var slot = GetSlot<InventorySlot>(pIndex);
 
         if (slot is null) {
             Logger.Inventory.Critical($"BUG! Slot with an index {pIndex} does not exist.", true);
@@ -82,8 +82,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
         }
 
         GizmoStack gizmoStack = Container.GetAt(pIndex);
-        var slot = SlotScene.Instantiate<views.inventory.InventorySlot>();
-
+        var slot = SlotScene.Instantiate<InventorySlot>();
         
         // FIND_ME:
         slot.Update(gizmoStack);
@@ -258,7 +257,7 @@ public abstract partial class InventoryView : View<GizmoStack> {
         return (Inventory)Container!;
     }
 
-    private static void UpdateSlot(GizmoStack pGizmoStack, views.inventory.InventorySlot pSlot, float pCooldownSeconds) {
+    private static void UpdateSlot(GizmoStack pGizmoStack, InventorySlot pSlot, float pCooldownSeconds) {
         pSlot.Update(pGizmoStack);
         pSlot.SetOnCooldown(pCooldownSeconds);
     }

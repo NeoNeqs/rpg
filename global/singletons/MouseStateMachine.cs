@@ -28,6 +28,8 @@ public sealed partial class MouseStateMachine : Node {
 
         /// Used when player interacts with the world / environment, e.g. selecting entities,  
         WorldInteract,
+        
+        Debug,
     }
 
     public MouseStateMachine() {
@@ -80,21 +82,18 @@ public sealed partial class MouseStateMachine : Node {
 
         switch (pNewState) {
             case State.Free:
+            case State.WorldInteract:
+            case State.Debug:
+            case State.UIControl:
                 ShowMouse();
 
                 break;
-            case State.UIControl:
-                return false;
             case State.InventoryControl:
                 DisplayServer.MouseSetMode(DisplayServer.MouseMode.Hidden);
 
                 break;
             case State.CameraControl:
                 CaptureMouse();
-
-                break;
-            case State.WorldInteract:
-                ShowMouse();
 
                 break;
             default:
@@ -106,6 +105,10 @@ public sealed partial class MouseStateMachine : Node {
         CurrentState = pNewState;
 
         return true;
+    }
+
+    public static bool IsCaptured() {
+        return DisplayServer.MouseGetMode() == DisplayServer.MouseMode.Captured;
     }
 
     private void ShowMouse() {

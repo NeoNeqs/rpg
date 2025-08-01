@@ -1,6 +1,6 @@
 using Godot;
 using RPG.scripts.inventory;
-using ItemSlot = RPG.ui.views.item.ItemSlot;
+using RPG.ui.views.item;
 
 namespace RPG.ui;
 

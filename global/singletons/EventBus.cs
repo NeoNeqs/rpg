@@ -2,9 +2,8 @@ using Godot;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
 using RPG.ui.elements;
-using RPG.world;
 using RPG.world.character;
-using Entity = RPG.world.entity.Entity;
+using RPG.world.entity;
 
 namespace RPG.global.singletons;
 

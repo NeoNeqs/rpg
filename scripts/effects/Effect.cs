@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using RPG.global;
 using RPG.global.enums;
+using RPG.global.singletons;
 
 namespace RPG.scripts.effects;
 
@@ -16,6 +17,7 @@ public partial class Effect : Resource, INamedIdentifiable {
     public StringName Id { private set; get; } = new("");
     public string DisplayName { private set; get; } = "";
 
+    // TODO: move this to INamedIdentifiable and rename that interface to something that could hold id, name and icon
     public Texture2D? Icon { private set; get; }
 
     // Note: TickTimeout refers to the time in seconds it takes to 1 application of the effect
@@ -32,43 +34,37 @@ public partial class Effect : Resource, INamedIdentifiable {
 
     public float ApplicationChance { set; get; } = 1.0f;
 
-    public ushort Radius { private set; get; }
-
     public EffectFlags Flags { private set; get; }
 
     public StringName[] ExcludingEffects { private set; get; } = [];
 
-    public bool IsAoe => Radius > 0;
-    protected Timer? Timer { private set; get; }
+    public EffectBehavior? Behavior { private set; get; }
+
+    public Timer Timer { private set; get; } = new();
 
     private short _totalTicks = 1;
     protected short CurrentTick = 1;
 
-    public Timer? Start() {
-        if (!RNG.Roll(ApplicationChance)) {
-            return null;
-        }
-
-        if (Timer is not null && !Timer.IsStopped()) {
+    public Timer TryStart() {
+        if (!Timer.IsStopped()) {
             return Timer;
         }
 
-        Timer = new Timer();
         Timer.Autostart = true;
         Timer.WaitTime = TickTimeout;
+        CurrentTick = TotalTicks;
 
         if (IsInstant()) {
-            Timer.Ready += SetupPeriodicEffect;
+            Timer.Ready += TickFunction;
         }
 
-        Timer.Timeout += SetupPeriodicEffect;
+        Timer.Timeout += TickFunction;
         return Timer;
     }
 
-
     public float GetTimeLeft() {
         float timeLeft = (CurrentTick - 1) * TickTimeout;
-        
+
         if (IsInstanceValid(Timer) && !Timer.IsStopped()) {
             timeLeft += (float)Timer.TimeLeft;
         } else {
@@ -86,15 +82,19 @@ public partial class Effect : Resource, INamedIdentifiable {
         return Flags.HasFlag(EffectFlags.Instant);
     }
 
-    public bool IsTargetSelfOnly() {
-        return Flags.HasFlag(EffectFlags.TargetSelfOnly);
+    public bool NeedsEnemyTarget() {
+        return Flags.HasFlag(EffectFlags.NeedsEnemyTarget);
     }
 
-    public bool IsTargetAllies() {
-        return Flags.HasFlag(EffectFlags.TargetAllies);
+    public bool NeedsFriendlyTarget() {
+        return Flags.HasFlag(EffectFlags.NeedsFriendlyTarget);
     }
 
-    private void SetupPeriodicEffect() {
+    public bool IsAoe() {
+        return Behavior is AoeEffectBehavior;
+    }
+
+    private void TickFunction() {
         CurrentTick--;
 
         if (CurrentTick < 0) {
@@ -110,20 +110,14 @@ public partial class Effect : Resource, INamedIdentifiable {
     }
 
     public void CleanupAndFinish() {
-#if TOOLS
-        if (Timer is null) {
-            Logger.Core.Critical("Timer should not be null here, but it is!", true);
-            return;
-        }
-#endif
-        Timer?.Stop();
-        Timer?.QueueFree();
+        Timer.Stop();
+        Timer.GetParent().RemoveChild(Timer);
         EmitSignalFinished();
     }
 
     public virtual void Refresh() {
         // Reset the timer since new stack was just applied
-        if (Timer?.IsInsideTree() ?? false) {
+        if (Timer.IsInsideTree()) {
             Timer.Start();
         }
 
@@ -135,7 +129,11 @@ public partial class Effect : Resource, INamedIdentifiable {
             new Dictionary() {
                 ["name"] = nameof(Id),
                 ["type"] = Variant.From(Variant.Type.StringName),
-                ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
+                ["usage"] = Variant.From(
+                    PropertyUsageFlags.ScriptVariable |
+                    PropertyUsageFlags.Default |
+                    PropertyUsageFlags.ReadOnly
+                )
             },
             new Dictionary() {
                 ["name"] = nameof(DisplayName),
@@ -171,13 +169,6 @@ public partial class Effect : Resource, INamedIdentifiable {
                 ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
             },
             new Dictionary() {
-                ["name"] = nameof(Radius),
-                ["type"] = Variant.From(Variant.Type.Int),
-                ["hint"] = Variant.From(PropertyHint.Range),
-                ["hint_string"] = $"0, {ushort.MaxValue.ToString()}, 1",
-                ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
-            },
-            new Dictionary() {
                 ["name"] = nameof(Flags),
                 ["type"] = Variant.From(Variant.Type.Int),
                 ["hint"] = Variant.From(PropertyHint.Flags),
@@ -188,7 +179,14 @@ public partial class Effect : Resource, INamedIdentifiable {
                 ["name"] = nameof(ExcludingEffects),
                 ["type"] = Variant.From(Variant.Type.Array),
                 ["hint"] = Variant.From(PropertyHint.TypeString),
-                ["hint_string"] = $"{Variant.Type.StringName:D}:",
+                ["hint_string"] = $"{Variant.Type.StringName:D}/{PropertyHint.EnumSuggestion:D}:{ResourceDB.EffectIdsHintString}",
+                ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
+            },
+            new Dictionary() {
+                ["name"] = nameof(Behavior),
+                ["type"] = Variant.From(Variant.Type.Object),
+                ["hint"] = Variant.From(PropertyHint.ResourceType),
+                ["hint_string"] = nameof(EffectBehavior),
                 ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
             },
         ];

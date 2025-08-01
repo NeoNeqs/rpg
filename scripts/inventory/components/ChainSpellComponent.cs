@@ -3,6 +3,8 @@ using RPG.scripts.effects;
 
 namespace RPG.scripts.inventory.components;
 
+
+// TODO: rename to SequenceSpellComponent
 [Tool, GlobalClass]
 public sealed partial class ChainSpellComponent : SpellComponent {
     [Export] public Gizmo[] Spells = [];

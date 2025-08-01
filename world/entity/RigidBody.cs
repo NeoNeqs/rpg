@@ -1,5 +1,5 @@
 using Godot;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
+using RPG.global.singletons;
 
 namespace RPG.world.entity;
 

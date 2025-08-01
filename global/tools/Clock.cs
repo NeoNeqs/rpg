@@ -69,7 +69,7 @@ public sealed class Clock : IDisposable {
 
     public void ShowResult() {
         string humanizedTime = Utils.HumanizeMicroseconds(_accumulatedTime);
-        Logger.Core.Info($"({_tag}) {_object.GetType().Name}::{_method}:{_line} -> {humanizedTime}");
+        Logger.Core.Info($"{_tag}: {_object.GetType().Name}::{_method}:{_line} -> {humanizedTime}");
     }
 
     public void Dispose() {

@@ -1,4 +1,3 @@
-#if TOOLS
 using System.Diagnostics;
 using Godot;
 using RPG.scripts;
@@ -17,6 +16,7 @@ public static class Tools {
     }
 }
 
+#if TOOLS
 // A neat trick to do compile time asserts, although the thrown error message is not very useful.
 // Source: https://www.lunesu.com/archives/62-Static-assert-in-C!.html
 // ReSharper disable once UnusedType.Local
@@ -48,7 +48,6 @@ internal sealed class StaticAssert {
     private byte _assert16 = nameof(Effect.TickTimeout) == "TickTimeout" ? 0 : -1;
     private byte _assert17 = nameof(Effect.TotalTicks) == "TotalTicks" ? 0 : -1;
     private byte _assert18 = nameof(Effect.ApplicationChance) == "ApplicationChance" ? 0 : -1;
-    private byte _assert19 = nameof(Effect.Radius) == "Radius" ? 0 : -1;
     private byte _assert20 = nameof(Effect.Flags) == "Flags" ? 0 : -1;
     
     private byte _assert21 = nameof(DamageEffect.DamageType) == "DamageType" ? 0 : -1;

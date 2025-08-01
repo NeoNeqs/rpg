@@ -1,5 +1,5 @@
 using Godot;
-using EventBus = RPG.global.singletons.EventBus;
+using RPG.global.singletons;
 
 namespace RPG.world.entity;
 

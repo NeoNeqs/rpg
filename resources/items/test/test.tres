@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Gizmo" load_steps=3 format=3 uid="uid://dle630h5rkybo"]
+
+[ext_resource type="Script" uid="uid://dtyyu3w8h6fnp" path="res://scripts/inventory/components/GizmoComponent.cs" id="1_7w4rk"]
+[ext_resource type="Script" uid="uid://be1ycgpodowgh" path="res://scripts/inventory/Gizmo.cs" id="2_p3cnt"]
+
+[resource]
+script = ExtResource("2_p3cnt")
+Id = &"item:test:test"
+DisplayName = ""
+StackSize = 1
+Components = Dictionary[String, ExtResource("1_7w4rk")]({})
+metadata/_custom_type_script = "uid://be1ycgpodowgh"

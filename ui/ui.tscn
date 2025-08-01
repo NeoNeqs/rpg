@@ -16,6 +16,7 @@ font = ExtResource("2_ajbqs")
 font_size = 20
 
 [node name="UI" type="Control" node_paths=PackedStringArray("_inventoryManager")]
+process_mode = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

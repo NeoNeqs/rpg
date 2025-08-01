@@ -13,16 +13,16 @@ public partial class CombatData : RefCounted {
     [Signal]
     public delegate void CrowdControlAppliedEventHandler(CrowdControl pCrowdControl);
 
-    private readonly CombatSystem _combatSystem = null!;
+    private readonly StatCalculator _statCalculator = null!;
     
     public CrowdControl CrowdControlImmunity;
     public CrowdControl AppliedCrowdControl;
 
     private long _currentHealth;
 
-    public CombatData(CombatSystem pCombatSystem) {
-        _combatSystem = pCombatSystem;
-        _currentHealth = _combatSystem.GetMaxHealth();
+    public CombatData(StatCalculator pStatCalculator) {
+        _statCalculator = pStatCalculator;
+        _currentHealth = _statCalculator.GetMaxHealth();
     }
 
     // Parameterless constructor is required for the Godot to initialize a script/game object
@@ -45,7 +45,7 @@ public partial class CombatData : RefCounted {
     }
     
     public void ModifyHealth(double pDamage) {
-        long maxHealth = _combatSystem.GetMaxHealth();
+        long maxHealth = _statCalculator.GetMaxHealth();
         long testHealth = _currentHealth + (long)pDamage;
         
         if (testHealth > maxHealth) {

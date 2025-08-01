@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Godot;
 
 
@@ -50,24 +51,50 @@ public sealed class Logger(string pTag, Logger.Level pCurrentLevel) {
 #endif
 
     [Conditional("DEBUG")]
+    public void Debug([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Debug, pHandler.ToString(), pVerbose);
+    }
+
+    [Conditional("DEBUG")]
     public void Debug(string pMessage, bool pVerbose = false) {
         _Log(Level.Debug, pMessage, pVerbose);
+    }
+
+    public void Info([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Info, pHandler.ToString(), pVerbose);
     }
 
     public void Info(string pMessage, bool pVerbose = false) {
         _Log(Level.Info, pMessage, pVerbose);
     }
 
+    public void Warn([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Warn, pHandler.ToString(), pVerbose);
+    }
+
     public void Warn(string pMessage, bool pVerbose = false) {
         _Log(Level.Warn, pMessage, pVerbose);
     }
+
 
     public void Error(string pMessage, bool pVerbose = false) {
         _Log(Level.Error, pMessage, pVerbose);
     }
 
+    public void Error([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler,
+        bool pVerbose = false) {
+        _Log(Level.Error, pHandler.ToString(), pVerbose);
+    }
+
     public void Critical(string pMessage, bool pVerbose = false) {
         _Log(Level.Critical, pMessage, pVerbose);
+    }
+
+    public void Critical([InterpolatedStringHandlerArgument("")] LoggerInterpolatedStringHandler pHandler, bool pVerbose = false) {
+        _Log(Level.Critical, pHandler.ToString(), pVerbose);
     }
 
     private void _LogStackTrace() {

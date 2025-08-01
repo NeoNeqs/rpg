@@ -1,15 +1,16 @@
 using System;
 using Godot;
 using RPG.global;
+using RPG.ui.elements;
 
 namespace RPG.ui.views;
 
-public abstract partial class View<TItem> : elements.UIElement {
+public abstract partial class View<TItem> : UIElement {
     [Signal]
-    public delegate void SlotPressedEventHandler(View<TItem> pSourceView, views.Slot pSlot, bool pIsRightClick);
+    public delegate void SlotPressedEventHandler(View<TItem> pSourceView, Slot pSlot, bool pIsRightClick);
 
     [Signal]
-    public delegate void SlotHoveredEventHandler(View<TItem> pSourceView, views.Slot pSlot);
+    public delegate void SlotHoveredEventHandler(View<TItem> pSourceView, Slot pSlot);
 
     [Signal]
     public delegate void SlotUnhoveredEventHandler();
@@ -18,7 +19,7 @@ public abstract partial class View<TItem> : elements.UIElement {
     [Export] public PackedScene SlotScene = null!;
     protected IContainer<TItem>? Container;
 
-    public TSlot? GetSlot<TSlot>(int pIndex) where TSlot : views.Slot {
+    public TSlot? GetSlot<TSlot>(int pIndex) where TSlot : Slot {
         return SlotHolder.GetChildOrNull<TSlot>(pIndex);
     }
 
@@ -28,7 +29,6 @@ public abstract partial class View<TItem> : elements.UIElement {
 
     protected void ResizeHolder() {
         if (Container is null) {
-            Logger.UI.Critical("BUG! Container should not be null here!", true);
             return;
         }
 

@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using Godot;
+using Godot.Collections;
 using RPG.scripts.inventory.components;
 
 namespace RPG.scripts.inventory;
 
 [Tool, GlobalClass]
 public partial class Gizmo : ComponentSystem<GizmoComponent>, INamedIdentifiable {
-    // IMPORTANT: Properties must have private setters to prevent accidental (or not) modifications!
-    [Export] public StringName Id { private set; get; } = new("");
+    public StringName Id { private set; get; } = new("");
 
-    [Export] public string DisplayName { private set; get; } = "";
+    public string DisplayName { private set; get; } = "";
 
-    [Export] public Texture2D Icon { private set; get; } = null!;
+    public Texture2D? Icon { private set; get; }
 
-    [Export(PropertyHint.Range, "1, 100, 1")] public int StackSize { private set; get; } = 1;
+    public int StackSize { private set; get; } = 1;
 
     // I have tried using Godot's `Resource.Duplicate` to no avail. It does not function as I want it to...
     public Gizmo Duplicate() {
@@ -33,5 +33,45 @@ public partial class Gizmo : ComponentSystem<GizmoComponent>, INamedIdentifiable
         }
 
         return newGizmo;
+    }
+
+    public override Array<Dictionary> _GetPropertyList() {
+        Array<Dictionary> properties = [
+            new() {
+                ["name"] = nameof(Id),
+                ["type"] = Variant.From(Variant.Type.StringName),
+                ["usage"] = Variant.From(
+                    (long)PropertyUsageFlags.ReadOnly |
+                    (long)PropertyUsageFlags.Default |
+                    (long)PropertyUsageFlags.ScriptVariable
+                )
+            },
+            new() {
+                ["name"] = nameof(DisplayName),
+                ["type"] = Variant.From(Variant.Type.String),
+                ["usage"] = Variant.From(
+                    (long)PropertyUsageFlags.Default |
+                    (long)PropertyUsageFlags.ScriptVariable
+                )
+            },
+            new() {
+                ["name"] = nameof(Icon),
+                ["type"] = Variant.From(Variant.Type.Object),
+                ["hint"] = Variant.From(PropertyHint.ResourceType),
+                ["hint_string"] = "Texture2D",
+                ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
+            },
+            new () {
+                ["name"] = nameof(StackSize),
+                ["type"] = Variant.From(Variant.Type.Int),
+                ["hint"] = Variant.From(PropertyHint.Range),
+                ["hint_string"] = "1, 100, 1",
+                ["usage"] = Variant.From(PropertyUsageFlags.ScriptVariable | PropertyUsageFlags.Default)
+            },
+        ];
+
+        properties.AddRange(base._GetPropertyList());
+
+        return properties;
     }
 }

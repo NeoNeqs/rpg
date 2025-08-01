@@ -3,13 +3,11 @@ using RPG.global;
 using RPG.global.singletons;
 using RPG.scripts.combat;
 using RPG.scripts.inventory;
-using EventBus = RPG.global.singletons.EventBus;
-using HotbarView = RPG.ui.views.hotbar.HotbarView;
-using InventorySlot = RPG.ui.views.inventory.InventorySlot;
-using InventoryView = RPG.ui.views.inventory.InventoryView;
-using ItemView = RPG.ui.views.item.ItemView;
-using MouseStateMachine = RPG.global.singletons.MouseStateMachine;
-using SpellView = RPG.ui.views.spell.SpellView;
+using RPG.ui.views.effect;
+using RPG.ui.views.hotbar;
+using RPG.ui.views.inventory;
+using RPG.ui.views.item;
+using RPG.ui.views.spell;
 
 namespace RPG.ui;
 
@@ -73,9 +71,9 @@ public partial class InventoryManager : Control {
     //     AddChild(statView);
     // }
 
-    private void CreateEffectView(CombatManager pCombatManager) {
-        var effectView = AssetDB.EffectView.Instantiate<views.effect.EffectView>();
-        effectView.InitializeWith(pCombatManager);
+    private void CreateEffectView(SpellManager pSpellManager) {
+        var effectView = AssetDB.EffectView.Instantiate<EffectView>();
+        effectView.InitializeWith(pSpellManager);
         
     }
 
